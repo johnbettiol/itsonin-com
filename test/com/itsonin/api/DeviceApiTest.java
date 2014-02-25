@@ -21,18 +21,17 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.itsonin.dao.UserDao;
 import com.itsonin.di.AppModule;
-import com.itsonin.entity.User;
-import com.itsonin.enums.UserStatus;
-import com.itsonin.enums.UserType;
-import com.itsonin.security.AuthContextService;
+import com.itsonin.entity.Device;
+import com.itsonin.enums.DeviceLevel;
+import com.itsonin.enums.DeviceType;
+import com.itsonin.service.DeviceService;
 
 /**
  * @author nkislitsin
  *
  */
-public class UserApiTest {
+public class DeviceApiTest {
 	
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
 			new LocalDatastoreServiceTestConfig());
@@ -45,10 +44,9 @@ public class UserApiTest {
 	@Before
 	public void setUp() {
 		helper.setUp();
-		
-		AuthContextService authContextService = i.getInstance(AuthContextService.class);
-		UserDao userDao = i.getInstance(UserDao.class);
-		UserApi userApi = new UserApi(userDao, authContextService);
+
+		DeviceService userService = i.getInstance(DeviceService.class);
+		DeviceApi userApi = new DeviceApi(userService);
 
         dispatcher = MockDispatcherFactory.createDispatcher();
         dispatcher.getRegistry().addSingletonResource(userApi);
@@ -60,10 +58,10 @@ public class UserApiTest {
 	}
 
 	@Test
-	public void run() throws Exception {
-		String json = mapper.writeValueAsString(new User(1L, UserType.SUPER, UserStatus.ACTIVE, 
-				"msisdn", "email@email.com", "name", "salt", "hash", new Date(), new Date()));
-		MockHttpRequest request = MockHttpRequest.post("api/user/create");
+	public void testSaveDevice() throws Exception {
+		String json = mapper.writeValueAsString(
+				new Device(1L, DeviceType.BROWSER, "token", DeviceLevel.SUPER, new Date(), new Date()));
+		MockHttpRequest request = MockHttpRequest.post("api/device/create");
 		request.accept(MediaType.APPLICATION_JSON);
 		request.contentType(MediaType.APPLICATION_JSON);
 		request.content(new ByteArrayInputStream(json.getBytes()));
@@ -71,9 +69,9 @@ public class UserApiTest {
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
 		
-		User user = ReaderUtility.read(User.class, MediaType.APPLICATION_JSON, response.getContentAsString());
+		Device device = ReaderUtility.read(Device.class, MediaType.APPLICATION_JSON, response.getContentAsString());
 
-		Assert.assertEquals(user.getId(), Long.valueOf(1L));
+		Assert.assertEquals(device.getDeviceId(), Long.valueOf(1L));
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	

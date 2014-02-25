@@ -6,7 +6,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
-import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
@@ -14,10 +13,9 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import com.google.inject.Inject;
-import com.itsonin.entity.User;
-import com.itsonin.enums.UserType;
+import com.itsonin.enums.DeviceLevel;
 import com.itsonin.security.annotations.PermitAll;
-import com.itsonin.security.annotations.UserTypeAllowed;
+import com.itsonin.security.annotations.DeviceLevelAllowed;
 
 /**
  * @author nkislitsin
@@ -38,9 +36,9 @@ public class SecurityInterceptor implements PreProcessInterceptor{
 	public ServerResponse preProcess(HttpRequest request,
 			ResourceMethodInvoker method) throws Failure, WebApplicationException {
         ServerResponse response = null;
-        UserTypeAllowed userTypesAllowed = method.getMethod().getAnnotation(UserTypeAllowed.class);
+        DeviceLevelAllowed userTypesAllowed = method.getMethod().getAnnotation(DeviceLevelAllowed.class);
         PermitAll permitAll = method.getMethod().getAnnotation(PermitAll.class);
- 
+ /*
         User user = authContextService.getUser();
         
         if (userTypesAllowed==null && permitAll==null){
@@ -56,13 +54,13 @@ public class SecurityInterceptor implements PreProcessInterceptor{
 	        	if (userTypesAllowed != null && !isUserInRole(user.getType(), userTypesAllowed.value())) 
 	        		response = new ServerResponse("Not allowed", 403, new Headers<Object>());
 	        }
-        }
+        }*/
         return response;
 	}
 	
-    private boolean isUserInRole(UserType userType, UserType[] allowedUserTypes){
-    	for (UserType allowedUserType : allowedUserTypes){
-    		if (allowedUserType.equals(userType)) return true;
+    private boolean isDeviceAlowed(DeviceLevel deviceLevel, DeviceLevel[] allowedDeviceLevels){
+    	for (DeviceLevel allowedDeviceLevel : allowedDeviceLevels){
+    		if (allowedDeviceLevel.equals(deviceLevel)) return true;
     	}
     	return false;
     }

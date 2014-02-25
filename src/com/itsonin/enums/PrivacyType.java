@@ -4,6 +4,6 @@ package com.itsonin.enums;
  * @author nkislitsin
  *
  */
-public enum GuestStatus {
-	INVITED, ACCEPTED, DECLINED;
+public enum PrivacyType {
+	PRIVATE, FRIENDS, PUBLIC;
 }

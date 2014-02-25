@@ -1,6 +1,6 @@
-package com.itsonin.dao;
+package com.itsonin.ofy;
 
-import static com.itsonin.dao.OfyService.ofy;
+import static com.itsonin.ofy.OfyService.ofy;
 
 import java.util.ArrayList;
 import java.util.Collection;

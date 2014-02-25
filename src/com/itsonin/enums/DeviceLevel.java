@@ -4,6 +4,6 @@ package com.itsonin.enums;
  * @author nkislitsin
  *
  */
-public enum UserType {
-	USER, SUPER;
+public enum DeviceLevel {
+	NORMAL, SUPER;
 }

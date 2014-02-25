@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
-import com.itsonin.dao.EventDao;
 import com.itsonin.entity.Event;
+import com.itsonin.service.EventService;
 
 /**
  * @author nkislitsin
@@ -22,11 +22,11 @@ import com.itsonin.entity.Event;
 @Path("/api")
 public class EventApi {
 	
-	private EventDao eventDao;
+	private EventService eventService;
 	
 	@Inject
-	public EventApi(EventDao eventDao){
-		this.eventDao = eventDao;
+	public EventApi(EventService eventService){
+		this.eventService = eventService;
 	}
 	
 	@POST
@@ -34,7 +34,7 @@ public class EventApi {
 	@Consumes("application/json")
 	@Produces("application/json")
 	public Event create(Event event) {
-		eventDao.save(event);
+		eventService.create(event);
 		return event;
 	}
 	
@@ -42,6 +42,13 @@ public class EventApi {
 	@Path("/event/{id}/update")
 	@Produces("application/json")
 	public Response update(@PathParam("id")String id) {
+		return Response.ok().build();
+	}
+	
+	@GET
+	@Path("/event/{id}/info")
+	@Produces("application/json")
+	public Response info(@PathParam("id")String id) {
 		return Response.ok().build();
 	}
 	
@@ -56,7 +63,7 @@ public class EventApi {
 	@Path("/event/list")
 	@Produces("application/json")
 	public List<Event> list() {
-		return eventDao.list();
+		return eventService.list();
 	}
 	
 	@GET
@@ -87,7 +94,7 @@ public class EventApi {
 	@Path("/event/{eventId}/{guestId}/update")
 	@Produces("application/json")
 	public Event update(@PathParam("eventId")String eventId,
-							@PathParam("guestId")String guestId) {
+						@PathParam("guestId")String guestId) {
 		return null;
 	}
 

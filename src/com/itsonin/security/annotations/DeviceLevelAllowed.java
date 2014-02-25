@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.itsonin.enums.UserType;
+import com.itsonin.enums.DeviceLevel;
 
 /**
  * @author nkislitsin
@@ -14,6 +14,6 @@ import com.itsonin.enums.UserType;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 
-public @interface UserTypeAllowed {
-    public UserType[] value();
+public @interface DeviceLevelAllowed {
+    public DeviceLevel[] value();
 }

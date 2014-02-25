@@ -1,6 +1,7 @@
 package com.itsonin.dao;
 
 import com.itsonin.entity.Guest;
+import com.itsonin.ofy.ObjectifyGenericDao;
 
 /**
  * @author nkislitsin

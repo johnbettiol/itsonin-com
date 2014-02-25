@@ -5,7 +5,7 @@ import java.util.Date;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.itsonin.enums.CommentStatus;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * @author nkislitsin
@@ -13,42 +13,36 @@ import com.itsonin.enums.CommentStatus;
  */
 @Entity
 @Cache
+@Index
 public class Comment {
 
 	@Id
-	private Long id;
+	private Long commentId;
 	private Long eventId;
+	private Long guestId;
 	private Long parentCommentId;
 	private String comment;
-	private Long votesUp;
-	private Long votesDown;
-	private CommentStatus status;
 	private Date created;
-	private Date update;
 	
 	@SuppressWarnings("unused")
 	private Comment(){}
 
-	public Comment(Long id, Long eventId, Long parentCommentId, String comment,
-			Long votesUp, Long votesDown, CommentStatus status, Date created,
-			Date update) {
-		this.id = id;
+	public Comment(Long commentId, Long eventId, Long guestId,
+			Long parentCommentId, String comment, Date created) {
+		this.commentId = commentId;
 		this.eventId = eventId;
+		this.guestId = guestId;
 		this.parentCommentId = parentCommentId;
 		this.comment = comment;
-		this.votesUp = votesUp;
-		this.votesDown = votesDown;
-		this.status = status;
 		this.created = created;
-		this.update = update;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getCommentId() {
+		return commentId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setCommentId(Long commentId) {
+		this.commentId = commentId;
 	}
 
 	public Long getEventId() {
@@ -57,6 +51,14 @@ public class Comment {
 
 	public void setEventId(Long eventId) {
 		this.eventId = eventId;
+	}
+
+	public Long getGuestId() {
+		return guestId;
+	}
+
+	public void setGuestId(Long guestId) {
+		this.guestId = guestId;
 	}
 
 	public Long getParentCommentId() {
@@ -75,30 +77,6 @@ public class Comment {
 		this.comment = comment;
 	}
 
-	public Long getVotesUp() {
-		return votesUp;
-	}
-
-	public void setVotesUp(Long votesUp) {
-		this.votesUp = votesUp;
-	}
-
-	public Long getVotesDown() {
-		return votesDown;
-	}
-
-	public void setVotesDown(Long votesDown) {
-		this.votesDown = votesDown;
-	}
-
-	public CommentStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(CommentStatus status) {
-		this.status = status;
-	}
-
 	public Date getCreated() {
 		return created;
 	}
@@ -106,14 +84,5 @@ public class Comment {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-
-	public Date getUpdate() {
-		return update;
-	}
-
-	public void setUpdate(Date update) {
-		this.update = update;
-	}
-
 
 }

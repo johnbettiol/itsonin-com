@@ -5,10 +5,12 @@ import java.util.Date;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.PrivacyType;
 
 /**
  * @author nkislitsin
@@ -16,53 +18,62 @@ import com.itsonin.enums.EventVisibility;
  */
 @Entity
 @Cache
+@Index
 public class Event {
 
 	@Id
-	private Long id;
-	private Long userId;
+	private Long eventId;
 	private EventType type;
 	private EventVisibility visibility;
+	private PrivacyType privacy;
 	private EventStatus status;
 	private EventFlexibility flexibility;
 	private String title;
 	private String description;
+	private String notes;
+	private Date startTime;
+	private Date endTime;
+	private Double gpsLat;
+	private Double gpsLong;
+	private String locationUrl;
+	private String locationTitle;
+	private String locationAddress;
 	private Date created;
-	private Date update;
 	
 	@SuppressWarnings("unused")
 	private Event(){}
 
-	public Event(Long id, Long userId, EventType type,
-			EventVisibility visibility, EventStatus status,
+	public Event(Long eventId, EventType type, EventVisibility visibility,
+			PrivacyType privacy, EventStatus status,
 			EventFlexibility flexibility, String title, String description,
-			Date created, Date update) {
-		this.id = id;
-		this.userId = userId;
+			String notes, Date startTime, Date endTime, Double gpsLat,
+			Double gpsLong, String locationUrl, String locationTitle,
+			String locationAddress, Date created) {
+		this.eventId = eventId;
 		this.type = type;
 		this.visibility = visibility;
+		this.privacy = privacy;
 		this.status = status;
 		this.flexibility = flexibility;
 		this.title = title;
 		this.description = description;
+		this.notes = notes;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.gpsLat = gpsLat;
+		this.gpsLong = gpsLong;
+		this.locationUrl = locationUrl;
+		this.locationTitle = locationTitle;
+		this.locationAddress = locationAddress;
 		this.created = created;
-		this.update = update;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getEventId() {
+		return eventId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setEventId(Long eventId) {
+		this.eventId = eventId;
 	}
 
 	public EventType getType() {
@@ -79,6 +90,14 @@ public class Event {
 
 	public void setVisibility(EventVisibility visibility) {
 		this.visibility = visibility;
+	}
+
+	public PrivacyType getPrivacy() {
+		return privacy;
+	}
+
+	public void setPrivacy(PrivacyType privacy) {
+		this.privacy = privacy;
 	}
 
 	public EventStatus getStatus() {
@@ -113,20 +132,76 @@ public class Event {
 		this.description = description;
 	}
 
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public Double getGpsLat() {
+		return gpsLat;
+	}
+
+	public void setGpsLat(Double gpsLat) {
+		this.gpsLat = gpsLat;
+	}
+
+	public Double getGpsLong() {
+		return gpsLong;
+	}
+
+	public void setGpsLong(Double gpsLong) {
+		this.gpsLong = gpsLong;
+	}
+
+	public String getLocationUrl() {
+		return locationUrl;
+	}
+
+	public void setLocationUrl(String locationUrl) {
+		this.locationUrl = locationUrl;
+	}
+
+	public String getLocationTitle() {
+		return locationTitle;
+	}
+
+	public void setLocationTitle(String locationTitle) {
+		this.locationTitle = locationTitle;
+	}
+
+	public String getLocationAddress() {
+		return locationAddress;
+	}
+
+	public void setLocationAddress(String locationAddress) {
+		this.locationAddress = locationAddress;
+	}
+
 	public Date getCreated() {
 		return created;
 	}
 
 	public void setCreated(Date created) {
 		this.created = created;
-	}
-
-	public Date getUpdate() {
-		return update;
-	}
-
-	public void setUpdate(Date update) {
-		this.update = update;
 	}
 
 

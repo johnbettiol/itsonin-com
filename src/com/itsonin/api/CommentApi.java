@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
-import com.itsonin.dao.CommentDao;
 import com.itsonin.entity.Comment;
+import com.itsonin.service.CommentService;
 
 /**
  * @author nkislitsin
@@ -22,11 +22,11 @@ import com.itsonin.entity.Comment;
 @Path("/api")
 public class CommentApi {
 	
-	private CommentDao commentDao;
+	private CommentService commentService;
 	
 	@Inject
-	public CommentApi(CommentDao commentDao){
-		this.commentDao = commentDao;
+	public CommentApi(CommentService commentService){
+		this.commentService = commentService;
 	}
 	
 	@POST

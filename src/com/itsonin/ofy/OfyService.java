@@ -1,13 +1,13 @@
-package com.itsonin.dao;
+package com.itsonin.ofy;
 
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 import com.itsonin.entity.Comment;
+import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
-import com.itsonin.entity.EventSchedule;
 import com.itsonin.entity.Guest;
-import com.itsonin.entity.User;
+import com.itsonin.entity.GuestDevice;
 
 /**
  * @author nkislitsin
@@ -16,10 +16,10 @@ import com.itsonin.entity.User;
 public class OfyService {
 	static {
         register(Comment.class);
+        register(Device.class);
         register(Event.class);
-        register(EventSchedule.class);
         register(Guest.class);
-        register(User.class);
+        register(GuestDevice.class);
     }
 
     public static Objectify ofy() {

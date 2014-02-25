@@ -1,6 +1,7 @@
 package com.itsonin.dao;
 
 import com.itsonin.entity.Comment;
+import com.itsonin.ofy.ObjectifyGenericDao;
 
 /**
  * @author nkislitsin
