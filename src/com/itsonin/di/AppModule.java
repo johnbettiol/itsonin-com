@@ -14,7 +14,9 @@ import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
 import com.itsonin.dao.GuestDeviceDao;
+import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
+import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
 import com.itsonin.resteasy.JacksonContextResolver;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.AuthFilter;
@@ -37,6 +39,8 @@ public class AppModule extends AbstractModule {
 		bind(JacksonContextResolver.class);
 		
 		bind(NotFoundExceptionMapper.class);
+		bind(ForbiddenExceptionMapper.class);
+		bind(UnauthorizedExceptionMapper.class);
 		
 		bind(CommentDao.class).in(Singleton.class);
 		bind(DeviceDao.class).in(Singleton.class);
