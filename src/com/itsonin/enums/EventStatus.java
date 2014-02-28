@@ -5,5 +5,5 @@ package com.itsonin.enums;
  *
  */
 public enum EventStatus {
-	NEW, ACTIVE, DELETED, CLOSED;
+	ACTIVE, EXPIRED, CANCELLED;
 }

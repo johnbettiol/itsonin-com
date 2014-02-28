@@ -1,5 +1,6 @@
 package com.itsonin.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.googlecode.objectify.annotation.Cache;
@@ -16,27 +17,24 @@ import com.itsonin.enums.DeviceType;
 @Entity
 @Cache
 @Index
-public class Device {
-
+public class Device implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	private Long deviceId;
 	private DeviceType type;
 	private String token;
 	private DeviceLevel level;
 	private Date created;
-	private Date update;
+	private Date lastLogin;
 	
 	@SuppressWarnings("unused")
 	private Device(){}
 
-	public Device(Long deviceId, DeviceType type,
-			String token, DeviceLevel level, Date created, Date update) {
-		this.deviceId = deviceId;
+	public Device(DeviceType type, DeviceLevel level) {
 		this.type = type;
-		this.token = token;
 		this.level = level;
-		this.created = created;
-		this.update = update;
 	}
 
 	public Long getDeviceId() {
@@ -79,13 +77,12 @@ public class Device {
 		this.created = created;
 	}
 
-	public Date getUpdate() {
-		return update;
+	public Date getLastLogin() {
+		return lastLogin;
 	}
 
-	public void setUpdate(Date update) {
-		this.update = update;
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
-
 
 }

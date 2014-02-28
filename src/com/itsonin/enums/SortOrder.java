@@ -4,6 +4,6 @@ package com.itsonin.enums;
  * @author nkislitsin
  *
  */
-public enum GuestType {
-	GUEST, HOST;
+public enum SortOrder {
+	ASC, DESC;
 }

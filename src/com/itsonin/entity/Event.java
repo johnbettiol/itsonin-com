@@ -43,13 +43,10 @@ public class Event {
 	@SuppressWarnings("unused")
 	private Event(){}
 
-	public Event(Long eventId, EventType type, EventVisibility visibility,
-			PrivacyType privacy, EventStatus status,
-			EventFlexibility flexibility, String title, String description,
-			String notes, Date startTime, Date endTime, Double gpsLat,
-			Double gpsLong, String locationUrl, String locationTitle,
-			String locationAddress, Date created) {
-		this.eventId = eventId;
+	public Event(EventType type, EventVisibility visibility, PrivacyType privacy, 
+			EventStatus status,	EventFlexibility flexibility, String title, String description,
+			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
+			String locationUrl, String locationTitle, String locationAddress, Date created) {
 		this.type = type;
 		this.visibility = visibility;
 		this.privacy = privacy;

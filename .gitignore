@@ -2,4 +2,6 @@ Thumbs.db
 *~
 *.bak
 .settings/
+*.class
+datastore-indexes-auto.xml
 local_db.bin

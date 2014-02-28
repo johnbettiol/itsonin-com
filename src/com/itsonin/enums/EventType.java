@@ -5,5 +5,5 @@ package com.itsonin.enums;
  *
  */
 public enum EventType {
-	PICNIC, PARTY, FLASHMOB, RALLY;
+	PICNIC, PARTY, FLASHMOB, RALLY, PROTEST, EXCERCISE;
 }

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
 import com.itsonin.entity.Comment;
+import com.itsonin.response.SuccessResponse;
 import com.itsonin.service.CommentService;
 
 /**
@@ -32,35 +33,71 @@ public class CommentApi {
 	@POST
 	@Path("/event/{eventId}/{guestId}/comment/create")
 	@Produces("application/json")
-	public Comment create(@PathParam("eventId")String eventId,
-						@PathParam("guestId")String guestId) {
-		return null;
+	public Comment create(@PathParam("eventId")Long eventId,
+						  @PathParam("guestId")Long guestId,
+						  Comment comment) {
+		return commentService.create(eventId, guestId, comment);
+	}
+	
+	@POST
+	@Path("/event/{eventId}/comment/create")
+	@Produces("application/json")
+	public Comment create(@PathParam("eventId")Long eventId,
+						  Comment comment) {
+		return create(eventId, null, comment);
 	}
 	
 	@PUT
 	@Path("/event/{eventId}/{guestId}/comment/{commentId}/update")
 	@Produces("application/json")
-	public Comment update(@PathParam("eventId")String eventId,
-							@PathParam("guestId")String guestId,
-							@PathParam("commentId")String commentId) {
-		return null;
+	public Response update(@PathParam("eventId")Long eventId,
+						   @PathParam("guestId")Long guestId,
+						   @PathParam("commentId")Long commentId,
+						  Comment comment) {
+		commentService.update(eventId, guestId, commentId, comment);
+		return Response.ok().entity(new SuccessResponse("Comment updated successfully")).build();
+	}
+	
+	@PUT
+	@Path("/event/{eventId}/comment/{commentId}/update")
+	@Produces("application/json")
+	public Response update(@PathParam("eventId")Long eventId,
+						   @PathParam("commentId")Long commentId,
+						  Comment comment) {
+		return update(eventId, null, commentId, comment);
 	}
 	
 	@DELETE
 	@Path("/event/{eventId}/{guestId}/comment/{commentId}/delete")
 	@Produces("application/json")
-	public Response delete(@PathParam("eventId")String eventId,
-							@PathParam("guestId")String guestId,
-							@PathParam("commentId")String commentId) {
-		return Response.ok().build();
+	public Response delete(@PathParam("eventId")Long eventId,
+						   @PathParam("guestId")Long guestId,
+						   @PathParam("commentId")Long commentId) {
+		commentService.delete(eventId, guestId, commentId);
+		return Response.ok().entity(new SuccessResponse("Comment deleted successfully")).build();
+	}
+	
+	@DELETE
+	@Path("/event/{eventId}/comment/{commentId}/delete")
+	@Produces("application/json")
+	public Response delete(@PathParam("eventId")Long eventId,
+						   @PathParam("commentId")Long commentId) {
+		return delete(eventId, null, commentId);
 	}
 	
 	@GET
 	@Path("/event/{eventId}/{guestId}/comment/list")
 	@Produces("application/json")
-	public List<Comment> list(@PathParam("eventId")String eventId,
-								@PathParam("guestId")String guestId) {
-		return null;
+	public List<Comment> list(@PathParam("eventId")Long eventId,
+							  @PathParam("guestId")Long guestId) {
+		return commentService.list(eventId, guestId);
+	}
+	
+	@GET
+	@Path("/event/{eventId}/comment/list")
+	@Produces("application/json")
+	public List<Comment> list(@PathParam("eventId")Long eventId) {
+		return list(eventId, null);
 	}
 
 }

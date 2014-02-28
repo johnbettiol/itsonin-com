@@ -12,7 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
+import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
+import com.itsonin.entity.Guest;
+import com.itsonin.response.SuccessResponse;
 import com.itsonin.service.EventService;
 
 /**
@@ -33,30 +36,30 @@ public class EventApi {
 	@Path("/event/create")
 	@Consumes("application/json")
 	@Produces("application/json")
-	public Event create(Event event) {
-		eventService.create(event);
-		return event;
+	public EventWithGuest create(EventWithGuest eventWithGuest) {
+		return eventService.create(eventWithGuest.getEvent(), eventWithGuest.getGuest());
 	}
 	
 	@PUT
 	@Path("/event/{id}/update")
 	@Produces("application/json")
-	public Response update(@PathParam("id")String id) {
-		return Response.ok().build();
+	public Response update(@PathParam("id")Long id, Event event) {
+		eventService.update(id, event);
+		return Response.ok().entity(new SuccessResponse("Event updated successfully")).build();
 	}
 	
 	@GET
 	@Path("/event/{id}/info")
 	@Produces("application/json")
-	public Response info(@PathParam("id")String id) {
-		return Response.ok().build();
+	public Event info(@PathParam("id")Long id) {
+		return eventService.get(id);
 	}
 	
 	@GET
-	@Path("/event/{id}/attend")
+	@Path("/event/{eventId}/attend")
 	@Produces("application/json")
-	public Response attend(@PathParam("id")String id) {
-		return Response.ok().build();
+	public Guest attend(@PathParam("eventId")Long eventId, Guest guest) {
+		return eventService.attend(eventId, guest);
 	}
 	
 	@GET
@@ -69,33 +72,37 @@ public class EventApi {
 	@GET
 	@Path("/event/{eventId}/{guestId}/cancel")
 	@Produces("application/json")
-	public Response cancel(@PathParam("eventId")String eventId,
-								@PathParam("guestId")String guestId) {
-		return Response.ok().build();
+	public Response cancel(@PathParam("eventId")Long eventId,
+						   @PathParam("guestId")Long guestId) {
+		eventService.cancel(eventId, guestId);
+		return Response.ok().entity(new SuccessResponse("Event cancelled successfully")).build();
+	}
+	
+	@GET
+	@Path("/event/{eventId}/cancel")
+	@Produces("application/json")
+	public Response cancel(@PathParam("eventId")Long eventId) {
+		return cancel(eventId, null);
 	}
 	
 	@GET
 	@Path("/event/{eventId}/{guestId}/decline")
 	@Produces("application/json")
-	public Response decline(@PathParam("eventId")String eventId,
-							@PathParam("guestId")String guestId) {
-		return Response.ok().build();
+	public Response decline(@PathParam("eventId")Long eventId,
+							@PathParam("guestId")Long guestId) {
+		eventService.decline(eventId, guestId);
+		return Response.ok().entity(new SuccessResponse("Event declined successfully")).build();
 	}
 	
-	@GET
-	@Path("/event/{eventId}/{guestId}/invite")
-	@Produces("application/json")
-	public Response invite(@PathParam("eventId")String eventId,
-							@PathParam("guestId")String guestId) {
-		return Response.ok().build();
-	}
-	
+	/*
 	@PUT
 	@Path("/event/{eventId}/{guestId}/update")
 	@Produces("application/json")
-	public Event update(@PathParam("eventId")String eventId,
-						@PathParam("guestId")String guestId) {
-		return null;
-	}
+	public Response update(@PathParam("eventId")Long eventId,
+						   @PathParam("guestId")Long guestId, 
+						   Event event) {
+		eventService.update(eventId, event);
+		return Response.ok().entity(new SuccessResponse("Event updated successfully")).build();
+	}*/ //TODO:Guest?
 
 }

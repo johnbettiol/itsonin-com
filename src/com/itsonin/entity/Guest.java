@@ -18,7 +18,9 @@ import com.itsonin.enums.GuestType;
 public class Guest {
 
 	@Id
+	private String id;
 	private Long guestId;
+	private Long eventId;
 	private Long parentGuestId;
 	private String name;
 	private GuestType type;
@@ -26,10 +28,16 @@ public class Guest {
 	
 	@SuppressWarnings("unused")
 	private Guest(){}
+	
+	public Guest(String name) {
+		this.name = name;
+	}
 
-	public Guest(Long guestId, Long parentGuestId, String name, GuestType type,
+	public Guest(Long guestId, Long eventId, Long parentGuestId, String name, GuestType type,
 			Date created) {
+		this.id = eventId + "_" + guestId;
 		this.guestId = guestId;
+		this.eventId = eventId;
 		this.parentGuestId = parentGuestId;
 		this.name = name;
 		this.type = type;
@@ -42,6 +50,14 @@ public class Guest {
 
 	public void setGuestId(Long guestId) {
 		this.guestId = guestId;
+	}
+	
+	public Long getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(Long eventId) {
+		this.eventId = eventId;
 	}
 
 	public Long getParentGuestId() {
@@ -75,6 +91,5 @@ public class Guest {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-
 
 }

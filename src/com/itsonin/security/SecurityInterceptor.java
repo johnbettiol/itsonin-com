@@ -6,6 +6,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
+import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
@@ -13,7 +14,10 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import com.google.inject.Inject;
+import com.itsonin.entity.Device;
 import com.itsonin.enums.DeviceLevel;
+import com.itsonin.exception.ForbiddenException;
+import com.itsonin.exception.UnauthorizedException;
 import com.itsonin.security.annotations.PermitAll;
 import com.itsonin.security.annotations.DeviceLevelAllowed;
 
@@ -36,23 +40,25 @@ public class SecurityInterceptor implements PreProcessInterceptor{
 	public ServerResponse preProcess(HttpRequest request,
 			ResourceMethodInvoker method) throws Failure, WebApplicationException {
         ServerResponse response = null;
-        DeviceLevelAllowed userTypesAllowed = method.getMethod().getAnnotation(DeviceLevelAllowed.class);
+        /*DeviceLevelAllowed deviceLevelAllowed = method.getMethod().getAnnotation(DeviceLevelAllowed.class);
         PermitAll permitAll = method.getMethod().getAnnotation(PermitAll.class);
- /*
-        User user = authContextService.getUser();
+ 
+        Device device = authContextService.getDevice();
         
-        if (userTypesAllowed==null && permitAll==null){
+        if (deviceLevelAllowed==null && permitAll==null){
            Class<?> resourceClass = method.getResourceClass();
-           userTypesAllowed = resourceClass.getAnnotation(UserTypeAllowed.class);
+           deviceLevelAllowed = resourceClass.getAnnotation(DeviceLevelAllowed.class);
            permitAll = resourceClass.getAnnotation(PermitAll.class);
         }
         
         if(permitAll == null){
-	        if(user == null){
+	        if(device == null){
 	        	response = new ServerResponse("Not authorized",401, new Headers<Object>());
+	        	//throw new UnauthorizedException("Not authorized");
 	        }else{
-	        	if (userTypesAllowed != null && !isUserInRole(user.getType(), userTypesAllowed.value())) 
+	        	if (deviceLevelAllowed != null && !isDeviceAlowed(device.getLevel(), deviceLevelAllowed.value())) 
 	        		response = new ServerResponse("Not allowed", 403, new Headers<Object>());
+	        		//throw new ForbiddenException("Not allowed");
 	        }
         }*/
         return response;

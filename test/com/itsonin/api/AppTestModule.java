@@ -1,23 +1,23 @@
-package com.itsonin.di;
+package com.itsonin.api;
 
 import javax.servlet.http.HttpSession;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.itsonin.api.CommentApi;
-import com.itsonin.api.DeviceApi;
-import com.itsonin.api.EventApi;
-import com.itsonin.api.GuestApi;
 import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
 import com.itsonin.dao.GuestDeviceDao;
+import com.itsonin.entity.Device;
+import com.itsonin.enums.DeviceLevel;
+import com.itsonin.enums.DeviceType;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
+import com.itsonin.mocks.MockHttpSession;
 import com.itsonin.resteasy.JacksonContextResolver;
+import com.itsonin.security.AuthContext;
 import com.itsonin.security.AuthContextService;
-import com.itsonin.security.AuthFilter;
 import com.itsonin.security.SecurityInterceptor;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
@@ -28,7 +28,7 @@ import com.itsonin.service.GuestService;
  * @author nkislitsin
  *
  */
-public class AppModule extends AbstractModule {
+public class AppTestModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
@@ -56,8 +56,12 @@ public class AppModule extends AbstractModule {
 	}
 	
 	@Provides 
-	HttpSession provideHttpSession() {
-		return AuthFilter.getRequest().getSession();
-	}
+	HttpSession getMockSession(){
+		MockHttpSession session = new MockHttpSession();
+		Device device = new Device(DeviceType.BROWSER, DeviceLevel.SUPER);
+		device.setDeviceId(1L);
+		session.setAttribute("authContext", new AuthContext(device));
+		return session;
+    }
 
 }

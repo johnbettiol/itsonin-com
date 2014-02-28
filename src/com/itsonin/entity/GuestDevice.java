@@ -15,6 +15,7 @@ import com.googlecode.objectify.annotation.Index;
 public class GuestDevice {
 
 	@Id
+	private String id;
 	private Long deviceId;
 	private Long guestId;
 	
@@ -22,8 +23,17 @@ public class GuestDevice {
 	private GuestDevice(){}
 
 	public GuestDevice(Long deviceId, Long guestId) {
+		this.id = deviceId + "_" + guestId;
 		this.deviceId = deviceId;
 		this.guestId = guestId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Long getDeviceId() {
@@ -41,5 +51,6 @@ public class GuestDevice {
 	public void setGuestId(Long guestId) {
 		this.guestId = guestId;
 	}
+
 
 }

@@ -27,9 +27,8 @@ public class Comment {
 	@SuppressWarnings("unused")
 	private Comment(){}
 
-	public Comment(Long commentId, Long eventId, Long guestId,
+	public Comment(Long eventId, Long guestId,
 			Long parentCommentId, String comment, Date created) {
-		this.commentId = commentId;
 		this.eventId = eventId;
 		this.guestId = guestId;
 		this.parentCommentId = parentCommentId;
