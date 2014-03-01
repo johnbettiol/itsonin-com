@@ -162,6 +162,16 @@ public class FullApiTest {
 		// Device 2 visits /api/device/2/previousGuests
 		// * Device 2 should see listed Device 3 and Device 4 (without token information)
 		
+		// CLEAR OUT ALL COOKIES/SESSION INFO
+		
+		// Device 2 visits /api/event/<eventId>/guest/list
+		// * Device 2 should be forbidden from getting the guest list due to authentication
+		
+		// Device 2 visits /api/device/2/authenticate
+		// * Re-Authenticate device 2
+
+		// Device 2 visits /api/event/<eventId>/guest/list
+		// * Device 2 should see themselves and Device 3 attending and Device 4 not attending
 		
 	}
 
