@@ -26,7 +26,7 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
     	objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     	objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
     	objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    	objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);  
+    	objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
     
     @Override

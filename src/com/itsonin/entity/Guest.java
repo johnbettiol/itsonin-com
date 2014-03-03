@@ -2,11 +2,14 @@ package com.itsonin.entity;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.itsonin.enums.GuestType;
+import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
  * @author nkislitsin
@@ -33,12 +36,10 @@ public class Guest {
 		this.name = name;
 	}
 
-	public Guest(Long guestId, Long eventId, Long parentGuestId, String name, GuestType type,
-			Date created) {
+	public Guest(Long guestId, Long eventId, String name, GuestType type, Date created) {
 		this.id = eventId + "_" + guestId;
 		this.guestId = guestId;
 		this.eventId = eventId;
-		this.parentGuestId = parentGuestId;
 		this.name = name;
 		this.type = type;
 		this.created = created;
@@ -84,6 +85,7 @@ public class Guest {
 		this.type = type;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public Date getCreated() {
 		return created;
 	}

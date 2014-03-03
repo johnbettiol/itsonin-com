@@ -12,7 +12,7 @@ public class ContextListener extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-		return Guice.createInjector(/*new AppModule(),*/ new WebModule());
+		return Guice.createInjector(new WebModule());
 	}
 
 }

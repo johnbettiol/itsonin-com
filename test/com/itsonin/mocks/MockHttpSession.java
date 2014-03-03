@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSessionContext;
 public class MockHttpSession implements HttpSession
 {
     private Map<String, Object> attributes = new HashMap<String, Object>();
+    private String id;
  
     @Override
     public Object getAttribute(String name)
@@ -39,8 +40,11 @@ public class MockHttpSession implements HttpSession
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override

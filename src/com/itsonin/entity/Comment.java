@@ -2,10 +2,13 @@ package com.itsonin.entity;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
  * @author nkislitsin
@@ -76,6 +79,7 @@ public class Comment {
 		this.comment = comment;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public Date getCreated() {
 		return created;
 	}

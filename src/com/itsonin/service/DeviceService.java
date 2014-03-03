@@ -14,6 +14,7 @@ import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.ForbiddenException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.exception.UnauthorizedException;
+import com.itsonin.security.AuthContext;
 import com.itsonin.security.AuthContextService;
 
 /**
@@ -43,7 +44,7 @@ public class DeviceService {
 	}
 	
 	public List<Device> list(String name, Date created, Date lastLogin, String sortField,
-			 SortOrder sortOrder, Long offset, Long limit) {
+			 SortOrder sortOrder, Integer offset, Integer limit) {
 		if(!isAllowed())
 			throw new ForbiddenException("Not allowed");
 		
@@ -64,6 +65,7 @@ public class DeviceService {
 	
 	public Device authenticate(Long id){
 		Device device = deviceDao.get(id);
+		authContextService.set(new AuthContext(device));
 		if(device == null)
 			throw new UnauthorizedException("Not autheticated");
 		else

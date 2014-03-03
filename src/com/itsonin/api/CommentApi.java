@@ -40,6 +40,17 @@ public class CommentApi {
 	}
 	
 	@POST
+	@Path("/event/{eventId}/{guestId}/comment/{parentCommentId}/create")
+	@Produces("application/json")
+	public Comment create(@PathParam("eventId")Long eventId,
+						  @PathParam("guestId")Long guestId,
+						  @PathParam("parentCommentId")Long parentCommentId,
+						  Comment comment) {
+		comment.setParentCommentId(parentCommentId);
+		return commentService.create(eventId, guestId, comment);
+	}
+	
+	@POST
 	@Path("/event/{eventId}/comment/create")
 	@Produces("application/json")
 	public Comment create(@PathParam("eventId")Long eventId,

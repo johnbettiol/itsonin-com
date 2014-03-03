@@ -48,8 +48,8 @@ public class CommentService {
 	}
 	
 	public void update(Long eventId, Long guestId, Long commentId, Comment comment) {
-		if(!isAllowed(eventId, guestId))
-			throw new ForbiddenException("Not allowed");
+		//if(!isAllowed(eventId, guestId))
+		//	throw new ForbiddenException("Not allowed");
 		
 		Comment toUpdate = commentDao.get(commentId);
 		

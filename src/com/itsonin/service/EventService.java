@@ -17,6 +17,7 @@ import com.itsonin.entity.GuestDevice;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.GuestType;
+import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.security.AuthContextService;
 
@@ -103,13 +104,11 @@ public class EventService {
 		return eventDao.get(id);
 	}
 	
-	public Guest attend(Long eventId, Guest guest) {
+	public Guest attend(Long eventId) {
 		Device device = authContextService.getDevice();
 		
-		guest.setGuestId(counterDao.next("EVENT_" + eventId + "_GUEST"));
-		guest.setEventId(eventId);
-		guest.setType(GuestType.HOST);
-		guest.setCreated(new Date());
+		Guest guest = new Guest(counterDao.next("EVENT_" + eventId + "_GUEST"), eventId, 
+				"name", GuestType.GUEST, new Date());//TODO:where get a name?
 		Key<Guest> guestKey = guestDao.save(guest);
 		guest = guestDao.get(guestKey);
 		
@@ -118,8 +117,14 @@ public class EventService {
 		return guest;
 	}
 	
-	public List<Event> list() {
-		return eventDao.list();
+	public List<Event> list(String name, Date created, String comment, String sortField,
+			SortOrder sortOrder, Integer numberOfLevels, Integer offset, Integer limit) {
+		Device device = authContextService.getDevice();
+		Long deviceId = null;
+		if(DeviceLevel.NORMAL.equals(device.getLevel()))
+			deviceId = device.getDeviceId();
+		
+		return eventDao.list(deviceId, name, created, comment, sortField, sortOrder, numberOfLevels, offset, limit);
 	}
 	
 	public void cancel(Long eventId, Long guestId) {

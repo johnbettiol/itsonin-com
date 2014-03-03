@@ -60,8 +60,8 @@ public class DeviceApi {
 							 @QueryParam("lastLogin")Date lastLogin,
 							 @QueryParam("sortField")String sortField,
 							 @QueryParam("sortOrder")SortOrder sortOrder,
-							 @QueryParam("offset")Long offset,
-							 @QueryParam("limit")Long limit) {
+							 @QueryParam("offset")Integer offset,
+							 @QueryParam("limit")Integer limit) {
 		return deviceService.list(name, created, lastLogin, sortField, sortOrder, offset, limit);
 	}
 	
@@ -74,16 +74,16 @@ public class DeviceApi {
 	}
 	
 	@GET
-	@Path("/device/{id}/previousGuests")
+	@Path("/device/{deviceId}/previousGuests")
 	@Produces("application/json")
-	public List<Guest> previousGuests(@PathParam("id")String id,
+	public List<Guest> previousGuests(@PathParam("deviceId")Long deviceId,
 									  @QueryParam("name")String name,
 									  @QueryParam("sortField")String sortField,
 									  @QueryParam("sortOrder")SortOrder sortOrder,
-									  @QueryParam("offset")Long offset,
-									  @QueryParam("limit")Long limit,
+									  @QueryParam("offset")Integer offset,
+									  @QueryParam("limit")Integer limit,
 									  @QueryParam("numberOfLevels")Integer numberOfLevels) {
-		return guestService.getPeviousGuests(name, sortField, sortOrder, offset, limit, numberOfLevels);
+		return guestService.getPeviousGuests(deviceId, name, sortField, sortOrder, offset, limit, numberOfLevels);
 	}
 
 }

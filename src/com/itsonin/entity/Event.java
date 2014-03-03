@@ -2,6 +2,8 @@ package com.itsonin.entity;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -11,6 +13,7 @@ import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.PrivacyType;
+import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
  * @author nkislitsin
@@ -193,6 +196,7 @@ public class Event {
 		this.locationAddress = locationAddress;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public Date getCreated() {
 		return created;
 	}

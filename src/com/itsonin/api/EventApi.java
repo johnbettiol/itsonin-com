@@ -1,5 +1,6 @@
 package com.itsonin.api;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -9,12 +10,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
+import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
 import com.itsonin.service.EventService;
 
@@ -58,15 +61,24 @@ public class EventApi {
 	@GET
 	@Path("/event/{eventId}/attend")
 	@Produces("application/json")
-	public Guest attend(@PathParam("eventId")Long eventId, Guest guest) {
-		return eventService.attend(eventId, guest);
+	public Guest attend(@PathParam("eventId")Long eventId) {
+		return eventService.attend(eventId);
 	}
 	
 	@GET
 	@Path("/event/list")
 	@Produces("application/json")
-	public List<Event> list() {
-		return eventService.list();
+	public List<Event> list(@QueryParam("name")String name,
+							@QueryParam("created")Date created,
+							@QueryParam("comment")String comment,
+							@QueryParam("sortField")String sortField,
+							@QueryParam("sortOrder")SortOrder sortOrder,
+							@QueryParam("numberOfLevels")Integer numberOfLevels,
+							@QueryParam("offset")Integer offset,
+							@QueryParam("limit")Integer limit
+							) {
+		return eventService.list(name, created, comment, sortField, 
+				sortOrder, numberOfLevels, offset, limit);
 	}
 	
 	@GET
@@ -93,16 +105,5 @@ public class EventApi {
 		eventService.decline(eventId, guestId);
 		return Response.ok().entity(new SuccessResponse("Event declined successfully")).build();
 	}
-	
-	/*
-	@PUT
-	@Path("/event/{eventId}/{guestId}/update")
-	@Produces("application/json")
-	public Response update(@PathParam("eventId")Long eventId,
-						   @PathParam("guestId")Long guestId, 
-						   Event event) {
-		eventService.update(eventId, event);
-		return Response.ok().entity(new SuccessResponse("Event updated successfully")).build();
-	}*/ //TODO:Guest?
 
 }

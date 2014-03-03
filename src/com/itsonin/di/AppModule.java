@@ -21,6 +21,7 @@ import com.itsonin.resteasy.JacksonContextResolver;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.AuthFilter;
 import com.itsonin.security.SecurityInterceptor;
+import com.itsonin.security.impl.AuthContextServiceImpl;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
@@ -34,9 +35,9 @@ public class AppModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(SecurityInterceptor.class);
-		bind(AuthContextService.class).in(Singleton.class);
 		bind(JacksonContextResolver.class);
+		bind(AuthContextService.class).to(AuthContextServiceImpl.class);
+		bind(SecurityInterceptor.class);
 		
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);
