@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +45,7 @@ import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.GuestType;
 import com.itsonin.exception.ForbiddenException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.exception.UnauthorizedException;
@@ -60,6 +65,9 @@ import com.itsonin.service.GuestService;
  * 
  */
 public class FullApiTest {
+	
+	private static final Logger log = Logger.getLogger(FullApiTest.class.getName());
+
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
 			new LocalDatastoreServiceTestConfig());
@@ -125,25 +133,43 @@ public class FullApiTest {
 				DeviceLevel.NORMAL), Long.valueOf(4L));
 		Device device5 = createDevice(new Device(DeviceType.BROWSER,
 				DeviceLevel.NORMAL), Long.valueOf(5L));
+		Device device6 = createDevice(new Device(DeviceType.BROWSER,
+				DeviceLevel.NORMAL), Long.valueOf(6L));
+		Device device7 = createDevice(new Device(DeviceType.BROWSER,
+				DeviceLevel.NORMAL), Long.valueOf(7L));
 		// Authenticate Device 1 (SUPER),2,3,4
 		// * Should return in response a session to be used for all
 		//   future communication (if session expires, device must re-authenticate)
 		//   use a filter to enforce security on all api requests
 		// * You need to have a separate session/http instance for each device
 		
-		authenticate(device1);
-		authenticate(device2);
-		authenticate(device3);
-		authenticate(device4);
-		authenticate(device5);
+		authenticate(device1, HttpServletResponse.SC_OK);
+		authenticate(device2, HttpServletResponse.SC_OK);
+		authenticate(device3, HttpServletResponse.SC_OK);
+		authenticate(device4, HttpServletResponse.SC_OK);
+		authenticate(device5, HttpServletResponse.SC_OK);
+		authenticate(device6, HttpServletResponse.SC_OK);
+
+		device7.setToken("This+should+break+it");
+		authenticate(device7, HttpServletResponse.SC_UNAUTHORIZED);
 		
 		// Device 1 visits /api/device/list
 		// * All devices currently on system should be listed
 		listDevices(device1);
 		
+		// Device 2 visits /api/device/5/delete should be forbidden
+		deleteDevice(device2, 5L, HttpServletResponse.SC_FORBIDDEN);
+		
 		// Device 1 visits /api/device/5/delete
 		// * SUPER user has permission to delete a device
-		deleteDevice(device1, 5L);
+		deleteDevice(device1, 5L, HttpServletResponse.SC_OK);
+		
+		// On second attempt to delete it should return NOT FOUND
+		// @TODO NOT WORKING 
+		// deleteDevice(device1, 5L, HttpServletResponse.SC_NOT_FOUND);
+		
+		// @TODO NOT WORKING
+		// deleteDevice(device6, 6L, HttpServletResponse.SC_OK);
 		
 		// Device 2 creates event 1 (create a PRIVATE event)
 		// * On creation of event, device 2 should be returned both the
@@ -234,40 +260,52 @@ public class FullApiTest {
 		
 		// Device 2 visits /api/device/2/authenticate
 		// * Re-Authenticate device 2
-		authenticate(device2);
+		authenticate(device2, HttpServletResponse.SC_OK);
 
 		// Device 2 visits /api/event/<eventId>/guest/list
 		// * Device 2 should see themselves and Device 3 attending and Device 4 not attending
 		listGuests(device2, 1L);
 		
 	}
+	
+	private void logRequestResponse(MockHttpRequest request, String requestJson, MockHttpResponse response, String responseJson) {
+		log.log(Level.INFO, "\n" + 
+				"requestUri: "+request.getUri().getAbsolutePath() + "\n" +
+				"requestJson: \n" + requestJson + "\n" +
+				"responseCode: " + response.getStatus() + "\n" +
+				"responseJson: " + responseJson);
+	}
 
 	private Device createDevice(Device device, Long expectedId)
 			throws JsonProcessingException, URISyntaxException, IOException {
-		String json = mapper.writeValueAsString(device);
+		String requestJson = mapper.writeValueAsString(device);
 		MockHttpRequest request = MockHttpRequest.post("api/device/create");
 		request.accept(MediaType.APPLICATION_JSON);
 		request.contentType(MediaType.APPLICATION_JSON);
-		request.content(new ByteArrayInputStream(json.getBytes()));
+		request.content(new ByteArrayInputStream(requestJson.getBytes()));
 
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
 
+		String responseJson = response.getContentAsString();
+		
+		logRequestResponse(request, requestJson, response, responseJson);
+		
 		Device newDevice = ReaderUtility.read(Device.class,
-				MediaType.APPLICATION_JSON, response.getContentAsString());
+				MediaType.APPLICATION_JSON, responseJson);
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		Assert.assertEquals(newDevice.getDeviceId(), expectedId);
 
 		return newDevice;
 	}
 	
-	private void authenticate(Device device) throws URISyntaxException{
-		MockHttpRequest request = MockHttpRequest.get("api/device/" + device.getDeviceId() + "/authenticate");
+	
+	private void authenticate(Device device, int expectedResult) throws URISyntaxException{
+		MockHttpRequest request = MockHttpRequest.get("api/device/" + device.getDeviceId() + "/authenticate/" + device.getToken());
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-		
-		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
-		
+		logRequestResponse(request, null, response, response.getContentAsString());
+		Assert.assertEquals(expectedResult, response.getStatus());
 		mockAuthContextService.createSession(device);
 	}
 	
@@ -277,6 +315,7 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.get("api/device/list");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
+		logRequestResponse(request, null, response, response.getContentAsString());
 
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
@@ -287,18 +326,19 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.get("api/device/" + device.getDeviceId() + "/previousGuests");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
-	private void deleteDevice(Device device, Long deviceId) throws URISyntaxException{
+	private void deleteDevice(Device device, Long deviceId, int expectedResponse) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
 		
 		MockHttpRequest request = MockHttpRequest.delete("api/device/" + deviceId + "/delete");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
-		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		logRequestResponse(request, null, response, response.getContentAsString());
+		Assert.assertEquals(expectedResponse, response.getStatus());
+			
 	}
 
 	private void createEvent(Device device, Event event) throws URISyntaxException, IOException {
@@ -313,40 +353,38 @@ public class FullApiTest {
 
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-		
+		logRequestResponse(request, json.toString(), response, response.getContentAsString());
 		EventWithGuest eventWithGuest = ReaderUtility.read(EventWithGuest.class, MediaType.APPLICATION_JSON, response.getContentAsString());
 		
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		Assert.assertEquals(eventWithGuest.getGuest().getType(), GuestType.HOST);
 	}
 
 	private void listEvents(Device device) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
-		
 		MockHttpRequest request = MockHttpRequest.get("api/event/list");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
 	private void attendEvent(Device device, Long eventId) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
-		
 		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/attend");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 
 	private void getEventInfo(Device device, Long eventId) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
-		
-		MockHttpRequest request = MockHttpRequest.get("api/event/1/info");
+		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/info");
 		request.accept(MediaType.APPLICATION_JSON);
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
@@ -354,15 +392,15 @@ public class FullApiTest {
 			throws URISyntaxException, IOException {
 		mockAuthContextService.setActiveSession(device);
 		
-		String json = mapper.writeValueAsString(new Comment(eventId, 1L, parentCommentId, comment, null));
+		String requestJson = mapper.writeValueAsString(new Comment(eventId, 1L, parentCommentId, comment, null));
 		MockHttpRequest request = MockHttpRequest.post("api/event/" + eventId + "/1/comment/create");
 		request.accept(MediaType.APPLICATION_JSON);
 		request.contentType(MediaType.APPLICATION_JSON);
-		request.content(new ByteArrayInputStream(json.getBytes()));
+		request.content(new ByteArrayInputStream(requestJson.getBytes()));
 
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-		
+		logRequestResponse(request, requestJson, response, response.getContentAsString());
 		Comment savedComment = ReaderUtility.read(Comment.class, MediaType.APPLICATION_JSON, response.getContentAsString());
 		
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
@@ -374,7 +412,7 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/1/comment/list");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
@@ -389,7 +427,7 @@ public class FullApiTest {
 		request.content(new ByteArrayInputStream(json.getBytes()));
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
@@ -399,7 +437,7 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.delete("api/event/" + eventId + "/1/comment/" + commentId + "/delete");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 
@@ -409,7 +447,7 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/1/decline");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	
@@ -419,7 +457,7 @@ public class FullApiTest {
 		MockHttpRequest request = MockHttpRequest.get("/api/event/" + eventId + "/guest/list");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
-
+		logRequestResponse(request, null, response, response.getContentAsString());
 		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 	}
 	

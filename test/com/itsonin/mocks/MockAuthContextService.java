@@ -56,7 +56,7 @@ public class MockAuthContextService implements AuthContextService{
 		sessions.clear();
 	}
 	
-	public void setActiveSession(Device device){
+	public void setActiveSession(Device device) {
 		String sessionId = "device_"+device.getDeviceId()+"_session";
 		MockHttpSession session = sessions.get(sessionId);
 		activeSessionId = (session == null) ? null : sessionId;

@@ -45,14 +45,14 @@ public class DeviceService {
 	
 	public List<Device> list(String name, Date created, Date lastLogin, String sortField,
 			 SortOrder sortOrder, Integer offset, Integer limit) {
-		if(!isAllowed())
+		if(!isSuper())
 			throw new ForbiddenException("Not allowed");
 		
 		return deviceDao.list(name, created, lastLogin, sortField, sortOrder, offset, limit);
 	}
 	
 	public void delete(Long id) {
-		if(!isAllowed())
+		if(!isSuper())
 			throw new ForbiddenException("Not allowed");
 		
 		Device device = get(id);
@@ -63,24 +63,26 @@ public class DeviceService {
 		return deviceDao.getDeviceByToken(token);
 	}
 	
-	public Device authenticate(Long id){
+	public Device authenticate(Long id, String token){
 		Device device = deviceDao.get(id);
 		authContextService.set(new AuthContext(device));
-		if(device == null)
-			throw new UnauthorizedException("Not autheticated");
-		else
-			return device;
+		String validateToken = device.getToken().toString();
+		if (device == null || !token.equals(validateToken)) {
+			throw new UnauthorizedException("Not Authenticated");
+		} else {
+				return device;
+		}
 	}
 	
 	public Device get(Long id){
 		Device device = deviceDao.get(id);
 		if(device == null)
-			throw new NotFoundException("Device with id=" + id + " is not exists");
+			throw new NotFoundException("Device with id=" + id + " does not exist");
 		else
 			return device;
 	}
 	
-	boolean isAllowed(){
+	boolean isSuper(){
 		Device device = authContextService.get().getDevice();
 		if(DeviceLevel.SUPER.equals(device.getLevel()))
 			return true;

@@ -38,10 +38,10 @@ public class DeviceApi {
 	}
 	
 	@GET
-	@Path("/device/{deviceId}/authenticate")
+	@Path("/device/{deviceId}/authenticate/{token}")
 	@Produces("application/json")
-	public Device authenticate(@PathParam("deviceId")Long deviceId) {
-		return deviceService.authenticate(deviceId);
+	public Device authenticate(@PathParam("deviceId")Long deviceId, @PathParam("token")String token) {
+		return deviceService.authenticate(deviceId, token);
 	}
 	
 	@POST
