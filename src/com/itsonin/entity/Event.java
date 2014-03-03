@@ -12,7 +12,6 @@ import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
-import com.itsonin.enums.PrivacyType;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
@@ -28,7 +27,6 @@ public class Event {
 	private Long eventId;
 	private EventType type;
 	private EventVisibility visibility;
-	private PrivacyType privacy;
 	private EventStatus status;
 	private EventFlexibility flexibility;
 	private String title;
@@ -46,13 +44,12 @@ public class Event {
 	@SuppressWarnings("unused")
 	private Event(){}
 
-	public Event(EventType type, EventVisibility visibility, PrivacyType privacy, 
+	public Event(EventType type, EventVisibility visibility, 
 			EventStatus status,	EventFlexibility flexibility, String title, String description,
 			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
 			String locationUrl, String locationTitle, String locationAddress, Date created) {
 		this.type = type;
 		this.visibility = visibility;
-		this.privacy = privacy;
 		this.status = status;
 		this.flexibility = flexibility;
 		this.title = title;
@@ -90,14 +87,6 @@ public class Event {
 
 	public void setVisibility(EventVisibility visibility) {
 		this.visibility = visibility;
-	}
-
-	public PrivacyType getPrivacy() {
-		return privacy;
-	}
-
-	public void setPrivacy(PrivacyType privacy) {
-		this.privacy = privacy;
 	}
 
 	public EventStatus getStatus() {

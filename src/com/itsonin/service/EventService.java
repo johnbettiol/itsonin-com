@@ -70,8 +70,6 @@ public class EventService {
 			toUpdate.setType(event.getType());
 		if(event.getVisibility() != null)
 			toUpdate.setVisibility(event.getVisibility());
-		if(event.getPrivacy() != null)
-			toUpdate.setPrivacy(event.getPrivacy());
 		if(event.getStatus() != null)
 			toUpdate.setStatus(event.getStatus());
 		if(event.getFlexibility() != null)

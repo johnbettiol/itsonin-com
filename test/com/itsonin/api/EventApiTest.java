@@ -29,7 +29,6 @@ import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
-import com.itsonin.enums.PrivacyType;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 
@@ -55,7 +54,7 @@ public class EventApiTest {
         dispatcher.getProviderFactory().getExceptionMappers().put(NotFoundException.class, new NotFoundExceptionMapper());
         dispatcher.getRegistry().addSingletonResource(i.getInstance(EventApi.class));
         
-        event = new Event(EventType.PICNIC, EventVisibility.PUBLIC, PrivacyType.PUBLIC, EventStatus.ACTIVE, 
+        event = new Event(EventType.PICNIC, EventVisibility.PUBLIC, EventStatus.ACTIVE, 
         		EventFlexibility.NEGOTIABLE, "event title", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
         		"location address", new Date());

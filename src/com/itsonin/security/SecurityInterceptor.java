@@ -6,7 +6,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
-import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
@@ -14,12 +13,7 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import com.google.inject.Inject;
-import com.itsonin.entity.Device;
 import com.itsonin.enums.DeviceLevel;
-import com.itsonin.exception.ForbiddenException;
-import com.itsonin.exception.UnauthorizedException;
-import com.itsonin.security.annotations.PermitAll;
-import com.itsonin.security.annotations.DeviceLevelAllowed;
 
 /**
  * @author nkislitsin
