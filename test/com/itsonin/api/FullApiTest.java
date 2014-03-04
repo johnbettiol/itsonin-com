@@ -27,6 +27,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalMemcacheServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -55,8 +56,10 @@ import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
 import com.itsonin.mocks.MockAuthContextService;
+import com.itsonin.ofy.OfyService;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 import com.itsonin.resteasy.JacksonContextResolver;
+import com.itsonin.security.ApiSecurityFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
@@ -73,7 +76,7 @@ public class FullApiTest {
 
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-			new LocalDatastoreServiceTestConfig());
+			new LocalDatastoreServiceTestConfig().setNoStorage(true), new LocalMemcacheServiceTestConfig());
 
 	private static ObjectMapper mapper = new ObjectMapper();
 	private Dispatcher dispatcher;
@@ -84,6 +87,7 @@ public class FullApiTest {
     @Before
 	@SuppressWarnings("rawtypes")
 	public void setUp() {
+    	OfyService.ofy().cache(false);
 		gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
 		DeviceDao deviceDao = new DeviceDao();
 		CommentDao commentDao = new CommentDao();
@@ -113,7 +117,8 @@ public class FullApiTest {
 		exceptionMappers.put(UnauthorizedException.class, new UnauthorizedExceptionMapper());
 		exceptionMappers.put(ForbiddenException.class, new ForbiddenExceptionMapper());
 		
-		dispatcher.getProviderFactory().register(JacksonContextResolver.class);	
+		dispatcher.getProviderFactory().register(JacksonContextResolver.class);
+		dispatcher.getProviderFactory().register(new ApiSecurityFilter(authContextService));
 
 		// @TODO You should never be able to create a SUPER device (only update
 		// an existing to SUPER)
@@ -180,6 +185,7 @@ public class FullApiTest {
 		allDevices.remove(4); // Remove 5th device from device array
 		listDevices(device1, HttpServletResponse.SC_OK, allDevices, true);
 		
+		OfyService.ofy().clear();
 		// On second attempt to delete it should return NOT FOUND
 		deleteDevice(device1, 5L, HttpServletResponse.SC_NOT_FOUND);
 		// A user should be able to delete their own device
@@ -276,7 +282,7 @@ public class FullApiTest {
 		
 		// Device 2 visits /api/event/<eventId>/guest/list
 		// * Device 2 should be forbidden from getting the guest list due to authentication
-		listGuests(device2, 1L, HttpServletResponse.SC_FORBIDDEN, eventGuests, true);
+		listGuests(device2, 1L, HttpServletResponse.SC_UNAUTHORIZED, eventGuests, true);
 		
 		// Device 2 visits /api/device/2/authenticate
 		// * Re-Authenticate device 2
@@ -536,7 +542,9 @@ public class FullApiTest {
 		String responseJson = response.getContentAsString();
 		logRequestResponse(request, null, response, responseJson);
 		Assert.assertEquals(expectedResponse, response.getStatus());
-		checkExpectedList(expectedGuests, responseJson, Guest.class, findAllOrNone);
+		if(response.getStatus() == HttpServletResponse.SC_OK){
+			checkExpectedList(expectedGuests, responseJson, Guest.class, findAllOrNone);
+		}
 	}
 	
 }

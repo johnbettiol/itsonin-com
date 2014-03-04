@@ -18,9 +18,9 @@ import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
 import com.itsonin.resteasy.JacksonContextResolver;
+import com.itsonin.security.ApiSecurityFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.AuthFilter;
-import com.itsonin.security.SecurityInterceptor;
 import com.itsonin.security.impl.AuthContextServiceImpl;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
@@ -37,7 +37,7 @@ public class AppModule extends AbstractModule {
 	protected void configure() {
 		bind(JacksonContextResolver.class);
 		bind(AuthContextService.class).to(AuthContextServiceImpl.class);
-		bind(SecurityInterceptor.class);
+		bind(ApiSecurityFilter.class);
 		
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);

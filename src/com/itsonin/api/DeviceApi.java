@@ -18,6 +18,7 @@ import com.itsonin.entity.Device;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
+import com.itsonin.security.annotations.PermitAll;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.GuestService;
 
@@ -39,6 +40,7 @@ public class DeviceApi {
 	
 	@GET
 	@Path("/device/{deviceId}/authenticate/{token}")
+	@PermitAll
 	@Produces("application/json")
 	public Device authenticate(@PathParam("deviceId")Long deviceId, @PathParam("token")String token) {
 		return deviceService.authenticate(deviceId, token);
@@ -46,6 +48,7 @@ public class DeviceApi {
 	
 	@POST
 	@Path("/device/create")
+	@PermitAll
 	@Consumes("application/json")
 	@Produces("application/json")
 	public Device create(Device device) {

@@ -52,7 +52,7 @@ public class DeviceService {
 	}
 	
 	public void delete(Long id) {
-		if(!isSuper())
+		if(!isSuper() && !isOwner(id))
 			throw new ForbiddenException("Not allowed");
 		
 		Device device = get(id);
@@ -88,6 +88,15 @@ public class DeviceService {
 			return true;
 		else
 			return false;
+	}
+	
+	boolean isOwner(Long deviceId){
+		Device device = authContextService.get().getDevice();
+		if(device.getDeviceId().equals(deviceId)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 }
