@@ -30,8 +30,8 @@ public class Device implements Serializable{
 	private String token;
 	private DeviceLevel level;
 	private Date created;
-	private Date lastLogin;
-	
+	private Date lastLogin=new Date();
+
 	@SuppressWarnings("unused")
 	private Device(){}
 
@@ -77,6 +77,7 @@ public class Device implements Serializable{
 		return created;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public void setCreated(Date created) {
 		this.created = created;
 	}

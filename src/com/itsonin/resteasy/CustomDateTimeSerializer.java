@@ -15,11 +15,13 @@ import org.codehaus.jackson.map.SerializerProvider;
  */
 public class CustomDateTimeSerializer extends JsonSerializer<Date> {
 
+	public static final String ITSONIN_DATES = "yyyy-MM-dd'T'HH:mm:ss";
+
 	@Override
 	public void serialize(Date value, JsonGenerator gen,
 			SerializerProvider provider) throws IOException,
 			JsonProcessingException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat(ITSONIN_DATES);
 		String formattedDate = formatter.format(value);
 
 		gen.writeString(formattedDate);

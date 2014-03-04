@@ -1,5 +1,6 @@
 package com.itsonin.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -21,7 +22,9 @@ import com.itsonin.resteasy.CustomDateTimeSerializer;
 @Entity
 @Cache
 @Index
-public class Event {
+public class Event implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	private Long eventId;
@@ -39,7 +42,7 @@ public class Event {
 	private String locationUrl;
 	private String locationTitle;
 	private String locationAddress;
-	private Date created;
+	private Date created;	
 	
 	@SuppressWarnings("unused")
 	private Event(){}
@@ -129,18 +132,22 @@ public class Event {
 		this.notes = notes;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public Date getStartTime() {
 		return startTime;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public Date getEndTime() {
 		return endTime;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
@@ -190,6 +197,7 @@ public class Event {
 		return created;
 	}
 
+	@JsonSerialize(using = CustomDateTimeSerializer.class)
 	public void setCreated(Date created) {
 		this.created = created;
 	}
