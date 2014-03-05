@@ -95,12 +95,12 @@ public class FullApiTest {
 		GuestDao guestDao = new GuestDao();
 		EventDao eventDao = new EventDao();
 		GuestDeviceDao guestDeviceDao = new GuestDeviceDao();
-		CommentService commentService = new CommentService(commentDao, guestDao, guestDeviceDao,
+		CommentService commentService = new CommentService(commentDao, guestDao, eventDao, guestDeviceDao,
 				authContextService);
 		DeviceService deviceService = new DeviceService(deviceDao, counterDao, authContextService);
 		EventService eventService = new EventService
 				(eventDao, guestDao, guestDeviceDao, counterDao, authContextService);
-		GuestService guestService = new GuestService(guestDao, authContextService);
+		GuestService guestService = new GuestService(guestDao, guestDeviceDao, authContextService);
 		CommentApi commentApi = new CommentApi(commentService);
 		DeviceApi deviceApi = new DeviceApi(deviceService, guestService);
 		EventApi eventApi = new EventApi(eventService);
@@ -215,7 +215,7 @@ public class FullApiTest {
 		// Device 2 visits /api/event/<eventId>/guest/list
 		// * Device 2 should see themselves attending
 		listGuests(device2, d2Event.getEvent().getEventId(), HttpServletResponse.SC_OK, eventGuests, true);
-		
+	
 		// Device 3 visits /api/event/list
 		// * Device 3 should see an empty list
 		listEvents(device3, HttpServletResponse.SC_OK, new ArrayList<Event>(), false);
@@ -227,7 +227,7 @@ public class FullApiTest {
 		// Device 3 visits /event/<eventId>/attend
 		// * On submitting attend, the api should return back the guest information record
 		attendEvent(device3, d2Event.getEvent().getEventId());
-		
+//TODO: where get the name? queryParam?		
 		// Device 3 visits /api/event/list
 		// * Device 3 should see a list containing the event that they are now attending
 		listEvents(device3, HttpServletResponse.SC_OK, allEvents, true);
@@ -259,10 +259,13 @@ public class FullApiTest {
 		// * Device 2 should see themselves and Device 3 attending
 		listGuests(device2, d2Event.getEvent().getEventId(), HttpServletResponse.SC_OK, eventGuests, true);
 		
-		// Device 4 visits /api/event/<eventId>/comment/list
+		// Device 2 visits /api/event/<eventId>/comment/list
 		// * Device should be able to see comments from Device 2 and Device 3
-		listComments(device4, d2Event.getEvent().getEventId());
-		// @TODO Based on above, as event is private, device 4 should be forbidden to list comments
+		listComments(device2, d2Event.getEvent().getEventId(), HttpServletResponse.SC_OK);
+		
+		// Device 4 visits /api/event/<eventId>/comment/list
+		// * Based on above, as event is private, device 4 should be forbidden to list comments
+		listComments(device4, d2Event.getEvent().getEventId(), HttpServletResponse.SC_FORBIDDEN);
 		
 		// Device 4 visits /event/<eventId>/decline
 		// * On submitting decline, the api should return back the guest information record 
@@ -487,21 +490,21 @@ public class FullApiTest {
 		return savedComment;
 	}
 	
-	private void listComments(Device device, Long eventId) throws URISyntaxException{
+	private void listComments(Device device, Long eventId, int expectedResponse) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
 		
-		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/1/comment/list");
+		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/comment/list");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
 		logRequestResponse(request, null, response, response.getContentAsString());
-		Assert.assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		Assert.assertEquals(expectedResponse, response.getStatus());
 	}
 	
 	private void updateComment(Device device, Long eventId, Long commentId, String comment) 
 			throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
 		
-		MockHttpRequest request = MockHttpRequest.put("api/event/" + eventId + "/1/comment/" + commentId + "/update");
+		MockHttpRequest request = MockHttpRequest.put("api/event/" + eventId + "/comment/" + commentId + "/update");
 		request.accept(MediaType.APPLICATION_JSON);
 		request.contentType(MediaType.APPLICATION_JSON);
 		String json = "{\"comment\":\"" + comment + "\"}";
@@ -515,7 +518,7 @@ public class FullApiTest {
 	private void deleteComment(Device device, Long eventId, Long commentId) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
 		
-		MockHttpRequest request = MockHttpRequest.delete("api/event/" + eventId + "/1/comment/" + commentId + "/delete");
+		MockHttpRequest request = MockHttpRequest.delete("api/event/" + eventId + "/comment/" + commentId + "/delete");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
 		logRequestResponse(request, null, response, response.getContentAsString());
@@ -525,7 +528,7 @@ public class FullApiTest {
 	private void declineEvent(Device device, Long eventId) throws URISyntaxException{
 		mockAuthContextService.setActiveSession(device);
 		
-		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/1/decline");
+		MockHttpRequest request = MockHttpRequest.get("api/event/" + eventId + "/decline");
 		MockHttpResponse response = new MockHttpResponse();
 		dispatcher.invoke(request, response);
 		logRequestResponse(request, null, response, response.getContentAsString());

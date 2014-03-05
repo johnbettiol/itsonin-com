@@ -2,12 +2,12 @@ package com.itsonin.dao;
 
 import static com.itsonin.ofy.OfyService.ofy;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import com.googlecode.objectify.cmd.Query;
 import com.itsonin.entity.Guest;
+import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.ofy.ObjectifyGenericDao;
 
@@ -20,15 +20,12 @@ public class GuestDao extends ObjectifyGenericDao<Guest>{
 	public GuestDao() {
 		super(Guest.class);
 	}
-	
-	public List<Guest> getPreviousGuests(Long deviceId, String name, String sortField,
-			 SortOrder sortOrder, Integer offset, Integer limit, Integer numberOfLevels){
-		return Collections.EMPTY_LIST;//TODO
-	}
-	
-	public List<Guest> list(String name, Date created, String sortField,
+
+	public List<Guest> list(Long eventId, String name, Date created, String sortField,
 			SortOrder sortOrder, Integer numberOfLevels, Integer offset, Integer limit) {
 		Query<Guest> q = ofy().load().type(clazz);
+		
+		q.filter("eventId", eventId);
 		
 		if(name != null)
 			q = q.filter("name >=", name).filter("name <=", name);
@@ -51,6 +48,17 @@ public class GuestDao extends ObjectifyGenericDao<Guest>{
 		
 //TODO: number of levels
 		return q.list();
+	}
+	
+	public Long getHostGuestForEvent(Long eventId){
+		Guest guest = ofy().load().type(Guest.class).filter("eventId", eventId)
+				.filter("type", GuestType.HOST).first().now();
+		
+		if(guest == null){
+			return null;
+		}else{
+			return guest.getGuestId();
+		}
 	}
 	
 }

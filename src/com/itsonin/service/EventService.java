@@ -52,6 +52,7 @@ public class EventService {
 		
 		guest.setGuestId(counterDao.next("EVENT_" + event.getEventId() + "_GUEST"));
 		guest.setEventId(event.getEventId());
+		guest.setId(guest.getEventId() + "_" + guest.getGuestId());
 		guest.setType(GuestType.HOST);
 		guest.setCreated(new Date());
 		Key<Guest> guestKey = guestDao.save(guest);
@@ -107,11 +108,13 @@ public class EventService {
 		
 		Guest guest = new Guest(counterDao.next("EVENT_" + eventId + "_GUEST"), eventId, 
 				"name", GuestType.GUEST, new Date());//TODO:where get a name?
+		
+		guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId));
 		Key<Guest> guestKey = guestDao.save(guest);
 		guest = guestDao.get(guestKey);
 		
 		guestDeviceDao.save(new GuestDevice(device.getDeviceId(), guest.getGuestId()));
-		
+	
 		return guest;
 	}
 	
@@ -131,8 +134,22 @@ public class EventService {
 		eventDao.save(event);
 	}
 
-	public void decline(Long eventId, Long guestId) {
-		//TODO: remove the guest?
+	public void decline(Long eventId) {
+		Device device = authContextService.get().getDevice();
+		List<GuestDevice> guestDeviceList = guestDeviceDao.listByProperty("deviceId", device.getDeviceId());
+		
+		Long guestId = null;
+		for(GuestDevice gd : guestDeviceList){
+			Guest guest = guestDao.get(eventId + "_" + gd.getGuestId());
+			if(guest != null && guest.getEventId().equals(eventId)){
+				guestId = guest.getGuestId();
+			}
+		}
+		
+		if(guestId != null){
+			Guest guest = guestDao.get(eventId + "_" + guestId);
+			guestDao.delete(guest);
+		}
 	}
 	
 	boolean isAllowed(Long eventId, Long guestId){

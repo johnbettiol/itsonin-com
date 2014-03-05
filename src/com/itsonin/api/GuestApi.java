@@ -34,7 +34,7 @@ public class GuestApi {
 	@GET
 	@Path("/event/{eventId}/{guestId}/guest/list")
 	@Produces("application/json")
-	public List<Guest> list(@PathParam("eventId")String eventId,
+	public List<Guest> list(@PathParam("eventId")Long eventId,
 							@PathParam("guestId")String guestId,
 							@QueryParam("name")String name,
 							@QueryParam("created")Date created,
@@ -44,13 +44,13 @@ public class GuestApi {
 							@QueryParam("numberOfLevels")Integer numberOfLevels,
 							@QueryParam("offset")Integer offset,
 							@QueryParam("limit")Integer limit) {
-		return guestService.list(name, created, comment, sortField, sortOrder, numberOfLevels, offset, limit);
+		return guestService.list(eventId, name, created, comment, sortField, sortOrder, numberOfLevels, offset, limit);
 	}
 	
 	@GET
 	@Path("/event/{eventId}/guest/list")
 	@Produces("application/json")
-	public List<Guest> list(@PathParam("eventId")String eventId,
+	public List<Guest> list(@PathParam("eventId")Long eventId,
 							@QueryParam("name")String name,
 							@QueryParam("created")Date created,
 							@QueryParam("comment")String comment,

@@ -36,18 +36,7 @@ public class CommentApi {
 	public Comment create(@PathParam("eventId")Long eventId,
 						  @PathParam("guestId")Long guestId,
 						  Comment comment) {
-		return commentService.create(eventId, guestId, comment);
-	}
-	
-	@POST
-	@Path("/event/{eventId}/{guestId}/comment/{parentCommentId}/create")
-	@Produces("application/json")
-	public Comment create(@PathParam("eventId")Long eventId,
-						  @PathParam("guestId")Long guestId,
-						  @PathParam("parentCommentId")Long parentCommentId,
-						  Comment comment) {
-		comment.setParentCommentId(parentCommentId);
-		return commentService.create(eventId, guestId, comment);
+		return commentService.create(eventId, guestId, null, comment);
 	}
 	
 	@POST
@@ -56,6 +45,25 @@ public class CommentApi {
 	public Comment create(@PathParam("eventId")Long eventId,
 						  Comment comment) {
 		return create(eventId, null, comment);
+	}
+	
+	@POST
+	@Path("/event/{eventId}/{guestId}/comment/{parentCommentId}/create")
+	@Produces("application/json")
+	public Comment createChild(@PathParam("eventId")Long eventId,
+							  @PathParam("guestId")Long guestId,
+							  @PathParam("parentCommentId")Long parentCommentId,
+							  Comment comment) {
+		return commentService.create(eventId, guestId, parentCommentId, comment);
+	}
+	
+	@POST
+	@Path("/event/{eventId}/comment/{parentCommentId}/create")
+	@Produces("application/json")
+	public Comment createChild(@PathParam("eventId")Long eventId,
+							  @PathParam("parentCommentId")Long parentCommentId,
+							  Comment comment) {
+		return commentService.create(eventId, null, parentCommentId, comment);
 	}
 	
 	@PUT
