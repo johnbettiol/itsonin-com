@@ -52,7 +52,8 @@ public class DeviceApiTest {
         dispatcher.getProviderFactory().getExceptionMappers().put(UnauthorizedException.class, new UnauthorizedExceptionMapper());
         dispatcher.getRegistry().addSingletonResource(i.getInstance(DeviceApi.class));
 
-        device = new Device(DeviceType.BROWSER, DeviceLevel.SUPER);
+        device = new Device(DeviceType.BROWSER);
+        device.setLevel(DeviceLevel.SUPER);
 	}
 
 	@After

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import org.jboss.resteasy.core.Dispatcher;
@@ -83,13 +84,14 @@ public class FullApiTest {
 	private AuthContextService authContextService = new MockAuthContextService();
 	private MockAuthContextService mockAuthContextService = (MockAuthContextService) authContextService;
     private Gson gson;
+    private DeviceDao deviceDao;
 	
     @Before
 	@SuppressWarnings("rawtypes")
 	public void setUp() {
     	OfyService.ofy().cache(false);
 		gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
-		DeviceDao deviceDao = new DeviceDao();
+		deviceDao = new DeviceDao();
 		CommentDao commentDao = new CommentDao();
 		CounterDao counterDao = new CounterDao();
 		GuestDao guestDao = new GuestDao();
@@ -135,26 +137,22 @@ public class FullApiTest {
 		
 		// Create 3 different devices
 		// @TODO SUPER user can only be assigned via server side, all devices are set to NORMAL on create
-		Device device1 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.SUPER), Long.valueOf(1L));
+		Device device1 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(1L));
+		device1.setLevel(DeviceLevel.SUPER);
+		deviceDao.save(device1);
 		allDevices.add(device1);
-		Device device2 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(2L));
+		
+		Device device2 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(2L));
 		allDevices.add(device2);
-		Device device3 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(3L));
+		Device device3 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(3L));
 		allDevices.add(device3);
-		Device device4 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(4L));
+		Device device4 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(4L));
 		allDevices.add(device4);
-		Device device5 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(5L));
+		Device device5 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(5L));
 		allDevices.add(device5);
-		Device device6 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(6L));
+		Device device6 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(6L));
 		allDevices.add(device6);
-		Device device7 = createDevice(new Device(DeviceType.BROWSER,
-				DeviceLevel.NORMAL), Long.valueOf(7L));
+		Device device7 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(7L));
 		allDevices.add(device7);
 		// Authenticate Device 1 (SUPER),2,3,4
 		// * Should return in response a session to be used for all
@@ -297,12 +295,21 @@ public class FullApiTest {
 		
 	}
 	
-	private void logRequestResponse(MockHttpRequest request, String requestJson, MockHttpResponse response, String responseJson) {
+	private static void logRequestResponse(MockHttpRequest request, String requestJson, MockHttpResponse response, String responseJson) {
+		StringBuilder sb = new StringBuilder();
+		List<NewCookie> cookies = response.getNewCookies();
+		for (NewCookie newCookie : cookies) {
+			sb.append(newCookie.getName());
+			sb.append("=");
+			sb.append(newCookie.getValue());
+			sb.append(";");
+		}
 		log.log(Level.INFO, "\n" + 
 				"requestUri: "+request.getUri().getAbsolutePath() + "\n" +
-				"requestJson: \n" + requestJson + "\n" +
+				"requestJson: " + (requestJson != null ? requestJson : "(empty)") + "\n" +
 				"responseCode: " + response.getStatus() + "\n" +
-				"responseJson: " + responseJson);
+				(sb.length() > 0 ? "responsecookie: " + sb.toString() + "\n" : "") +
+				"responseJson: " + (responseJson != null ? responseJson : "(empty)"));
 	}
 
 	private Device createDevice(Device device, Long expectedId)
