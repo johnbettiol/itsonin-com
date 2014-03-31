@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.entity.Device;
-import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.DeviceType;
 import com.itsonin.service.DeviceService;
 import com.itsonin.utils.CookieUtils;
@@ -55,7 +54,7 @@ public class AuthFilter implements Filter{
 				device = deviceService.getDeviceByToken(token);
 
 			if(device == null){
-				device = deviceService.create(new Device(DeviceType.BROWSER, DeviceLevel.NORMAL));
+				device = deviceService.create(new Device(DeviceType.BROWSER));
 				CookieUtils.setCookie("token", device.getToken(), resp);
 			}
 			

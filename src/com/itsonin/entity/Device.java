@@ -35,9 +35,9 @@ public class Device implements Serializable{
 	@SuppressWarnings("unused")
 	private Device(){}
 
-	public Device(DeviceType type, DeviceLevel level) {
+	public Device(DeviceType type) {
 		this.type = type;
-		this.level = level;
+		this.level = DeviceLevel.NORMAL;
 	}
 
 	public Long getDeviceId() {
