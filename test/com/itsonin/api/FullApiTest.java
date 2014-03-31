@@ -45,6 +45,7 @@ import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.DeviceType;
 import com.itsonin.enums.EventFlexibility;
+import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
@@ -194,8 +195,9 @@ public class FullApiTest {
 		// Device 2 creates event 1 (create a PRIVATE event)
 		// * On creation of event, device 2 should be returned both the
 		//   Event information and their new Guest information (and that they are a host)
-		EventWithGuest d2Event = createEvent(device2, new Event(EventType.PICNIC, EventVisibility.PRIVATE, EventStatus.ACTIVE, 
-        		EventFlexibility.NEGOTIABLE, "event title", "event description", "event notes", 
+		EventWithGuest d2Event = createEvent(device2, new Event(EventType.PICNIC,  EventSharability.NORMAL,
+				EventVisibility.PRIVATE, EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, 
+				"event title", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
         		"location address", null));
 		

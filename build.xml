@@ -1,0 +1,54 @@
+<project name="itsonin build" default="build" basedir=".">
+
+	<property name="JS_DIR" value="war/js"/>
+	<property name="JS" value="${JS_DIR}/all.js" />
+	<property name="JS_MIN" value="${JS_DIR}/all.min.js" />
+	<property name="YUI" value="war/WEB-INF/lib/yuicompressor-2.4.7.jar"/>
+
+	<target name="build" depends="concatenate, update-version"/>
+
+	<target name="update-version">
+		<propertyset id="tdate">
+		</propertyset>
+		<tstamp>
+			<format property="tdate" pattern="yyyyMMddHHmmss"/>
+		</tstamp>
+		<echo>updating js version to: ${tdate}</echo>
+		<replaceregexp byline="true">
+			<regexp pattern="\?v=([0-9]+)&quot;"/>
+			<substitution expression="\?v=${tdate}&quot;"/>
+			<fileset dir="war/">
+				<include name="index.jsp"/>
+			</fileset>
+		</replaceregexp>
+	</target>
+	
+	<target name="min" description="Minimize JavaScript files">
+		<echo message="Building min js" />
+		<apply executable="java" parallel="false" verbose="true" dest="${JS_DIR}">
+			<fileset dir="${JS_DIR}">
+				<include name="all.js" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="${YUI}" />
+			<!--<arg value="- -charset" />
+	            <arg value="ANSI" /> -->
+			<arg value="-v" />
+			<arg value="-o" />
+			<mapper type="glob" from="all.js" to="all.min.js" />
+			<targetfile />
+		</apply>
+	</target>
+	
+	<target name="concatenate" 
+		description="Concatenate JavaScript source files">
+		<echo message="Building ${JS}" />
+		<delete file="${JS_MIN}"/>
+		<delete file="${JS}"/>
+		<concat destfile="${JS}" force="yes">
+			<fileset dir="${JS_DIR}" includes="**/*.js"/>
+		</concat>
+		<echo message="${JS} built." />
+	</target>
+	
+</project>

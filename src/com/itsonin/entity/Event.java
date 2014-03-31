@@ -10,6 +10,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.itsonin.enums.EventFlexibility;
+import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
 import com.itsonin.enums.EventVisibility;
@@ -29,6 +30,7 @@ public class Event implements Serializable {
 	@Id
 	private Long eventId;
 	private EventType type;
+	private EventSharability sharability;
 	private EventVisibility visibility;
 	private EventStatus status;
 	private EventFlexibility flexibility;
@@ -47,11 +49,12 @@ public class Event implements Serializable {
 	@SuppressWarnings("unused")
 	private Event(){}
 
-	public Event(EventType type, EventVisibility visibility, 
+	public Event(EventType type, EventSharability sharability, EventVisibility visibility, 
 			EventStatus status,	EventFlexibility flexibility, String title, String description,
 			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
 			String locationUrl, String locationTitle, String locationAddress, Date created) {
 		this.type = type;
+		this.sharability = sharability;
 		this.visibility = visibility;
 		this.status = status;
 		this.flexibility = flexibility;
@@ -82,6 +85,14 @@ public class Event implements Serializable {
 
 	public void setType(EventType type) {
 		this.type = type;
+	}
+
+	public EventSharability getSharability() {
+		return sharability;
+	}
+
+	public void setSharability(EventSharability sharability) {
+		this.sharability = sharability;
 	}
 
 	public EventVisibility getVisibility() {
@@ -201,6 +212,5 @@ public class Event implements Serializable {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-
 
 }

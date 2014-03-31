@@ -8,6 +8,7 @@ import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 
@@ -27,6 +28,7 @@ public class Guest {
 	private Long parentGuestId;
 	private String name;
 	private GuestType type;
+	private GuestStatus status;
 	private Date created;
 	
 	@SuppressWarnings("unused")
@@ -36,12 +38,14 @@ public class Guest {
 		this.name = name;
 	}
 
-	public Guest(Long guestId, Long eventId, String name, GuestType type, Date created) {
+	public Guest(Long guestId, Long eventId, String name, GuestType type, 
+			GuestStatus status, Date created) {
 		this.id = eventId + "_" + guestId;
 		this.guestId = guestId;
 		this.eventId = eventId;
 		this.name = name;
 		this.type = type;
+		this.setStatus(status);
 		this.created = created;
 	}
 
@@ -100,6 +104,14 @@ public class Guest {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public GuestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(GuestStatus status) {
+		this.status = status;
 	}
 
 }

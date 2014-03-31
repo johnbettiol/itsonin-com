@@ -1,0 +1,59 @@
+<div class="row">
+	<div class="col-lg-8 search-panel">
+		<input type="text" class="form-control" ng-model="event.title" placeholder="Your event name">
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="toolbar toolbar-event">
+			<ul class="eventType">
+				<li ng-repeat="eventType in eventTypes" ng-class="{true:'active',false:''}[event.type == eventType.id]">
+					<a href="" ng-click="selectEventType(eventType.id)">
+						<span class="glyphicon glyphicon-{{eventType.img}}"></span>
+						<span>{{eventType.id}}</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<span class="glyphicon glyphicon-calendar pull-left" ng-click="nextDateType()"></span>
+		<div class="text-center">
+			<span ng-show="dateType == 'EMPTY'">Happening sometime</span>
+			<span ng-show="dateType == 'NOW'">Happening NOW</span>
+			<div ng-show="dateType == 'CUSTOM'">
+				<!-- <input type="text" b-datepicker ng-model="event.startTime" data-date-format="dd-mm-yyyy">
+				 -->
+				<div class="input-daterange input-group" ng-model="event.startTime" b-datepicker>
+				    <input type="text" class="input-sm form-control" ng-model="event.startTime"/>
+				    <span class="input-group-addon">to</span>
+				    <input type="text" class="input-sm form-control" ng-model="event.endTime" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<span class="glyphicon glyphicon-map-marker pull-left" ng-click="nextLocationType()"></span>
+		<div class="text-center">
+			<span ng-show="locationType == 'EMPTY'">Happening somewhere</span>
+			<div ng-show="locationType == 'MAP'">
+				<google-places event="event"></google-places>
+				<span class="glyphicon glyphicon-globe pull-right"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<span class="glyphicon glyphicon-{{sharabilityImg}} pull-left" ng-click="nextSharability()"></span>
+		<span class="glyphicon glyphicon-{{visibilityImg}} pull-right" ng-click="nextVisibility()"></span>
+	</div>
+</div>
+<pre>{{event}}</pre>
+<a href="" class="btn btn-default pull-right" ng-click="shareEvent()">
+	<span class="glyphicon glyphicon-share"></span><br>Share event
+</a>

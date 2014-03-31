@@ -16,6 +16,7 @@ import com.itsonin.entity.Guest;
 import com.itsonin.entity.GuestDevice;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventStatus;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.NotFoundException;
@@ -107,7 +108,7 @@ public class EventService {
 		Device device = authContextService.getDevice();
 		
 		Guest guest = new Guest(counterDao.next("EVENT_" + eventId + "_GUEST"), eventId, 
-				"name", GuestType.GUEST, new Date());//TODO:where get a name?
+				"name", GuestType.GUEST, GuestStatus.ATTENDING, new Date());//TODO:where get a name?
 		
 		guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId));
 		Key<Guest> guestKey = guestDao.save(guest);

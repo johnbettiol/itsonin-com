@@ -147,5 +147,10 @@ public class CommentService {
 		}
 		return null;
 	}
+	
+	private String validate(Comment comment){
+		
+		return "";
+	}
 
 }

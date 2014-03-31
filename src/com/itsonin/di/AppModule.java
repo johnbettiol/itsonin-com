@@ -26,6 +26,7 @@ import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.service.GuestService;
+import com.itsonin.tasks.AdminTasks;
 
 /**
  * @author nkislitsin
@@ -58,6 +59,8 @@ public class AppModule extends AbstractModule {
 		bind(DeviceApi.class);
 		bind(EventApi.class);
 		bind(GuestApi.class);
+		
+		bind(AdminTasks.class);
 	}
 	
 	@Provides 
