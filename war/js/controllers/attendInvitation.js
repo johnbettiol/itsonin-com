@@ -2,8 +2,11 @@ angular.module('itsonin').controller('AttendInvitationController',
 	['$scope', '$routeParams', '$modal', 'eventService', 'views', '$q',
 	 function ($scope, $routeParams, $modal, eventService, views, $q) {
 
+		$scope.eventId = $routeParams.invitationId.split('.')[0];
+		$scope.parentGuestId = $routeParams.invitationId.split('.')[1];
+		
 		$scope.loadEvent = function () {
-			eventService.info($routeParams.invitationId, function(response) {//TODO: send eventId
+			eventService.info($scope.eventId, function(response) {
 				$scope.event = response;
 			},
 			function(error) {

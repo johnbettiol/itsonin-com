@@ -103,7 +103,7 @@ public class FullApiTest {
 		DeviceService deviceService = new DeviceService(deviceDao, counterDao, authContextService);
 		EventService eventService = new EventService
 				(eventDao, guestDao, guestDeviceDao, counterDao, authContextService);
-		GuestService guestService = new GuestService(guestDao, guestDeviceDao, authContextService);
+		GuestService guestService = new GuestService(guestDao, eventDao, counterDao, guestDeviceDao, authContextService);
 		CommentApi commentApi = new CommentApi(commentService);
 		DeviceApi deviceApi = new DeviceApi(deviceService, guestService);
 		EventApi eventApi = new EventApi(eventService);

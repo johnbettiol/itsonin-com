@@ -66,7 +66,7 @@
 	font-style: italic;
 }
 
-.eventType>.active>a {
+.eventType>.active>a, .toolbar .active>a {
 	color: red;
 }
 
@@ -112,4 +112,12 @@
 	position: absolute;
 	right: 15px;
 	top: 5px;
+}
+
+.angular-google-map-container { 
+	height: 400px; 
+}
+
+.row-main {
+	margin: 5px;
 }
