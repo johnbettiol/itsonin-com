@@ -4,7 +4,10 @@ angular.module('itsonin').constant('constants', {
         {id: 'BIRTHDAY', img: 'gift', background: ''},
         {id: 'CLUBBING', img: 'glass', background: ''},
         {id: 'PICNIC', img: 'tree-conifer', background: ''},
-        {id: 'DINNER', img: 'cutlery', background: ''}
+        {id: 'DINNER', img: 'cutlery', background: ''},
+        {id: 'PARTY', img: 'glass', background: ''},
+        {id: 'RALLY', img: 'road', background: ''},
+        {id: 'EXCERCISE', img: 'book', background: ''}
     ],
     EVENT_SHARABILITIES: [
         {id: 'NOSHARE', img: 'picture'},

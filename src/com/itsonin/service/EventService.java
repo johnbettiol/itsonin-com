@@ -16,6 +16,7 @@ import com.itsonin.entity.Guest;
 import com.itsonin.entity.GuestDevice;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventStatus;
+import com.itsonin.enums.EventType;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
@@ -48,6 +49,7 @@ public class EventService {
 		Device device = authContextService.getDevice();
 		
 		event.setEventId(counterDao.next("EVENT"));
+		event.setCreated(new Date());
 		Key<Event> eventKey = eventDao.save(event);
 		event = eventDao.get(eventKey);
 		
@@ -55,6 +57,7 @@ public class EventService {
 		guest.setEventId(event.getEventId());
 		guest.setId(guest.getEventId() + "_" + guest.getGuestId());
 		guest.setType(GuestType.HOST);
+		guest.setStatus(GuestStatus.ATTENDING);
 		guest.setCreated(new Date());
 		Key<Guest> guestKey = guestDao.save(guest);
 		guest = guestDao.get(guestKey);
@@ -70,6 +73,8 @@ public class EventService {
 		
 		if(event.getType() != null)
 			toUpdate.setType(event.getType());
+		if(event.getSharability() != null)
+			toUpdate.setSharability(event.getSharability());
 		if(event.getVisibility() != null)
 			toUpdate.setVisibility(event.getVisibility());
 		if(event.getStatus() != null)
@@ -119,14 +124,15 @@ public class EventService {
 		return guest;
 	}
 	
-	public List<Event> list(String name, Date created, String comment, String sortField,
-			SortOrder sortOrder, Integer numberOfLevels, Integer offset, Integer limit) {
+	public List<Event> list(List<EventType> types, String name, Date startTime, String comment, 
+			String sortField, SortOrder sortOrder, Integer numberOfLevels, Integer offset, 
+			Integer limit) {
 		Device device = authContextService.getDevice();
 		Long deviceId = null;
 		if(DeviceLevel.NORMAL.equals(device.getLevel()))
 			deviceId = device.getDeviceId();
 		
-		return eventDao.list(deviceId, name, created, comment, sortField, sortOrder, numberOfLevels, offset, limit);
+		return eventDao.list(deviceId, types, name, startTime, comment, sortField, sortOrder, numberOfLevels, offset, limit);
 	}
 	
 	public void cancel(Long eventId, Long guestId) {

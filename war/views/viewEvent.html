@@ -9,7 +9,7 @@
 		</a>
 	</div>
 </div>
-
+<div ng-show="readyToShow == true">
 <div class="panel panel-default">
 	<div class="panel-body">
 		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>
@@ -17,6 +17,7 @@
 			<span class="field">{{event.startTime | date:'short'}}</span>
 			<span class="field">{{event.title}}</span>
 			<span class="field">{{event.locationTitle}}</span>
+			<span class="field">{{event.locationAddress}}</span>
 			<span class="field">{{event.description}}</span>
 			<span class="field">{{event.sharability}}</span>
 			<span class="field">{{event.visibility}}</span>

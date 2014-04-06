@@ -1,4 +1,4 @@
-angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
+angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
 .config(['$routeProvider', 'views', function($routeProvider, views) {
   $routeProvider
   	  .when('/', {templateUrl: views.list, controller: 'ListController'})
@@ -23,11 +23,11 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
     function($rootScope, $location, $cookies) {
 	
 	$rootScope.location = 'dusseldorf'; //TODO: get location
-	
+
 	if(!$cookies.token){
-		$location.path("/about");
-	} else {
-		$location.path("/" + $rootScope.location);
+		$location.path('/about');
+	} else if($location.path() == '/' || $location.path() == ''){
+		$location.path('/' + $rootScope.location);
 	}
 		
 }]);

@@ -17,8 +17,10 @@ import com.google.inject.Inject;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
+import com.itsonin.enums.EventType;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
+import com.itsonin.resteasy.CustomDateFormat;
 import com.itsonin.service.EventService;
 
 /**
@@ -68,8 +70,9 @@ public class EventApi {
 	@GET
 	@Path("/event/list")
 	@Produces("application/json")
-	public List<Event> list(@QueryParam("name")String name,
-							@QueryParam("created")Date created,
+	public List<Event> list(@QueryParam("types")List<EventType> types,
+							@QueryParam("name")String name,
+							@QueryParam("startTime") @CustomDateFormat("yyyy-MM-dd HH:mm")Date startTime,
 							@QueryParam("comment")String comment,
 							@QueryParam("sortField")String sortField,
 							@QueryParam("sortOrder")SortOrder sortOrder,
@@ -77,7 +80,7 @@ public class EventApi {
 							@QueryParam("offset")Integer offset,
 							@QueryParam("limit")Integer limit
 							) {
-		return eventService.list(name, created, comment, sortField, 
+		return eventService.list(types, name, startTime, comment, sortField, 
 				sortOrder, numberOfLevels, offset, limit);
 	}
 	

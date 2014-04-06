@@ -4,6 +4,10 @@
 	<property name="JS" value="${JS_DIR}/all.js" />
 	<property name="JS_MIN" value="${JS_DIR}/all.min.js" />
 	<property name="YUI" value="war/WEB-INF/lib/yuicompressor-2.4.7.jar"/>
+	
+	<property name="sdk.dir" location="d:/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.1/appengine-java-sdk-1.9.1" />
+
+	<import file="${sdk.dir}/config/user/ant-macros.xml" />
 
 	<target name="build" depends="concatenate, update-version"/>
 
@@ -49,6 +53,10 @@
 			<fileset dir="${JS_DIR}" includes="**/*.js"/>
 		</concat>
 		<echo message="${JS} built." />
+	</target>
+	
+	<target name="rollback" description="Rolls back an interrupted application update.">
+	    <appcfg action="rollback" war="war" />
 	</target>
 	
 </project>

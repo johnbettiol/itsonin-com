@@ -1,8 +1,11 @@
 angular.module('itsonin').controller('DeclineInvitationController',
 	['$scope', '$routeParams', 'eventService', function ($scope, $routeParams, eventService) {
 
+		$scope.eventId = $routeParams.invitationId.split('.')[0];
+		$scope.parentGuestId = $routeParams.invitationId.split('.')[1];
+		
 		$scope.loadEvent = function () {
-			eventService.info($routeParams.invitationId, function(response) {//TODO: send eventId
+			eventService.info($scope.eventId, function(response) {
 				$scope.event = response;
 			},
 			function(error) {

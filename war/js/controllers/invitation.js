@@ -1,9 +1,12 @@
 angular.module('itsonin').controller('InvitationController',
   ['$scope', '$routeParams', '$location', 'eventService', 
    function ($scope, $routeParams, $location, eventService) {
+	  
+	$scope.eventId = $routeParams.invitationId.split('.')[0];
+	$scope.parentGuestId = $routeParams.invitationId.split('.')[1];
 			  
 	$scope.loadEvent = function () {
-		eventService.info($routeParams.invitationId, function(response) {//TODO: send eventId
+		eventService.info($scope.eventId, function(response) {
 			$scope.event = response;
 		},
 		function(error) {
@@ -14,7 +17,7 @@ angular.module('itsonin').controller('InvitationController',
 	$scope.loadEvent();
 	
 	$scope.attendEvent = function () {
-		eventService.attend($routeParams.invitationId, function(response) {//TODO:
+		eventService.attend($scope.eventId, function(response) {
 			$location.path('/i/' + $routeParams.invitationId + '/attend');
 		},
 		function(error) {
@@ -23,7 +26,7 @@ angular.module('itsonin').controller('InvitationController',
 	}
 	
 	$scope.declineEvent = function () {
-		eventService.decline($routeParams.invitationId, function(response) {//TODO:
+		eventService.decline($scope.eventId, function(response) {
 			$location.path('/i/' + $routeParams.invitationId + '/decline');
 		},
 		function(error) {

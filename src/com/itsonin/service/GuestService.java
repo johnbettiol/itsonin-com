@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.inject.Inject;
+import com.itsonin.dao.CounterDao;
+import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
 import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.entity.Device;
+import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.entity.GuestDevice;
 import com.itsonin.enums.DeviceLevel;
@@ -23,13 +26,17 @@ import com.itsonin.security.AuthContextService;
 public class GuestService {
 
 	private GuestDao guestDao;
+	private EventDao eventDao;
+	private CounterDao counterDao;
 	private GuestDeviceDao guestDeviceDao;
 	private AuthContextService authContextService;
 	
 	@Inject
-	public GuestService(GuestDao guestDao, GuestDeviceDao guestDeviceDao, 
-			AuthContextService authContextService){
+	public GuestService(GuestDao guestDao, EventDao eventDao, CounterDao counterDao, 
+			GuestDeviceDao guestDeviceDao, AuthContextService authContextService){
 		this.guestDao = guestDao;
+		this.eventDao = eventDao;
+		this.counterDao = counterDao;
 		this.guestDeviceDao = guestDeviceDao;
 		this.authContextService = authContextService;
 	}
@@ -77,6 +84,17 @@ public class GuestService {
 			toUpdate.setType(guest.getType());
 		
 		guestDao.save(toUpdate);
+	}
+	
+	public Guest create(Long eventId, Guest guest){
+		Event event = eventDao.get(eventId);
+		
+		guest.setGuestId(counterDao.next("EVENT_" + event.getEventId() + "_GUEST"));
+		guest.setEventId(eventId);
+		guest.setId(guest.getEventId() + "_" + guest.getGuestId());
+		guest.setCreated(new Date());
+		
+		return guest;
 	}
 	
 	public List<Guest> list(Long eventId, String name, Date created, String comment, String sortField,
