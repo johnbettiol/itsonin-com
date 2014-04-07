@@ -1,9 +1,6 @@
 package com.itsonin.di;
 
-import javax.servlet.http.HttpSession;
-
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.itsonin.api.CommentApi;
 import com.itsonin.api.DeviceApi;
@@ -13,7 +10,6 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
-import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
@@ -49,7 +45,6 @@ public class AppModule extends AbstractModule {
 		bind(DeviceDao.class).in(Singleton.class);
 		bind(EventDao.class).in(Singleton.class);
 		bind(GuestDao.class).in(Singleton.class);
-		bind(GuestDeviceDao.class).in(Singleton.class);
 		
 		bind(CommentService.class).in(Singleton.class);
 		bind(DeviceService.class).in(Singleton.class);

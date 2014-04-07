@@ -36,7 +36,7 @@ public class DeviceService {
 	}
 	
 	public Device create(Device device) {
-		device.setDeviceId(counterDao.next("DEVICE"));
+		device.setDeviceId(counterDao.nextDeviceId());
 		device.setCreated(new Date());
 		device.setToken(UUID.randomUUID().toString());
 		Key<Device> key = deviceDao.save(device);

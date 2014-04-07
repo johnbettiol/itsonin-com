@@ -10,7 +10,6 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
-import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
@@ -23,8 +22,6 @@ import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.service.GuestService;
-import com.itsonin.servlet.Page2Servlet;
-import com.itsonin.servlet.Page3Servlet;
 import com.itsonin.tasks.AdminTasks;
 
 public class WebModule extends ServletModule {
@@ -47,7 +44,6 @@ public class WebModule extends ServletModule {
 		bind(DeviceDao.class).in(Singleton.class);
 		bind(EventDao.class).in(Singleton.class);
 		bind(GuestDao.class).in(Singleton.class);
-		bind(GuestDeviceDao.class).in(Singleton.class);
 
 		bind(CommentService.class).in(Singleton.class);
 		bind(DeviceService.class).in(Singleton.class);

@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.googlecode.objectify.cmd.Query;
+import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
+import com.itsonin.enums.EventType;
 import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.ofy.ObjectifyGenericDao;
@@ -59,6 +61,17 @@ public class GuestDao extends ObjectifyGenericDao<Guest>{
 		}else{
 			return guest.getGuestId();
 		}
+	}
+
+	public Guest getGuestForEvent(Long eventId, Long deviceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Guest> listByDeviceId(Long deviceId) {
+			Query<Guest> q = ofy().load().type(clazz);
+			q = q.filter("deviceId =", deviceId);
+			return q.list();
 	}
 	
 }

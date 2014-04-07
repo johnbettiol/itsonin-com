@@ -9,7 +9,6 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
-import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.mocks.MockHttpSession;
 import com.itsonin.resteasy.JacksonContextResolver;
@@ -38,7 +37,6 @@ public class AppTestModule extends AbstractModule {
 		bind(DeviceDao.class).in(Singleton.class);
 		bind(EventDao.class).in(Singleton.class);
 		bind(GuestDao.class).in(Singleton.class);
-		bind(GuestDeviceDao.class).in(Singleton.class);
 		
 		bind(CommentService.class).in(Singleton.class);
 		bind(DeviceService.class).in(Singleton.class);

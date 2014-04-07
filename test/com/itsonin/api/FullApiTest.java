@@ -37,7 +37,6 @@ import com.itsonin.dao.CounterDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
-import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Comment;
 import com.itsonin.entity.Device;
@@ -97,13 +96,12 @@ public class FullApiTest {
 		CounterDao counterDao = new CounterDao();
 		GuestDao guestDao = new GuestDao();
 		EventDao eventDao = new EventDao();
-		GuestDeviceDao guestDeviceDao = new GuestDeviceDao();
-		CommentService commentService = new CommentService(commentDao, guestDao, eventDao, guestDeviceDao,
+		CommentService commentService = new CommentService(commentDao, guestDao, eventDao,
 				authContextService);
 		DeviceService deviceService = new DeviceService(deviceDao, counterDao, authContextService);
 		EventService eventService = new EventService
-				(eventDao, guestDao, guestDeviceDao, counterDao, authContextService);
-		GuestService guestService = new GuestService(guestDao, eventDao, counterDao, guestDeviceDao, authContextService);
+				(eventDao, guestDao, counterDao, authContextService);
+		GuestService guestService = new GuestService(guestDao, eventDao, counterDao, authContextService);
 		CommentApi commentApi = new CommentApi(commentService);
 		DeviceApi deviceApi = new DeviceApi(deviceService, guestService);
 		EventApi eventApi = new EventApi(eventService);

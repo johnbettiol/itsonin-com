@@ -23,6 +23,7 @@ public class Guest {
 
 	@Id
 	private String id;
+	private Long deviceId;
 	private Long guestId;
 	private Long eventId;
 	private Long parentGuestId;
@@ -38,9 +39,10 @@ public class Guest {
 		this.name = name;
 	}
 
-	public Guest(Long guestId, Long eventId, String name, GuestType type, 
+	public Guest(Long deviceId, Long guestId, Long eventId, String name, GuestType type, 
 			GuestStatus status, Date created) {
-		this.id = eventId + "_" + guestId;
+		this.id = eventId + "_" + guestId + "_" + deviceId;
+		this.deviceId = deviceId;
 		this.guestId = guestId;
 		this.eventId = eventId;
 		this.name = name;
@@ -55,6 +57,14 @@ public class Guest {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public Long getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(Long deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public Long getGuestId() {

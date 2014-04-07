@@ -1,5 +1,6 @@
 package com.itsonin.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,15 +9,14 @@ import com.googlecode.objectify.Key;
 import com.itsonin.dao.CounterDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
-import com.itsonin.dao.GuestDeviceDao;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
-import com.itsonin.entity.GuestDevice;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
@@ -32,37 +32,33 @@ public class EventService {
 	private EventDao eventDao;
 	private GuestDao guestDao;
 	private CounterDao counterDao;
-	private GuestDeviceDao guestDeviceDao;
 	private AuthContextService authContextService;
 	
 	@Inject
-	public EventService(EventDao eventDao, GuestDao guestDao, GuestDeviceDao guestDeviceDao,
-			CounterDao counterDao, AuthContextService authContextService){
+	public EventService(EventDao eventDao, GuestDao guestDao,
+			CounterDao counterDao, AuthContextService authContextService) {
 		this.eventDao = eventDao;
 		this.guestDao = guestDao;
 		this.counterDao = counterDao;
-		this.guestDeviceDao = guestDeviceDao;
 		this.authContextService = authContextService;
 	}
 
 	public EventWithGuest create(Event event, Guest guest) {
 		Device device = authContextService.getDevice();
 		
-		event.setEventId(counterDao.next("EVENT"));
+		event.setEventId(counterDao.nextEventId());
 		event.setCreated(new Date());
 		Key<Event> eventKey = eventDao.save(event);
 		event = eventDao.get(eventKey);
-		
-		guest.setGuestId(counterDao.next("EVENT_" + event.getEventId() + "_GUEST"));
+		guest.setGuestId(counterDao.nextGuestId(event.getEventId()));
 		guest.setEventId(event.getEventId());
 		guest.setId(guest.getEventId() + "_" + guest.getGuestId());
 		guest.setType(GuestType.HOST);
 		guest.setStatus(GuestStatus.ATTENDING);
 		guest.setCreated(new Date());
+		guest.setDeviceId(device.getDeviceId());
 		Key<Guest> guestKey = guestDao.save(guest);
 		guest = guestDao.get(guestKey);
-
-		guestDeviceDao.save(new GuestDevice(device.getDeviceId(), guest.getGuestId()));
 		return new EventWithGuest(event, guest);
 	}
 	
@@ -105,22 +101,27 @@ public class EventService {
 		eventDao.save(toUpdate);
 	}
 	
-	public Event get(Long id) {
-		return eventDao.get(id);
+	public Event get(Long eventId) {
+		Event event = eventDao.get(eventId);
+		storeGuestEntry(eventId, event.getVisibility() == EventVisibility.PUBLIC ? GuestStatus.VIEWED : GuestStatus.PENDING);
+		return event;
 	}
 	
 	public Guest attend(Long eventId) {
+		return storeGuestEntry(eventId, GuestStatus.ATTENDING);
+	}
+	
+	public Guest decline(Long eventId) {
+		return storeGuestEntry(eventId, GuestStatus.DECLINED);
+	}
+	
+	private Guest storeGuestEntry(Long eventId, GuestStatus guestStatus) {
 		Device device = authContextService.getDevice();
-		
-		Guest guest = new Guest(counterDao.next("EVENT_" + eventId + "_GUEST"), eventId, 
-				"name", GuestType.GUEST, GuestStatus.ATTENDING, new Date());//TODO:where get a name?
-		
+		Guest guest = new Guest(device.getDeviceId(), counterDao.nextGuestId(eventId), eventId, 
+				"name", GuestType.GUEST, guestStatus, new Date());//TODO:where get a name?
 		guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId));
 		Key<Guest> guestKey = guestDao.save(guest);
 		guest = guestDao.get(guestKey);
-		
-		guestDeviceDao.save(new GuestDevice(device.getDeviceId(), guest.getGuestId()));
-	
 		return guest;
 	}
 	
@@ -129,10 +130,35 @@ public class EventService {
 			Integer limit) {
 		Device device = authContextService.getDevice();
 		Long deviceId = null;
-		if(DeviceLevel.NORMAL.equals(device.getLevel()))
-			deviceId = device.getDeviceId();
+		List<Event> eventList = eventDao.list(deviceId, types, name, startTime, comment, sortField, sortOrder, numberOfLevels, offset, limit);
+		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
+		List<Event> filteredList = new ArrayList<Event>();
 		
-		return eventDao.list(deviceId, types, name, startTime, comment, sortField, sortOrder, numberOfLevels, offset, limit);
+		if (DeviceLevel.NORMAL.equals(device.getLevel())) {
+			deviceId = device.getDeviceId();
+			
+			for (Event event : eventList) {
+				if (event.getVisibility() == EventVisibility.PUBLIC) {
+					filteredList.add(event);
+				} else if (event.getVisibility() == EventVisibility.PRIVATE && guestList.size() > 0) {
+					int guestCounter = -1;
+					for (int grIndex=0; grIndex < guestList.size(); grIndex++) {
+						Guest guestRecord = guestList.get(grIndex);
+						if (guestRecord.getEventId() == event.getEventId()) {
+							filteredList.add(event);
+							guestCounter=grIndex;
+						}
+					}
+					if (guestCounter > 0) {
+						guestList.remove(guestCounter);
+					}
+				} else {
+					// We do this one for FriendsOnly
+				}
+			}
+		}
+		return filteredList;
+
 	}
 	
 	public void cancel(Long eventId, Long guestId) {
@@ -141,35 +167,13 @@ public class EventService {
 		eventDao.save(event);
 	}
 
-	public void decline(Long eventId) {
-		Device device = authContextService.get().getDevice();
-		List<GuestDevice> guestDeviceList = guestDeviceDao.listByProperty("deviceId", device.getDeviceId());
-		
-		Long guestId = null;
-		for(GuestDevice gd : guestDeviceList){
-			Guest guest = guestDao.get(eventId + "_" + gd.getGuestId());
-			if(guest != null && guest.getEventId().equals(eventId)){
-				guestId = guest.getGuestId();
-			}
-		}
-		
-		if(guestId != null){
-			Guest guest = guestDao.get(eventId + "_" + guestId);
-			guestDao.delete(guest);
-		}
-	}
-	
-	boolean isAllowed(Long eventId, Long guestId){
+	public boolean isAllowed(Long eventId, Long guestId){
 		Device device = authContextService.get().getDevice();
 		if(DeviceLevel.SUPER.equals(device.getLevel()))
 			return true;
 		
 		Guest guest = guestDao.get(eventId + "_" + guestId);
 		if(guest != null && GuestType.HOST.equals(guest.getType()))
-			return true;
-		
-		GuestDevice guestDevice = guestDeviceDao.get(device.getDeviceId() + "_" + guestId);
-		if(guestDevice != null)
 			return true;
 		
 		return false;

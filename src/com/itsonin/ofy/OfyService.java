@@ -8,7 +8,6 @@ import com.itsonin.entity.Counter;
 import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
-import com.itsonin.entity.GuestDevice;
 
 /**
  * @author nkislitsin
@@ -21,7 +20,6 @@ public class OfyService {
         register(Device.class);
         register(Event.class);
         register(Guest.class);
-        register(GuestDevice.class);
     }
 
     public static Objectify ofy() {

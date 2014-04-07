@@ -17,8 +17,20 @@ public class CounterDao {
 	public CounterDao() {
 		
 	}
+	
+	public long nextGuestId(long eventId) {
+		return next("EVENT_" + eventId + "_GUEST");
+	}
+	
+	public long nextDeviceId() {
+		return next("DEVICE");
+	}
+	
+	public long nextEventId() {
+		return next("EVENT");
+	}
 
-	public long next(String name) {
+	private long next(String name) {
 		Objectify trans = ofy().transaction();
 		int triesLeft = 5;
 		

@@ -8,6 +8,7 @@ import java.util.List;
 import com.googlecode.objectify.cmd.Query;
 import com.itsonin.entity.Event;
 import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.ofy.ObjectifyGenericDao;
 
