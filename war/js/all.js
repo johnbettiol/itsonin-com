@@ -10,6 +10,7 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
       .when('/i/:invitationId/attend', {templateUrl: views.attendInvitation, controller: 'AttendInvitationController'})
       .when('/i/:invitationId/decline', {templateUrl: views.declineInvitation, controller: 'DeclineInvitationController'})
       .when('/about', {templateUrl: views.about, controller: 'AboutController'})
+      .when('/welcome', {templateUrl: views.welcome, controller: 'WelcomeController'})
       .when('/me', {templateUrl: views.me, controller: 'MeController'})
       .when('/:location', {templateUrl: views.list, controller: 'ListController'})
       .otherwise({redirectTo: '/:location'});
@@ -24,9 +25,7 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
 	
 	$rootScope.location = 'dusseldorf'; //TODO: get location
 
-	if(!$cookies.token){
-		$location.path('/about');
-	} else if($location.path() == '/' || $location.path() == ''){
+	if($location.path() == '/' || $location.path() == ''){
 		$location.path('/' + $rootScope.location);
 	}
 		
@@ -60,9 +59,14 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
          {id: 'EMPTY'}, 
          {id: 'MAP'}
     ]
-});angular.module('itsonin').controller('AboutController',
+});
+angular.module('itsonin').controller('AboutController',
   ['$scope', function ($scope) {
 	  
+}]);
+angular.module('itsonin').controller('WelcomeController',
+  ['$scope', function ($scope) {
+  
 }]);
 angular.module('itsonin').controller('AttendEventController',
 	['$scope', '$routeParams', '$modal', 'eventService', 'views', '$q',
@@ -707,6 +711,7 @@ angular.module('itsonin').factory('$modal',
     attendInvitation: 'views/attendInvitation.html?v=1',
     declineInvitation: 'views/declineInvitation.html?v=1',
     about: 'views/about.html?v=1',
+    welcome: 'views/welcome.html?v=1',
     me: 'views/me.html?v=1',
     shareLink: 'views/modals/shareLink.html?v=1',
     map: 'views/modals/map.html?v=1'

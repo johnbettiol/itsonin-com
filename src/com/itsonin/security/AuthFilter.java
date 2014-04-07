@@ -22,95 +22,60 @@ import com.itsonin.utils.CookieUtils;
 
 /**
  * @author nkislitsin
- *
+ * 
  */
 @Singleton
-public class AuthFilter implements Filter{
-	
-	protected static final Logger log = Logger.getLogger(AuthFilter.class.getName());	
-	
-	static final ThreadLocal<Context> localContext = new ThreadLocal<Context>();
-	
+public class AuthFilter implements Filter {
+
+	private static final String TOKEN_COOKIE = "token";
+
+	protected static final Logger log = Logger.getLogger(AuthFilter.class
+			.getName());
+
 	private DeviceService deviceService;
-	
+	private AuthContextService authContextService;
+
 	@Inject
-	public AuthFilter(DeviceService deviceService){
+	public AuthFilter(DeviceService deviceService, AuthContextService authContextService) {
 		this.deviceService = deviceService;
+		this.authContextService = authContextService;
 	}
 
 	public void doFilter(ServletRequest servletRequest,
 			ServletResponse servletResponse, FilterChain filterChain)
 			throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest)servletRequest;
-		HttpServletResponse resp = (HttpServletResponse)servletResponse;
-		HttpSession session = req.getSession();
-		
-		AuthContext authContext = (AuthContext)session.getAttribute("authContext");
-		if(authContext == null){
+		HttpServletRequest req = (HttpServletRequest) servletRequest;
+		HttpServletResponse res = (HttpServletResponse) servletResponse;
+
 			Device device = null;
-			String token = CookieUtils.getCookieValue("token", req);
-			
-			if(token != null && !token.isEmpty())
+			String token = CookieUtils.getCookieValue(TOKEN_COOKIE, req);
+
+			if (token != null && !token.isEmpty()) {
 				device = deviceService.getDeviceByToken(token);
-
-			if(device == null){
-				device = deviceService.create(new Device(DeviceType.BROWSER));
-				CookieUtils.setCookie("token", device.getToken(), resp);
 			}
-			
-			session.setAttribute("authContext", new AuthContext(device));
-		}
-		
-		Context previous = localContext.get();
 
-		try {
-			localContext.set(new Context(req, resp));
-			filterChain.doFilter(servletRequest, servletResponse);
-		} finally {
-			localContext.set(previous);
-		}
-	}
-	
-	public static HttpServletRequest getRequest() {
-		return getContext().getRequest();
-	}
-
-	public static HttpServletResponse getResponse() {
-		return getContext().getResponse();
-	}
-	
-	public static Context getContext() {
-		return localContext.get();
-	}
-
-	static class Context {
-
-		final HttpServletRequest request;
-		final HttpServletResponse response;
-
-		Context(HttpServletRequest request, HttpServletResponse response) {
-			this.request = request;
-			this.response = response;
-		}
-
-		HttpServletRequest getRequest() {
-			return request;
-		}
-
-		HttpServletResponse getResponse() {
-			return response;
-		}
+			if (device == null) {
+				// @TODO We no longer need device type, just create with nothing
+				device = deviceService.create(new Device(DeviceType.BROWSER));
+				CookieUtils.setCookie(TOKEN_COOKIE, device.getToken(), res);
+				if (servletRequest instanceof HttpServletRequest) {
+					if ("/".equals(req.getRequestURI())) {
+						res.sendRedirect("/#/welcome");
+					}
+				}
+			}
+			authContextService.set(new AuthContext(device));
+		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		
+
 	}
 
 	@Override
 	public void destroy() {
-		
+
 	}
 
 }
-

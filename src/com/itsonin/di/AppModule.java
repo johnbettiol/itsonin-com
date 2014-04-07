@@ -39,6 +39,7 @@ public class AppModule extends AbstractModule {
 		bind(JacksonContextResolver.class);
 		bind(AuthContextService.class).to(AuthContextServiceImpl.class);
 		bind(ApiSecurityFilter.class);
+		bind(AuthFilter.class).in(Singleton.class);
 		
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);
@@ -61,11 +62,6 @@ public class AppModule extends AbstractModule {
 		bind(GuestApi.class);
 		
 		bind(AdminTasks.class);
-	}
-	
-	@Provides 
-	HttpSession provideHttpSession() {
-		return AuthFilter.getRequest().getSession();
 	}
 
 }

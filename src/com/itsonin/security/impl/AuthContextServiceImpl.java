@@ -16,13 +16,10 @@ import com.itsonin.security.AuthContextService;
 @Singleton
 public class AuthContextServiceImpl implements AuthContextService{
 
-	@Inject 
-	private Provider<HttpSession> sessionProvider;
-	
-	private static final String name = "authContext";
+	static final ThreadLocal<AuthContext> localContext = new ThreadLocal<AuthContext>();
 	
 	public AuthContext get(){
-		Object obj = sessionProvider.get().getAttribute(name);
+		Object obj = localContext.get();
 		if (obj == null){
 			return null;
 		}
@@ -30,7 +27,7 @@ public class AuthContextServiceImpl implements AuthContextService{
 	}
 	
 	public void set(AuthContext context){
-		sessionProvider.get().setAttribute(name, context);
+		localContext.set(context);
 	}
 	
 	public Device getDevice(){
