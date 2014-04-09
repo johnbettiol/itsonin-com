@@ -1,0 +1,15 @@
+<div class="modal-dialog" ng-controller="ShareByEmailController">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Share by email</h4>
+    </div>
+    <div class="modal-body">
+      <input type="text" class="form-control" ng-model="email">
+    </div>
+    <div class="modal-footer">
+        <a ng-href="mailto:{{email}}?subject=Invitation&amp;body={{link}}" class="btn btn-primary">Share</a>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	</div>
+  </div>
+</div>

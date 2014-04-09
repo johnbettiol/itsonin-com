@@ -6,7 +6,7 @@ angular.module('itsonin').controller('DeclineInvitationController',
 		
 		$scope.loadEvent = function () {
 			eventService.info($scope.eventId, function(response) {
-				$scope.event = response;
+				$scope.event = response.event;
 			},
 			function(error) {
 			});

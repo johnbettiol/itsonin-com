@@ -104,7 +104,7 @@ public class FullApiTest {
 		GuestService guestService = new GuestService(guestDao, eventDao, counterDao, authContextService);
 		CommentApi commentApi = new CommentApi(commentService);
 		DeviceApi deviceApi = new DeviceApi(deviceService, guestService);
-		EventApi eventApi = new EventApi(eventService);
+		EventApi eventApi = new EventApi(eventService, guestService, commentService);
 		GuestApi guestApi = new GuestApi(guestService);
 		
 		helper.setUp();

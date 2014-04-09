@@ -12,6 +12,7 @@ import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.ForbiddenException;
 import com.itsonin.exception.NotFoundException;
@@ -19,7 +20,7 @@ import com.itsonin.security.AuthContextService;
 
 /**
  * @author nkislitsin
- *
+ * 
  */
 public class GuestService {
 
@@ -27,62 +28,73 @@ public class GuestService {
 	private EventDao eventDao;
 	private CounterDao counterDao;
 	private AuthContextService authContextService;
-	
+
 	@Inject
-	public GuestService(GuestDao guestDao, EventDao eventDao, CounterDao counterDao, 
-			AuthContextService authContextService){
+	public GuestService(GuestDao guestDao, EventDao eventDao,
+			CounterDao counterDao, AuthContextService authContextService) {
 		this.guestDao = guestDao;
 		this.eventDao = eventDao;
 		this.counterDao = counterDao;
 		this.authContextService = authContextService;
 	}
-	
-	public List<Guest> getPeviousGuests(Long deviceId, String name, String sortField,
-			 SortOrder sortOrder, Integer offset, Integer limit, Integer numberOfLevels) {
+
+	public List<Guest> getPeviousGuests(Long deviceId, String name,
+			String sortField, SortOrder sortOrder, Integer offset,
+			Integer limit, Integer numberOfLevels) {
 		Device device = authContextService.getDevice();
-		if(DeviceLevel.NORMAL.equals(device.getLevel()) && !deviceId.equals(device.getDeviceId()))
+		if (DeviceLevel.NORMAL.equals(device.getLevel())
+				&& !deviceId.equals(device.getDeviceId())) {
 			throw new ForbiddenException("Not allowed");
-		
-		List<Guest> guestDeviceList = guestDao.listByProperty("deviceId", device.getDeviceId());
-		
+		}
+
+		List<Guest> guestDeviceList = guestDao.listByProperty("deviceId",
+				device.getDeviceId());
+
 		List<Guest> hosts = new ArrayList<Guest>();
-		for (int i = 0; i < guestDeviceList.size(); i += 30) {//30 - limit for 'in' query
-			List<Guest> sublist = guestDeviceList.subList(i, Math.min(i + 30, guestDeviceList.size()));
+		for (int i = 0; i < guestDeviceList.size(); i += 30) {// 30 - limit for
+																// 'in' query
+			List<Guest> sublist = guestDeviceList.subList(i,
+					Math.min(i + 30, guestDeviceList.size()));
 			List<Long> guestIds = new ArrayList<Long>();
 
-			for(Guest guestDevice : sublist){
+			for (Guest guestDevice : sublist) {
 				guestIds.add(guestDevice.getGuestId());
 			}
-			
+
 			hosts.addAll(guestDao.listByProperty("guestId in", guestIds));
 		}
-		
+
 		List<Guest> previousGuests = new ArrayList<Guest>();
-		for (int i = 0; i < hosts.size(); i += 30) {//30 - limit for 'in' query
-			List<Guest> sublist = hosts.subList(i, Math.min(i + 30, guestDeviceList.size()));
+		for (int i = 0; i < hosts.size(); i += 30) {// 30 - limit for 'in' query
+			List<Guest> sublist = hosts.subList(i,
+					Math.min(i + 30, guestDeviceList.size()));
 			List<Long> hostIds = new ArrayList<Long>();
 
-			for(Guest host : sublist){
+			for (Guest host : sublist) {
 				hostIds.add(host.getGuestId());
 			}
-			
-			previousGuests.addAll(guestDao.listByProperty("parentGuestId in", hostIds));
+
+			previousGuests.addAll(guestDao.listByProperty("parentGuestId in",
+					hostIds));
 		}
-		
+
 		return previousGuests;
 	}
-	
-	public void update(Long eventId, Long guestId, Guest guest){
+
+	public void update(Long eventId, Long guestId, Guest guest) {
 		Guest toUpdate = guestDao.get(eventId + "_" + guestId);
-		if(toUpdate == null)
-			throw new NotFoundException("Guest with id= " + guestId + " doesn't not exist");
-		if(guest.getType() != null)
+		if (toUpdate == null) {
+			throw new NotFoundException("Guest with id= " + guestId
+					+ " doesn't not exist");
+		}
+		if (guest.getType() != null) {
 			toUpdate.setType(guest.getType());
-		
+		}
+
 		guestDao.save(toUpdate);
 	}
-	
-	public Guest create(Long eventId, Guest guest){
+
+	public Guest create(Long eventId, Guest guest) {
 		Event event = eventDao.get(eventId);
 		guest.setGuestId(counterDao.nextGuestId(event.getEventId()));
 		guest.setEventId(eventId);
@@ -90,10 +102,16 @@ public class GuestService {
 		guest.setCreated(new Date());
 		return guest;
 	}
-	
-	public List<Guest> list(Long eventId, String name, Date created, String comment, String sortField,
-			SortOrder sortOrder, Integer numberOfLevels, Integer offset, Integer limit) {
-		return guestDao.list(eventId, name, created, sortField, sortOrder, numberOfLevels, offset, limit);
+
+	public List<Guest> list(Long eventId, String name, Date created,
+			String comment, String sortField, SortOrder sortOrder,
+			Integer numberOfLevels, Integer offset, Integer limit) {
+		return guestDao.list(eventId, name, created, sortField, sortOrder,
+				numberOfLevels, offset, limit);
 	}
-	
+
+	public List<Guest> listByEvent(Long eventId, GuestStatus status) {
+		return guestDao.listByEvent(eventId, status);
+	}
+
 }

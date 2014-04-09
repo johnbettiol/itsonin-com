@@ -5,3 +5,4 @@ Thumbs.db
 *.class
 datastore-indexes-auto.xml
 local_db.bin
+all.js

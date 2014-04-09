@@ -21,116 +21,116 @@ import com.itsonin.security.AuthContextService;
 
 /**
  * @author nkislitsin
- *
+ * 
  */
 public class CommentService {
-	
+
 	private CommentDao commentDao;
 	private GuestDao guestDao;
 	private EventDao eventDao;
 	private AuthContextService authContextService;
-	
+
 	@Inject
-	public CommentService(CommentDao commentDao, GuestDao guestDao, EventDao eventDao, 
-			AuthContextService authContextService){
+	public CommentService(CommentDao commentDao, GuestDao guestDao,
+			EventDao eventDao, AuthContextService authContextService) {
 		this.commentDao = commentDao;
 		this.guestDao = guestDao;
 		this.eventDao = eventDao;
 		this.authContextService = authContextService;
 	}
-	
-	public Comment create(Long eventId, Long guestId, Long parentCommentId, Comment comment) {
-		if(!isAllowed(eventId, guestId))
+
+	public Comment create(Long eventId, Long guestId, Long parentCommentId,
+			Comment comment) {
+		if (!isAllowed(eventId, guestId)) {
 			throw new ForbiddenException("Not allowed");
-		
+		}
+
 		comment.setEventId(eventId);
 		comment.setGuestId(guestId);
 		comment.setParentCommentId(parentCommentId);
 		comment.setCreated(new Date());
 		Key<Comment> key = commentDao.save(comment);
-		
+
 		return commentDao.get(key);
 	}
-	
-	public void update(Long eventId, Long guestId, Long commentId, Comment comment) {
-		
-		if(!isAllowed(eventId, guestId))
+
+	public void update(Long eventId, Long guestId, Long commentId,
+			Comment comment) {
+
+		if (!isAllowed(eventId, guestId)) {
 			throw new ForbiddenException("Not allowed");
-		
+		}
+
 		Comment toUpdate = get(commentId);
-		
-		if(toUpdate == null)
-			throw new NotFoundException("Comment with id=" + commentId + " doesn't exist");
-		
-		if(comment.getComment() != null)
+
+		if (toUpdate == null) {
+			throw new NotFoundException("Comment with id=" + commentId
+					+ " doesn't exist");
+		}
+
+		if (comment.getComment() != null)
 			toUpdate.setComment(comment.getComment());
-		if(comment.getParentCommentId() != null)
+		if (comment.getParentCommentId() != null)
 			toUpdate.setParentCommentId(comment.getParentCommentId());
-		
+
 		commentDao.save(comment);
 	}
-	
+
 	public void delete(Long eventId, Long guestId, Long commentId) {
-		
-		if(!isAllowed(eventId, guestId))
+
+		if (!isAllowed(eventId, guestId)) {
 			throw new ForbiddenException("Not allowed");
-		
+		}
+
 		Comment toDelete = commentDao.get(commentId);
-		if(toDelete == null)
-			throw new NotFoundException("Comment with id=" + commentId + " is not exists");
-		
+		if (toDelete == null) {
+			throw new NotFoundException("Comment with id=" + commentId
+					+ " is not exists");
+		}
+
 		commentDao.delete(commentId);
 	}
-	
+
+	public List<Comment> list(Long eventId) {
+		return list(eventId, null);
+	}
+
 	public List<Comment> list(Long eventId, Long guestId) {
-		
 		Event event = eventDao.get(eventId);
-		if(event == null)
-			throw new NotFoundException("Event with id=" + eventId + " does not exist");
-		
-		if(EventVisibility.PRIVATE.equals(event.getVisibility()) && !isAllowed(eventId, guestId))
+		if (event == null) {
+			throw new NotFoundException("Event with id=" + eventId
+					+ " does not exist");
+		}
+
+		if (EventVisibility.PRIVATE.equals(event.getVisibility())
+				&& !isAllowed(eventId, guestId)) {
 			throw new ForbiddenException("Not allowed");
-			
-		return commentDao.list();
+		}
+
+		return commentDao.list(eventId, guestId);
 	}
-	
-	public Comment get(Long id){
+
+	public Comment get(Long id) {
 		Comment comment = commentDao.get(id);
-		if(comment == null)
-			throw new NotFoundException("Comment with id=" + id + " does not exist");
-		else
+		if (comment == null) {
+			throw new NotFoundException("Comment with id=" + id
+					+ " does not exist");
+		} else {
 			return comment;
+		}
 	}
-	
-	boolean isAllowed(Long eventId, Long guestId){
+
+	boolean isAllowed(Long eventId, Long guestId) {
 		Device device = authContextService.get().getDevice();
-		if (DeviceLevel.SUPER.equals(device.getLevel()))
+		if (DeviceLevel.SUPER.equals(device.getLevel())) {
 			return true;
-		
+		}
+
 		Guest guest = guestDao.get(eventId + "_" + guestId);
 		if (guest != null && GuestType.HOST.equals(guest.getType())) {
 			return true;
 		}
 		return false;
-	}
-	
-//	private Long getGuestIdForEvent(Long eventId){
-//		Device device = authContextService.get().getDevice();
-//		
-//		List<GuestDevice> guestDeviceList = guestDao.listByProperty("deviceId", device.getDeviceId());
-//		
-//		for(GuestDevice gd : guestDeviceList){
-//			Guest guest = guestDao.get(eventId + "_" + gd.getGuestId());
-//			if(guest != null && guest.getEventId().equals(eventId)){
-//				return guest.getGuestId();
-//			}
-//		}
-//		return null;
-//	}
-	
-	private String validate(Comment comment){
-		
-		return "";
 	}
 
 }

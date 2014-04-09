@@ -3,7 +3,7 @@
 		<a href="#/about">It's On In</a>
 	</h2>
 </div>
-<div ng-switch on="isKnownLocation">
+<div ng-switch on="isKnownLocation()">
 	<div class="alert alert-danger" ng-switch-when="false">Location not yet active</div>
 	<div ng-switch-when="true">
 		<div class="row">
@@ -24,76 +24,79 @@
 					</div>
 				</div>
 			</div>
-		</div><div class="row">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<div class="toolbar">
-					<ul>
-						<li ng-class="{true:'active',false:''}[allEvents == false]">
-							<a href="" ng-click="toggleEventsFilter()">
-								<span class="glyphicon glyphicon-th-list"></span>
-								<span>{{ allEvents ? 'All events' : 'My events' }}</span>
-							</a>
-						</li>
-						<li ng-class="{true:'active',false:''}[allDates == false]">
-							<a href="" ng-click="toggleDatesFilter()">
-								<span class="glyphicon glyphicon-calendar"></span>
-								<span>{{ allDates ? 'All dates' : 'Custom' }}</span>
-							</a>
-						</li>
-						<li ng-class="{true:'active',false:''}[allPlaces == false]">
-							<a href="" ng-click="togglePlacesFilter()">
-								<span class="glyphicon glyphicon-map-marker"></span>
-								<span>{{ allPlaces ? 'All places' : 'Custom' }}</span>
-							</a>
-						</li>
-						<li ng-class="{true:'active',false:''}[allCategories == false]">
-							<a href="" ng-click="toggleCategoriesFilter()">
-								<span class="glyphicon glyphicon-filter"></span>
-								<span>{{ allCategories ? 'All categories' : 'Selected' }}</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
 		</div>
-		<div class="panel panel-default" ng-show="!allDates">
-			<div class="panel-body">
-				Happening from
-				<input size="16" type="text" ng-model="filter.startTime" b-datetimepicker readonly class="form_datetime">
-			</div>
-		</div>
-		<div class="panel panel-default" ng-show="!allPlaces">
-			<div class="panel-body">
-				<!-- <google-places event="event"></google-places> -->
-				temporary disabled
-			</div>
-		</div>
-		<div class="panel panel-default" ng-show="!allCategories">
-			<div class="panel-body">
-				<div class="toolbar toolbar-event">
-					<ul class="eventType">
-						<li ng-repeat="eventType in eventTypes" ng-class="{true:'active',false:''}[filterContainsType(eventType.id) == true]">
-							<a href="" ng-click="toggleEventType(eventType.id)">
-								<span class="glyphicon glyphicon-{{eventType.img}}"></span>
-								<span>{{eventType.id}}</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="panel panel-default" ng-repeat="event in events">
-			<div class="panel-body">
-				<span class="glyphicon glyphicon-{{getEventImage(event.type)}} pull-left"></span>
-				<div class="fields pull-left">
-					<span class="field bold">{{event.startTime | date:'short'}}</span>
-					<span class="field bold">{{event.title}}</span>
-					<span class="field italic">{{event.locationTitle}}</span>
-					<span class="field">{{event.locationAddress}}</span>
-				</div>
-				<a ng-href="#/e/{{event.eventId}}" class="pull-right">View</a>
-			</div>
-		</div></div>
+        <div class="row">
+    		<div class="panel panel-default">
+    			<div class="panel-body">
+    				<div class="toolbar">
+    					<ul>
+    						<li ng-class="{true:'active',false:''}[filter.allEvents == false]">
+    							<a href="" ng-click="toggleEventsFilter()">
+    								<span class="glyphicon glyphicon-th-list"></span>
+    								<span>{{ filter.allEvents ? 'All events' : 'My events' }}</span>
+    							</a>
+    						</li>
+    						<li ng-class="{true:'active',false:''}[allDates == false]">
+    							<a href="" ng-click="toggleDatesFilter()">
+    								<span class="glyphicon glyphicon-calendar"></span>
+    								<span>{{ allDates ? 'All dates' : 'Custom' }}</span>
+    							</a>
+    						</li>
+    						<li ng-class="{true:'active',false:''}[allPlaces == false]">
+    							<a href="" ng-click="togglePlacesFilter()">
+    								<span class="glyphicon glyphicon-map-marker"></span>
+    								<span>{{ allPlaces ? 'All places' : 'Custom' }}</span>
+    							</a>
+    						</li>
+    						<li ng-class="{true:'active',false:''}[allCategories == false]">
+    							<a href="" ng-click="toggleCategoriesFilter()">
+    								<span class="glyphicon glyphicon-filter"></span>
+    								<span>{{ allCategories ? 'All categories' : 'Selected' }}</span>
+    							</a>
+    						</li>
+    					</ul>
+    				</div>
+    			</div>
+    		</div>
+            <pre>{{filter}}</pre>
+    		<div class="panel panel-default" ng-show="!allDates">
+    			<div class="panel-body">
+    				Happening from
+    				<input size="16" type="text" ng-model="filter.startTime" b-datetimepicker readonly class="form_datetime">
+    			</div>
+    		</div>
+    		<div class="panel panel-default" ng-show="!allPlaces">
+    			<div class="panel-body">
+    				<!-- <google-places event="event"></google-places> -->
+    				temporary disabled
+    			</div>
+    		</div>
+    		<div class="panel panel-default" ng-show="!allCategories">
+    			<div class="panel-body">
+    				<div class="toolbar toolbar-event">
+    					<ul class="eventType">
+    						<li ng-repeat="eventType in eventTypes" ng-class="{true:'active',false:''}[filterContainsType(eventType.id) == true]">
+    							<a href="" ng-click="toggleEventType(eventType.id)">
+    								<span class="glyphicon glyphicon-{{eventType.img}}"></span>
+    								<span>{{eventType.id}}</span>
+    							</a>
+    						</li>
+    					</ul>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="panel panel-default" ng-repeat="event in events">
+    			<div class="panel-body">
+    				<span class="glyphicon glyphicon-{{getEventImage(event.type)}} pull-left"></span>
+    				<div class="fields pull-left">
+    					<span class="field bold">{{event.startTime | date:'short'}}</span>
+    					<span class="field bold">{{event.title}}</span>
+    					<span class="field italic">{{event.locationTitle}}</span>
+    					<span class="field">{{event.locationAddress}}</span>
+    				</div>
+    				<a ng-href="#/e/{{event.eventId}}" class="pull-right">View</a>
+    			</div>
+    		</div>
+        </div>
 	</div>
 </div>

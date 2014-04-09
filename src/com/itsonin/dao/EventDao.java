@@ -8,7 +8,6 @@ import java.util.List;
 import com.googlecode.objectify.cmd.Query;
 import com.itsonin.entity.Event;
 import com.itsonin.enums.EventType;
-import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.ofy.ObjectifyGenericDao;
 
@@ -22,35 +21,42 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 		super(Event.class);
 	}
 	
-	public List<Event> list(Long deviceId, List<EventType> types, String name, 
+	public List<Event> list(List<EventType> types, String name, 
 			Date startTime, String comment, String sortField,	SortOrder sortOrder, 
 			Integer numberOfLevels, Integer offset, Integer limit) {
 		Query<Event> q = ofy().load().type(clazz);
 		
-		if(types != null && types.size() != 0)
+		if(types != null && types.size() != 0){
 			q = q.filter("type in", types);
-		
-		if(name != null)
-			q = q.filter("name >=", name).filter("name <=", name);
-		
-		if(startTime != null)
-			q = q.filter("startTime >", startTime);
-		
-		if(name != null)
-			q = q.filter("comment >=", comment).filter("comment <=", comment);
-		
-		if(sortOrder != null && sortField != null && !sortField.isEmpty()){
-			if(sortOrder.equals(SortOrder.ASC))
-				q.order(sortField);
-			else
-				q.order("-" + sortField);
 		}
 		
-		if(offset != null)
-			q.offset(offset);
+		if(name != null){
+			q = q.filter("name >=", name).filter("name <=", name);
+		}
 		
-		if(offset != null)
+		if(startTime != null){
+			q = q.filter("startTime >", startTime);
+		}
+		
+		if(name != null){
+			q = q.filter("comment >=", comment).filter("comment <=", comment);
+		}
+		
+		if(sortOrder != null && sortField != null && !sortField.isEmpty()){
+			if(sortOrder.equals(SortOrder.ASC)){
+				q = q.order(sortField);
+			}else{
+				q = q.order("-" + sortField);
+			}
+		}
+		
+		if(offset != null){
+			q.offset(offset);
+		}
+		
+		if(offset != null){
 			q.limit(limit);
+		}
 		
 //TODO: number of levels
 		return q.list();

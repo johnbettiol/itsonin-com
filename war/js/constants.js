@@ -16,8 +16,7 @@ angular.module('itsonin').constant('constants', {
     ],
     EVENT_VISIBILITIES: [
         {id: 'PUBLIC', img: 'gift'},
-    	{id: 'PRIVATE', img: 'picture'},
-    	{id: 'FRIENDSONLY', img: 'cutlery'}
+    	{id: 'PRIVATE', img: 'picture'}
     ],
     DATE_TYPES: [
          {id: 'EMPTY'}, 

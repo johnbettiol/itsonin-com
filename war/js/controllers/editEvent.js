@@ -13,11 +13,22 @@ angular.module('itsonin').controller('EditEventController',
 			  visibility: 'PUBLIC',
 			  flexibility: 'FIXED'
 	  };
+	  $scope.guest = {};
+	  
+	  $scope.$watch('event.startTime + event.endTime', function(newValue, oldValue) {
+	      if($scope.event.startTime && $scope.event.endTime){
+	          if($scope.event.startTime > $scope.event.endTime){
+	              var endTime = new Date($scope.event.startTime);
+	              endTime.setHours($scope.event.startTime.getHours() + 1);
+	              $scope.event.endTime = endTime;
+    	      }
+	      }
+	  });
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
 			  eventService.info($routeParams.eventId, function(response) {
-				  $scope.event = response;
+				  $scope.event = response.event;
 				  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
 						  $scope.event.sharability);
 				  $scope.visibilityImg = $scope.getImgById(constants.EVENT_VISIBILITIES,
@@ -43,6 +54,14 @@ angular.module('itsonin').controller('EditEventController',
 	  $scope.nextDateType = function() {
 		  var dateType = $scope.cycle(constants.DATE_TYPES, $scope.dateType);
 		  $scope.dateType = dateType.id;
+		  if($scope.dateType == 'NOW'){
+		      $scope.event.startTime = new Date();
+		  } else if ($scope.dateType == 'CUSTOM') {
+              var startTime = new Date();
+              startTime.setHours(startTime.getHours() + 1);
+              startTime.setMinutes(0);
+              $scope.event.startTime = startTime;
+		  }
 	  }
 	  
 	  $scope.nextLocationType = function() {
@@ -96,7 +115,7 @@ angular.module('itsonin').controller('EditEventController',
 	  }
 	  
 	  $scope.shareEvent = function () {
-		  eventService.create($scope.event, {name: 'nikolai'}, function(resp) {//TODO: where get the name ?
+		  eventService.create($scope.event, $scope.guest, function(resp) {
 			  $location.url('/e/' + resp.event.eventId + '/attend?hostId=' + resp.guest.guestId);
 		  });
 	  }

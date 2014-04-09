@@ -23,7 +23,7 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
 .run(['$rootScope', '$location', '$cookies', 
     function($rootScope, $location, $cookies) {
 	
-	$rootScope.location = 'dusseldorf'; //TODO: get location
+	$rootScope.location = 'Dusseldorf'; //TODO: get location
 
 	if (!$cookies.token){
 		$location.path('/welcome');

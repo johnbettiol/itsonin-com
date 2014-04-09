@@ -45,6 +45,10 @@
 	width: 20%;
 }
 
+.toolbar-share li {
+	width: 20%;
+}
+
 .panel .glyphicon {
 	font-size: 30px;
 	cursor: pointer;

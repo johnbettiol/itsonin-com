@@ -2,7 +2,6 @@ angular.module('itsonin').controller('ListController',
   ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
    function ($scope, $rootScope, $routeParams, eventService, constants) {
 	  
-	  $scope.isKnownLocation = ($rootScope.location == $routeParams.location);
 	  $scope.allEvents = true;
 	  $scope.allDates = true;
 	  $scope.allPlaces = true;
@@ -12,6 +11,16 @@ angular.module('itsonin').controller('ListController',
 	  $scope.filter = {
 		types: []
 	  };
+	  
+	  $scope.isKnownLocation = function () {
+	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf', 'Düsseldorf'];
+	      for(var i=0; i<knownLocations.length; i++){
+	          if($routeParams.location == knownLocations[i]){
+	              return true;
+	          }
+	      }
+	      return false;
+	  }
 
 	  $scope.$watch('filter.startTime', function(newValue, oldValue) {
 		  if(newValue && (newValue+'').length == 16 ){//TODO: fix
@@ -20,6 +29,11 @@ angular.module('itsonin').controller('ListController',
 	  });
 	  
 	  $scope.loadEvents = function () {
+	    if($scope.allEvents == true) {
+	        angular.extend($scope.filter, {allEvents: true});
+	    } else {
+	        angular.extend($scope.filter, {allEvents: false});
+	    }
 		eventService.list($scope.filter, function(response) {
 			  $scope.events = response;
 		},
@@ -45,8 +59,8 @@ angular.module('itsonin').controller('ListController',
 	  
 	  $scope.toggleEventsFilter = function() {
 		  $scope.resetFilter();
+          $scope.allEvents = !$scope.allEvents;
 		  $scope.loadEvents();
-		  $scope.allEvents = !$scope.allEvents;
 		  $scope.allDates = true;
 		  $scope.allPlaces = true;
 		  $scope.allCategories = true;

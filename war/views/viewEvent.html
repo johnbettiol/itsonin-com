@@ -10,22 +10,48 @@
 	</div>
 </div>
 <div ng-show="readyToShow == true">
-<div class="panel panel-default">
-	<div class="panel-body">
-		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>
-		<div class="fields pull-left">
-			<span class="field">{{event.startTime | date:'short'}}</span>
-			<span class="field">{{event.title}}</span>
-			<span class="field">{{event.locationTitle}}</span>
-			<span class="field">{{event.locationAddress}}</span>
-			<span class="field">{{event.description}}</span>
-			<span class="field">{{event.sharability}}</span>
-			<span class="field">{{event.visibility}}</span>
-		</div>
-	</div>
-</div>
-<div class="panel panel-default" ng-click="nextSharability()">
-	<div class="panel-body">
-		<span>comments ...</span>
-	</div>
+    <div class="panel panel-default">
+     	<div class="panel-body">
+       		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>
+       		<div class="fields pull-left">
+       			<span class="field">{{event.startTime | date:'short'}}</span>
+       			<span class="field">{{event.title}}</span>
+       			<span class="field">{{event.locationTitle}}</span>
+       			<span class="field">{{event.locationAddress}}</span>
+       			<span class="field">{{event.description}}</span>
+       			<span class="field">{{event.sharability}}</span>
+       			<span class="field">{{event.visibility}}</span>
+       		</div>
+       	</div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="toolbar toolbar-share">
+                <ul>
+                    <li><a href="" ng-click="shareLink()"><span class="glyphicon glyphicon-link"></span><span>Share link</span></a></li>
+                    <li><a href="" ng-click="shareByEmail()"><span class="glyphicon glyphicon-envelope"></span><span>Email</span></a></li>
+                    <li><a href=""><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
+                    <li><a href=""><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
+                    <li><a href=""><span class="glyphicon glyphicon-text-height"></span><span>Twitter</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" ng-repeat="guest in guests">
+    	<div class="panel-body">
+    	   <span class="glyphicon glyphicon-user pull-left"></span>
+    	   <div class="fields pull-left">
+    	       <span class="field">{{guest.name}}</span>
+    	   </div>
+    	</div>
+    </div>
+    <div class="panel panel-default" ng-repeat="comment in comments">
+    	<div class="panel-body">
+    	   <span class="glyphicon glyphicon-user pull-left"></span>
+    	   <div class="fields pull-left">
+    	       <span class="field bold">{{comment.created | date:'short'}}</span>
+               <span class="field">{{comment.comment}}</span>
+    	   </div>
+    	</div>
+    </div>
 </div>

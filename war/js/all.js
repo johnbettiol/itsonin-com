@@ -23,9 +23,11 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
 .run(['$rootScope', '$location', '$cookies', 
     function($rootScope, $location, $cookies) {
 	
-	$rootScope.location = 'dusseldorf'; //TODO: get location
+	$rootScope.location = 'Dusseldorf'; //TODO: get location
 
-	if($location.path() == '/' || $location.path() == ''){
+	if (!$cookies.token){
+		$location.path('/welcome');
+	} else if($location.path() == '/' || $location.path() == ''){
 		$location.path('/' + $rootScope.location);
 	}
 		
@@ -47,8 +49,7 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
     ],
     EVENT_VISIBILITIES: [
         {id: 'PUBLIC', img: 'gift'},
-    	{id: 'PRIVATE', img: 'picture'},
-    	{id: 'FRIENDSONLY', img: 'cutlery'}
+    	{id: 'PRIVATE', img: 'picture'}
     ],
     DATE_TYPES: [
          {id: 'EMPTY'}, 
@@ -59,22 +60,17 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
          {id: 'EMPTY'}, 
          {id: 'MAP'}
     ]
-});
-angular.module('itsonin').controller('AboutController',
+});angular.module('itsonin').controller('AboutController',
   ['$scope', function ($scope) {
 	  
 }]);
-angular.module('itsonin').controller('WelcomeController',
-  ['$scope', function ($scope) {
-  
-}]);
 angular.module('itsonin').controller('AttendEventController',
-	['$scope', '$routeParams', '$modal', 'eventService', 'views', '$q',
-	 function ($scope, $routeParams, $modal, eventService, views, $q) {
+	['$scope', '$routeParams', 'eventService', 'shareService',
+	 function ($scope, $routeParams, eventService, shareService) {
 
 		$scope.loadEvent = function () {
 			eventService.info($routeParams.eventId, function(response) {
-				$scope.event = response;
+				$scope.event = response.event;
 			},
 			function(error) {
 			});
@@ -82,31 +78,25 @@ angular.module('itsonin').controller('AttendEventController',
 
 		$scope.loadEvent();
 
-		$scope.shareLink = function () {
-		    var modalPromise = $modal({
-		        template: views.shareLink,
-		        persist: false,
-		        show: false,
-		        keyboard: true,
-		        data: {eventId: $routeParams.eventId, hostId: $routeParams.hostId}
-		    });
-
-		    $q.when(modalPromise).then(function(modalEl) {
-		        modalEl.modal('show');
-		    });
-		}
+	    $scope.shareLink = function () {
+	        shareService.shareLink($routeParams.eventId, $routeParams.hostId);
+	    }
+	    
+	    $scope.shareByEmail = function () {
+	        shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
+	    }
 }]);
 
 angular.module('itsonin').controller('AttendInvitationController',
-	['$scope', '$routeParams', '$modal', 'eventService', 'views', '$q',
-	 function ($scope, $routeParams, $modal, eventService, views, $q) {
+	['$scope', '$routeParams', 'eventService', 'shareService',
+	 function ($scope, $routeParams, eventService, shareService) {
 
 		$scope.eventId = $routeParams.invitationId.split('.')[0];
 		$scope.parentGuestId = $routeParams.invitationId.split('.')[1];
 		
 		$scope.loadEvent = function () {
 			eventService.info($scope.eventId, function(response) {
-				$scope.event = response;
+				$scope.event = response.event;
 			},
 			function(error) {
 			});
@@ -114,19 +104,13 @@ angular.module('itsonin').controller('AttendInvitationController',
 
 		$scope.loadEvent();
 
-		$scope.shareLink = function () {
-		    var modalPromise = $modal({
-		        template: views.shareLink,
-		        persist: false,
-		        show: false,
-		        keyboard: true,
-		        data: {}
-		    });
-
-		    $q.when(modalPromise).then(function(modalEl) {
-		        modalEl.modal('show');
-		    });
-		}
+        $scope.shareLink = function () {
+            shareService.shareLink($routeParams.eventId, $routeParams.hostId);
+        }
+        
+        $scope.shareByEmail = function () {
+            shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
+        }
 }]);
 angular.module('itsonin').controller('DeclineInvitationController',
 	['$scope', '$routeParams', 'eventService', function ($scope, $routeParams, eventService) {
@@ -136,7 +120,7 @@ angular.module('itsonin').controller('DeclineInvitationController',
 		
 		$scope.loadEvent = function () {
 			eventService.info($scope.eventId, function(response) {
-				$scope.event = response;
+				$scope.event = response.event;
 			},
 			function(error) {
 			});
@@ -160,11 +144,22 @@ angular.module('itsonin').controller('EditEventController',
 			  visibility: 'PUBLIC',
 			  flexibility: 'FIXED'
 	  };
+	  $scope.guest = {};
+	  
+	  $scope.$watch('event.startTime + event.endTime', function(newValue, oldValue) {
+	      if($scope.event.startTime && $scope.event.endTime){
+	          if($scope.event.startTime > $scope.event.endTime){
+	              var endTime = new Date($scope.event.startTime);
+	              endTime.setHours($scope.event.startTime.getHours() + 1);
+	              $scope.event.endTime = endTime;
+    	      }
+	      }
+	  });
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
 			  eventService.info($routeParams.eventId, function(response) {
-				  $scope.event = response;
+				  $scope.event = response.event;
 				  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
 						  $scope.event.sharability);
 				  $scope.visibilityImg = $scope.getImgById(constants.EVENT_VISIBILITIES,
@@ -190,6 +185,14 @@ angular.module('itsonin').controller('EditEventController',
 	  $scope.nextDateType = function() {
 		  var dateType = $scope.cycle(constants.DATE_TYPES, $scope.dateType);
 		  $scope.dateType = dateType.id;
+		  if($scope.dateType == 'NOW'){
+		      $scope.event.startTime = new Date();
+		  } else if ($scope.dateType == 'CUSTOM') {
+              var startTime = new Date();
+              startTime.setHours(startTime.getHours() + 1);
+              startTime.setMinutes(0);
+              $scope.event.startTime = startTime;
+		  }
 	  }
 	  
 	  $scope.nextLocationType = function() {
@@ -243,7 +246,7 @@ angular.module('itsonin').controller('EditEventController',
 	  }
 	  
 	  $scope.shareEvent = function () {
-		  eventService.create($scope.event, {name: 'nikolai'}, function(resp) {//TODO: where get the name ?
+		  eventService.create($scope.event, $scope.guest, function(resp) {
 			  $location.url('/e/' + resp.event.eventId + '/attend?hostId=' + resp.guest.guestId);
 		  });
 	  }
@@ -300,7 +303,6 @@ angular.module('itsonin').controller('ListController',
   ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
    function ($scope, $rootScope, $routeParams, eventService, constants) {
 	  
-	  $scope.isKnownLocation = ($rootScope.location == $routeParams.location);
 	  $scope.allEvents = true;
 	  $scope.allDates = true;
 	  $scope.allPlaces = true;
@@ -310,14 +312,29 @@ angular.module('itsonin').controller('ListController',
 	  $scope.filter = {
 		types: []
 	  };
+	  
+	  $scope.isKnownLocation = function () {
+	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf', 'Düsseldorf'];
+	      for(var i=0; i<knownLocations.length; i++){
+	          if($routeParams.location == knownLocations[i]){
+	              return true;
+	          }
+	      }
+	      return false;
+	  }
 
 	  $scope.$watch('filter.startTime', function(newValue, oldValue) {
-		  if(newValue && (newValue+'').length == 16 ){
+		  if(newValue && (newValue+'').length == 16 ){//TODO: fix
 			  $scope.loadEvents();
 		  }
 	  });
 	  
 	  $scope.loadEvents = function () {
+	    if($scope.allEvents == true) {
+	        angular.extend($scope.filter, {allEvents: true});
+	    } else {
+	        angular.extend($scope.filter, {allEvents: false});
+	    }
 		eventService.list($scope.filter, function(response) {
 			  $scope.events = response;
 		},
@@ -343,8 +360,8 @@ angular.module('itsonin').controller('ListController',
 	  
 	  $scope.toggleEventsFilter = function() {
 		  $scope.resetFilter();
+          $scope.allEvents = !$scope.allEvents;
 		  $scope.loadEvents();
-		  $scope.allEvents = !$scope.allEvents;
 		  $scope.allDates = true;
 		  $scope.allPlaces = true;
 		  $scope.allCategories = true;
@@ -449,20 +466,29 @@ angular.module('itsonin').controller('MapController',
 			  zoom: 8
 	  };
 }]);
+angular.module('itsonin').controller('ShareByEmailController',
+  ['$scope', function ($scope) {
+
+      $scope.link = 'http://' + window.location.host + '/#/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
+
+}]);
 angular.module('itsonin').controller('ShareLinkController',
   ['$scope', function ($scope) {
 	  $scope.link = 'http://' + window.location.host + '/#/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
 	  //TODO: replace host
 }]);
 angular.module('itsonin').controller('ViewEventController',
-  ['$scope', '$routeParams', 'eventService', 'guestService', 
-   function ($scope, $routeParams, eventService, guestService) {
+  ['$scope', '$routeParams', 'eventService', 'guestService', 'commentService', 'shareService',
+   function ($scope, $routeParams, eventService, guestService, commentService, shareService) {
 
 	$scope.readyToShow = false;
+	$scope.event = {};
 
 	$scope.loadEvent = function () {
 		eventService.info($routeParams.eventId, function(response) {
-			$scope.event = response;
+			$scope.event = response.event;
+			$scope.guests = response.guests;
+			$scope.comments = response.comments;
 			$scope.readyToShow = true;
 		},
 		function(error) {
@@ -472,16 +498,17 @@ angular.module('itsonin').controller('ViewEventController',
 
 	$scope.loadEvent();
 	
-	$scope.createGuest = function () {
-		guestService.create($routeParams.eventId, 'GUEST', 'VIEWED', function(response) {
-
-		},
-		function(error) {
-
-		});
-	}
-
-	$scope.createGuest();
+	$scope.shareLink = function () {
+	    shareService.shareLink($routeParams.eventId, $routeParams.hostId);
+    }
+    
+    $scope.shareByEmail = function () {
+        shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
+    }
+	  
+}]);
+angular.module('itsonin').controller('WelcomeController',
+  ['$scope', function ($scope) {
 	  
 }]);
 angular.module('itsonin').directive('bDatepicker', function(){
@@ -552,9 +579,12 @@ angular.module('itsonin').directive('bDatepicker', function(){
 	['$http', '$q', '$rootScope', '$cacheFactory', function($http, $q, $rootScope, $cacheFactory) {
 
 	return {
-		create: function(eventId, comment, success, error) {
-			$http.post('/api/event/' + eventId + '/comment/create', comment).success(success).error(error);
-		}
+	    create: function(eventId, comment, success, error) {
+	        $http.post('/api/event/' + eventId + '/comment/create', comment).success(success).error(error);
+	    },
+	    list: function(eventId, success, error) {
+	        $http.post('/api/event/' + eventId + '/comment/list').success(success).error(error);
+	    }
 	};
 }]);
 angular.module('itsonin').factory('eventService',
@@ -585,10 +615,13 @@ angular.module('itsonin').factory('guestService',
 	['$http', function($http) {
 
 	return {
-		create: function(eventId, type, status, success, error) {
-			$http.post('/api/event/' + eventId + '/guest/create', {status: status, type: type})
-			.success(success).error(error);
-		}
+	    create: function(eventId, type, status, success, error) {
+	        $http.post('/api/event/' + eventId + '/guest/create', {status: status, type: type})
+	        .success(success).error(error);
+	    },
+	    list: function(eventId, success, error) {
+	        $http.get('api/event/' + eventId + '/guest/list').success(success).error(error);
+	    }
 	};
 }]);
 angular.module('itsonin').factory('interceptor',
@@ -702,7 +735,39 @@ angular.module('itsonin').factory('$modal',
 	      return new Modal(config);
 	    };
 	    return ModalFactory;
-}]);angular.module('itsonin').constant('views', {
+}]);angular.module('itsonin').factory('shareService',
+	['$q', '$modal', 'views', function($q, $modal, views) {
+
+	return {
+		shareLink: function (eventId, hostId) {
+	        var modalPromise = $modal({
+	            template: views.shareLink,
+	            persist: false,
+	            show: false,
+	            keyboard: true,
+	            data: {eventId: eventId, hostId: hostId}
+	        });
+
+	        $q.when(modalPromise).then(function(modalEl) {
+	            modalEl.modal('show');
+	        });
+	    },
+	    shareByEmail: function (eventId, hostId) {
+	        var modalPromise = $modal({
+	            template: views.shareByEmail,
+	            persist: false,
+	            show: false,
+	            keyboard: true,
+	            data: {eventId: eventId, hostId: hostId}
+	        });
+
+	        $q.when(modalPromise).then(function(modalEl) {
+	            modalEl.modal('show');
+	        });
+	    }
+	};
+}]);
+angular.module('itsonin').constant('views', {
     list: 'views/list.html?v=1',
     viewEvent: 'views/viewEvent.html?v=1',
     editEvent: 'views/editEvent.html?v=1',
@@ -711,8 +776,9 @@ angular.module('itsonin').factory('$modal',
     attendInvitation: 'views/attendInvitation.html?v=1',
     declineInvitation: 'views/declineInvitation.html?v=1',
     about: 'views/about.html?v=1',
-    welcome: 'views/welcome.html?v=1',
+    welcome: 'views/welcome.html?v=1',    
     me: 'views/me.html?v=1',
     shareLink: 'views/modals/shareLink.html?v=1',
+    shareByEmail: 'views/modals/shareByEmail.html?v=1',
     map: 'views/modals/map.html?v=1'
 });
