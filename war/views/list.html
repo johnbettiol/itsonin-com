@@ -1,6 +1,6 @@
 <div class="row text-center">
 	<h2>
-		<a href="#/about">It's On In</a>
+		<a href="/about">It's On In</a>
 	</h2>
 </div>
 <div ng-switch on="isKnownLocation()">
@@ -18,7 +18,7 @@
 						</span>
 					</div>
 					<div style="display: table-cell;padding-left:5px">
-						<a href="#/e/add" class="btn btn-default pull-right">
+						<a href="/e/add" class="btn btn-default pull-right">
 							<span class="glyphicon glyphicon-plus"></span>
 						</a>
 					</div>
@@ -30,16 +30,16 @@
     			<div class="panel-body">
     				<div class="toolbar">
     					<ul>
-    						<li ng-class="{true:'active',false:''}[filter.allEvents == false]">
+    						<li ng-class="{true:'active',false:''}[allEvents == false]">
     							<a href="" ng-click="toggleEventsFilter()">
     								<span class="glyphicon glyphicon-th-list"></span>
-    								<span>{{ filter.allEvents ? 'All events' : 'My events' }}</span>
+    								<span>{{ allEvents ? 'All events' : 'My events' }}</span>
     							</a>
     						</li>
-    						<li ng-class="{true:'active',false:''}[allDates == false]">
-    							<a href="" ng-click="toggleDatesFilter()">
+    						<li ng-class="{true:'active',false:''}[dateFilterState != 0]">
+    							<a href="" ng-click="toggleDateFilter()">
     								<span class="glyphicon glyphicon-calendar"></span>
-    								<span>{{ allDates ? 'All dates' : 'Custom' }}</span>
+    								<span>{{ dateFilterText[dateFilterState] }}</span>
     							</a>
     						</li>
     						<li ng-class="{true:'active',false:''}[allPlaces == false]">
@@ -59,10 +59,11 @@
     			</div>
     		</div>
             <pre>{{filter}}</pre>
-    		<div class="panel panel-default" ng-show="!allDates">
+    		<div class="panel panel-default" ng-show="dateFilterState==1">
     			<div class="panel-body">
     				Happening from
     				<input size="16" type="text" ng-model="filter.startTime" b-datetimepicker readonly class="form_datetime">
+    				{{startTime}}
     			</div>
     		</div>
     		<div class="panel panel-default" ng-show="!allPlaces">
@@ -94,7 +95,7 @@
     					<span class="field italic">{{event.locationTitle}}</span>
     					<span class="field">{{event.locationAddress}}</span>
     				</div>
-    				<a ng-href="#/e/{{event.eventId}}" class="pull-right">View</a>
+    				<a ng-href="/e/{{event.eventId}}" class="pull-right">View</a>
     			</div>
     		</div>
         </div>

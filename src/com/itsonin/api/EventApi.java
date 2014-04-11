@@ -1,7 +1,6 @@
 package com.itsonin.api;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,17 +16,13 @@ import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
 import com.itsonin.dto.EventWithGuest;
-import com.itsonin.entity.Comment;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.EventType;
-import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
 import com.itsonin.resteasy.CustomDateFormat;
-import com.itsonin.service.CommentService;
 import com.itsonin.service.EventService;
-import com.itsonin.service.GuestService;
 
 /**
  * @author nkislitsin
@@ -37,15 +32,10 @@ import com.itsonin.service.GuestService;
 public class EventApi {
 
 	private EventService eventService;
-	private GuestService guestService;
-	private CommentService commentService;
 
 	@Inject
-	public EventApi(EventService eventService, GuestService guestService,
-			CommentService commentService) {
+	public EventApi(EventService eventService) {
 		this.eventService = eventService;
-		this.guestService = guestService;
-		this.commentService = commentService;
 	}
 
 	@POST
@@ -71,16 +61,7 @@ public class EventApi {
 	@Path("/event/{eventId}/info")
 	@Produces("application/json")
 	public Map<String, Object> info(@PathParam("eventId") Long eventId) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		Event event = eventService.get(eventId);
-		List<Guest> guest = guestService.listByEvent(eventId,
-				GuestStatus.ATTENDING);
-		List<Comment> comments = commentService.list(eventId);
-
-		result.put("event", event);
-		result.put("guests", guest);
-		result.put("comments", comments);
-		return result;
+		return eventService.info(eventId);
 	}
 
 	@GET
@@ -98,13 +79,14 @@ public class EventApi {
 			@QueryParam("types") List<EventType> types,
 			@QueryParam("name") String name,
 			@QueryParam("startTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date startTime,
+			@QueryParam("endTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date endTime,
 			@QueryParam("comment") String comment,
 			@QueryParam("sortField") String sortField,
 			@QueryParam("sortOrder") SortOrder sortOrder,
 			@QueryParam("numberOfLevels") Integer numberOfLevels,
 			@QueryParam("offset") Integer offset,
 			@QueryParam("limit") Integer limit) {
-		return eventService.list(allEvents, types, name, startTime, comment,
+		return eventService.list(allEvents, types, name, startTime, endTime, comment,
 				sortField, sortOrder, numberOfLevels, offset, limit);
 	}
 

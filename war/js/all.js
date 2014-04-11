@@ -1,5 +1,5 @@
-angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
-.config(['$routeProvider', 'views', function($routeProvider, views) {
+angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
+.config(['$routeProvider', 'views', '$locationProvider', function($routeProvider, views, $locationProvider) {
   $routeProvider
   	  .when('/', {templateUrl: views.list, controller: 'ListController'})
       .when('/e/add', {templateUrl: views.editEvent, controller: 'EditEventController'})
@@ -14,20 +14,30 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
       .when('/me', {templateUrl: views.me, controller: 'MeController'})
       .when('/:location', {templateUrl: views.list, controller: 'ListController'})
       .otherwise({redirectTo: '/:location'});
+  
+  	  $locationProvider.html5Mode(true);
 }])
 
 .config(['$httpProvider', function($httpProvider) {
 	$httpProvider.interceptors.push('interceptor'); 
 }])
 
-.run(['$rootScope', '$location', '$cookies', 
+.run(['$rootScope', '$location', '$cookies',
     function($rootScope, $location, $cookies) {
-	
-	$rootScope.location = 'Dusseldorf'; //TODO: get location
+
+	$rootScope.location = 'Düsseldorf'; //TODO: get location
+
+	$rootScope.$on("$routeChangeStart", function (event, next, current) {
+		if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
+			|| $location.path() == '/Dusseldorf'){
+			$location.path('/' + $rootScope.location);
+		}
+	});
 
 	if (!$cookies.token){
 		$location.path('/welcome');
-	} else if($location.path() == '/' || $location.path() == ''){
+	} else if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
+		|| $location.path() == '/Dusseldorf'){
 		$location.path('/' + $rootScope.location);
 	}
 		
@@ -40,7 +50,9 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
         {id: 'DINNER', img: 'cutlery', background: ''},
         {id: 'PARTY', img: 'glass', background: ''},
         {id: 'RALLY', img: 'road', background: ''},
-        {id: 'EXCERCISE', img: 'book', background: ''}
+        {id: 'EXCERCISE', img: 'book', background: ''},
+        {id: 'FLASHMOB', img: 'bullhorn', background: ''},
+        {id: 'PROTEST', img: 'fire', background: ''}
     ],
     EVENT_SHARABILITIES: [
         {id: 'NOSHARE', img: 'picture'},
@@ -141,17 +153,17 @@ angular.module('itsonin').controller('EditEventController',
 	  $scope.event = {
 			  status: 'ACTIVE',
 			  sharability: 'NORMAL',
-			  visibility: 'PUBLIC',
+			  visibility: 'PRIVATE',
 			  flexibility: 'FIXED'
 	  };
 	  $scope.guest = {};
 	  
 	  $scope.$watch('event.startTime + event.endTime', function(newValue, oldValue) {
-	      if($scope.event.startTime && $scope.event.endTime){
+	      if($scope.event.startTime instanceof Date && $scope.event.endTime instanceof Date){
 	          if($scope.event.startTime > $scope.event.endTime){
-	              var endTime = new Date($scope.event.startTime);
-	              endTime.setHours($scope.event.startTime.getHours() + 1);
-	              $scope.event.endTime = endTime;
+	              //var endTime = new Date($scope.event.startTime);
+	              //endTime.setHours($scope.event.startTime.getHours() + 1);
+	              $scope.event.endTime = moment($scope.event.startTime).clone().add('hours', 1).toDate();
     	      }
 	      }
 	  });
@@ -303,8 +315,9 @@ angular.module('itsonin').controller('ListController',
   ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
    function ($scope, $rootScope, $routeParams, eventService, constants) {
 	  
+	  $scope.dateFilterState = 0;
+	  $scope.dateFilterText = ["All dates", "Custom", "Now"];
 	  $scope.allEvents = true;
-	  $scope.allDates = true;
 	  $scope.allPlaces = true;
 	  $scope.allCategories = true;
 	  $scope.eventTypes = constants.EVENT_TYPES;
@@ -314,7 +327,7 @@ angular.module('itsonin').controller('ListController',
 	  };
 	  
 	  $scope.isKnownLocation = function () {
-	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf', 'Düsseldorf'];
+	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf'];
 	      for(var i=0; i<knownLocations.length; i++){
 	          if($routeParams.location == knownLocations[i]){
 	              return true;
@@ -324,18 +337,29 @@ angular.module('itsonin').controller('ListController',
 	  }
 
 	  $scope.$watch('filter.startTime', function(newValue, oldValue) {
-		  if(newValue && (newValue+'').length == 16 ){//TODO: fix
+		  if(newValue && newValue instanceof Date && $scope.dateFilterState == 1){
 			  $scope.loadEvents();
 		  }
 	  });
 	  
 	  $scope.loadEvents = function () {
-	    if($scope.allEvents == true) {
-	        angular.extend($scope.filter, {allEvents: true});
-	    } else {
-	        angular.extend($scope.filter, {allEvents: false});
+		$scope.events = [];
+	    var params = {
+			allEvents: ($scope.allEvents == true)?true:false,
+			types: $scope.filter.types
 	    }
-		eventService.list($scope.filter, function(response) {
+	    
+	    console.log($scope.filter.startTime);
+	    
+	    if($scope.filter.startTime){
+	    	params.startTime = moment($scope.filter.startTime).format('YYYY-MM-DD HH:mm');
+	    }
+	    
+	    if($scope.filter.endTime){
+	    	params.endTime = moment($scope.filter.endTime).format('YYYY-MM-DD HH:mm');
+	    }
+	    
+		eventService.list(params, function(response) {
 			  $scope.events = response;
 		},
 		function(error) {
@@ -359,39 +383,41 @@ angular.module('itsonin').controller('ListController',
 	  $scope.eventImages = $scope.getEventImages();
 	  
 	  $scope.toggleEventsFilter = function() {
-		  $scope.resetFilter();
           $scope.allEvents = !$scope.allEvents;
-		  $scope.loadEvents();
-		  $scope.allDates = true;
-		  $scope.allPlaces = true;
-		  $scope.allCategories = true;
+       	  $scope.loadEvents();
 	  }
 	  
-	  $scope.toggleDatesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
-		  $scope.allDates = !$scope.allDates;
-		  $scope.allEvents = true;
-		  $scope.allPlaces = true;
-		  $scope.allCategories = true;
+	  $scope.toggleDateFilter = function(){
+		  $scope.dateFilterState = ($scope.dateFilterState + 1) % $scope.dateFilterText.length;
+		  
+		  switch($scope.dateFilterState) {
+			  case 0: {
+				  delete $scope.filter.startTime;
+				  delete $scope.filter.endTime;
+				  $scope.loadEvents();
+				  break;
+			  }case 2: {
+				  $scope.filter.startTime = new Date();
+				  $scope.filter.endTime = new Date();
+				  $scope.loadEvents();
+				  break; 
+			  }
+		  }
 	  }
 	  
 	  $scope.togglePlacesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
 		  $scope.allPlaces = !$scope.allPlaces;
-		  $scope.allDates = true;
-		  $scope.allEvents = true;
-		  $scope.allCategories = true;
+		  if($scope.allPlaces == true){
+			  $scope.loadEvents();
+		  }
 	  }
 	  
 	  $scope.toggleCategoriesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
 		  $scope.allCategories = !$scope.allCategories;
-		  $scope.allDates = true;
-		  $scope.allPlaces = true;
-		  $scope.allEvents = true;
+		  if($scope.allCategories == true){
+			  $scope.filter.types = [];
+			  $scope.loadEvents();
+		  }
 	  }
 	  
 	  $scope.toggleEventType = function(type) {
@@ -419,12 +445,6 @@ angular.module('itsonin').controller('ListController',
 			  }
 		  });
 		  return exist >= 0;
-	  }
-	  
-	  $scope.resetFilter = function() {
-		  $scope.filter = {
-			types: []
-		  };
 	  }
 	  
 }]);
@@ -469,12 +489,12 @@ angular.module('itsonin').controller('MapController',
 angular.module('itsonin').controller('ShareByEmailController',
   ['$scope', function ($scope) {
 
-      $scope.link = 'http://' + window.location.host + '/#/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
+      $scope.link = 'http://' + window.location.host + '/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
 
 }]);
 angular.module('itsonin').controller('ShareLinkController',
   ['$scope', function ($scope) {
-	  $scope.link = 'http://' + window.location.host + '/#/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
+	  $scope.link = 'http://' + window.location.host + '/i/' + $scope.data.eventId + '.' + $scope.data.hostId;
 	  //TODO: replace host
 }]);
 angular.module('itsonin').controller('ViewEventController',
@@ -489,6 +509,7 @@ angular.module('itsonin').controller('ViewEventController',
 			$scope.event = response.event;
 			$scope.guests = response.guests;
 			$scope.comments = response.comments;
+			$scope.viewonly = response.viewonly;
 			$scope.readyToShow = true;
 		},
 		function(error) {
@@ -534,30 +555,116 @@ angular.module('itsonin').directive('bDatepicker', function(){
 	    }
 	  };
 });angular.module('itsonin').directive('bDatetimepicker', function(){
-	  return {
-	    require: '?ngModel',
-	    link: function(scope, element, attrs, controller) {
-	      var updateModel = function(ev) {
-	        scope.$apply(function() {
-	            controller.$setViewValue(new Date(ev.date.valueOf()));
-	            element.datetimepicker('hide');
-	            element.blur();
-	          });
-	      };
-	      if (controller != null) {
-	        controller.$render = function() {
-	          element.datetimepicker().initialDate = controller.$viewValue;
-	          element.datetimepicker({autoclose: true}).on('changeDate', updateModel);
-	          if(controller.$viewValue){
-	        	  element.datetimepicker('update', new Date(controller.$viewValue));
-	          }
-	          return controller.$viewValue;
-	        };
-	      }/*else {
-	    	  element.datetimepicker({autoclose: true}).on('changeDate', updateModel);
-	      }*/
-	    }
-	  };
+	return {
+		require: '?ngModel',
+		link: function(scope, element, attrs, controller) {
+			if(!controller) return;
+			
+			controller.$render = function() {
+				element.datetimepicker({autoclose: true}).on('changeDate', function(ev){
+					scope.$apply(function() {
+						controller.$setViewValue(
+								new Date(ev.date.getTime() + (ev.date.getTimezoneOffset() * 60000)));
+					});
+				});
+		        if(controller.$viewValue){
+		          element.datetimepicker('update', new Date(controller.$viewValue));
+		        }
+				return controller.$viewValue;
+			}
+		}
+	};
+});angular.module('itsonin').directive('googleMap', function(){
+	return {
+		restrict: 'E',
+		template: '<input id="pac-input" class="controls map-input" type="text">'+
+		'<div id="map-canvas" style="height: 400px;"></div>',
+		link: function($scope, element, attrs){
+			var markers = [];
+			
+			var center = new google.maps.LatLng(50.1, 14.4);
+			
+			var map = new google.maps.Map(document.getElementById('map-canvas'), 
+					{mapTypeId: google.maps.MapTypeId.ROADMAP, zoom: 8});
+			
+			var geocoder = new google.maps.Geocoder();
+
+			var defaultBounds = new google.maps.LatLngBounds(
+				      new google.maps.LatLng(51.230501, 6.762852),
+				      new google.maps.LatLng(51.840701, 6.762852));
+				  map.fitBounds(defaultBounds);
+
+			/*
+            var map_options = {
+                center: center
+            };
+            var map = new google.maps.Map(document.getElementById('map-canvas'), map_options);*/
+				  
+			var input = document.getElementById('pac-input');
+			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+			var searchBox = new google.maps.places.SearchBox(input);
+
+			// Listen for the event fired when the user selects an item from the
+			// pick list. Retrieve the matching places for that item.
+			google.maps.event.addListener(searchBox, 'places_changed', function() {
+				var places = searchBox.getPlaces();
+
+				for (var i = 0, marker; marker = markers[i]; i++) {
+					marker.setMap(null);
+				}
+
+				// For each place, get the icon, place name, and location.
+				markers = [];
+				var bounds = new google.maps.LatLngBounds();
+				for (var i = 0, place; place = places[i]; i++) {
+
+					// Create a marker for each place.
+					var marker = new google.maps.Marker({
+						map: map,
+						title: place.name,
+						position: place.geometry.location,
+						draggable: true
+					});
+					
+					google.maps.event.addListener(marker, 'click', function (mouseEvent) {
+						console.log(marker.getPosition().lat())
+						//latitude: gMapMarker.getPosition().lat(),
+						//	longitude: gMapMarker.getPosition().lng(),
+						var pos = mouseEvent.latLng;
+
+						/*
+						scope.$apply(function (){
+							scope.mapMarkers = [marker];
+						});*/
+					});
+					
+					google.maps.event.addListener(marker, 'dragend', function() {
+						geocoder.geocode({
+						    latLng: marker.getPosition()
+						  }, function(responses) {
+						    if (responses && responses.length > 0) {
+						      console.log(responses[0].formatted_address);
+						    } else {
+						      console.log('Cannot determine address at this location.');
+						    }
+						  });
+					  });
+
+					markers.push(marker);
+
+					bounds.extend(place.geometry.location);
+				}
+
+				map.fitBounds(bounds);
+			});
+			
+			google.maps.event.addListener(map, 'bounds_changed', function() {
+				var bounds = map.getBounds();
+				searchBox.setBounds(bounds);
+			});
+		}
+	}
 });angular.module('itsonin').directive('googlePlaces', function(){
 	return {
 		restrict:'E',

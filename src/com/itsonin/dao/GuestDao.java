@@ -57,15 +57,11 @@ public class GuestDao extends ObjectifyGenericDao<Guest> {
 		return q.list();
 	}
 
-	public Long getHostGuestForEvent(Long eventId) {
+	public Guest getHostGuestForEvent(Long eventId) {
 		Guest guest = ofy().load().type(Guest.class).filter("eventId", eventId)
 				.filter("type", GuestType.HOST).first().now();
 
-		if (guest == null) {
-			return null;
-		} else {
-			return guest.getGuestId();
-		}
+		return guest;
 	}
 
 	public Guest getGuestForEvent(Long eventId, Long deviceId) {

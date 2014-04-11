@@ -5,10 +5,11 @@
       <h4 class="modal-title">Share by email</h4>
     </div>
     <div class="modal-body">
-      <input type="text" class="form-control" ng-model="email">
+    	<label>Email</label>
+    	<input type="text" class="form-control" ng-model="email">
     </div>
     <div class="modal-footer">
-        <a ng-href="mailto:{{email}}?subject=Invitation&amp;body={{link}}" class="btn btn-primary">Share</a>
+        <a ng-href="mailto:{{email}}?subject=Invitation&amp;body={{link}}" class="btn btn-primary">Send</a>
 		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	</div>
   </div>

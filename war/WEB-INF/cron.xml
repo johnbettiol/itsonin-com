@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+<!-- TODO: enable
+	<cron>
+		<url>/tasks/deleteCompletedEvents</url>
+		<description>delete completed events</description>
+		<schedule>every day 00:00</schedule>
+	</cron>
+ -->
+</cronentries>

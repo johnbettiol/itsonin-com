@@ -7,7 +7,9 @@ angular.module('itsonin').constant('constants', {
         {id: 'DINNER', img: 'cutlery', background: ''},
         {id: 'PARTY', img: 'glass', background: ''},
         {id: 'RALLY', img: 'road', background: ''},
-        {id: 'EXCERCISE', img: 'book', background: ''}
+        {id: 'EXCERCISE', img: 'book', background: ''},
+        {id: 'FLASHMOB', img: 'bullhorn', background: ''},
+        {id: 'PROTEST', img: 'fire', background: ''}
     ],
     EVENT_SHARABILITIES: [
         {id: 'NOSHARE', img: 'picture'},

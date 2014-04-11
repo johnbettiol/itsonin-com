@@ -1,15 +1,15 @@
-<div class="text-center event-title">
-	<span>{{event.title}}</span>
-	<div>
-		<a ng-href="#/{{location}}" class="btn btn-default btn-big"> 
-			<span class="glyphicon glyphicon-home"></span>
-		</a> 
-		<a ng-href="#/e/{{event.eventId}}/edit" class="btn btn-default btn-big"> 
-			<span class="glyphicon glyphicon-pencil"></span>
-		</a>
-	</div>
-</div>
 <div ng-show="readyToShow == true">
+	<div class="text-center event-title">
+		<span>{{event.title}}</span>
+		<div>
+			<a ng-href="/{{location}}" class="btn btn-default btn-big"> 
+				<span class="glyphicon glyphicon-home"></span>
+			</a> 
+			<a ng-href="/e/{{event.eventId}}/edit" class="btn btn-default btn-big" ng-show="viewonly == false"> 
+				<span class="glyphicon glyphicon-pencil"></span>
+			</a>
+		</div>
+	</div>
     <div class="panel panel-default">
      	<div class="panel-body">
        		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>

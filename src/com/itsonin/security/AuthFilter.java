@@ -11,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -46,6 +45,12 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) servletRequest;
 		HttpServletResponse res = (HttpServletResponse) servletResponse;
+		
+		if (!"/".equals(req.getRequestURI()) && !req.getRequestURI().startsWith("/api") &&
+			!req.getRequestURI().startsWith("/tasks") &&!req.getRequestURI().startsWith("/_ah")) {			
+			req.getRequestDispatcher("/index.jsp").forward(req, res);
+			return;
+		}else{
 
 			Device device = null;
 			String token = CookieUtils.getCookieValue(TOKEN_COOKIE, req);
@@ -60,11 +65,12 @@ public class AuthFilter implements Filter {
 				CookieUtils.setCookie(TOKEN_COOKIE, device.getToken(), res);
 				if (servletRequest instanceof HttpServletRequest) {
 					if ("/".equals(req.getRequestURI())) {
-						res.sendRedirect("/#/welcome");
+						res.sendRedirect("/welcome");
 					}
 				}
 			}
 			authContextService.set(new AuthContext(device));
+		}
 		filterChain.doFilter(servletRequest, servletResponse);
 	}
 

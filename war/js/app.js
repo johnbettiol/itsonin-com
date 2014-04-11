@@ -1,5 +1,5 @@
-angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
-.config(['$routeProvider', 'views', function($routeProvider, views) {
+angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
+.config(['$routeProvider', 'views', '$locationProvider', function($routeProvider, views, $locationProvider) {
   $routeProvider
   	  .when('/', {templateUrl: views.list, controller: 'ListController'})
       .when('/e/add', {templateUrl: views.editEvent, controller: 'EditEventController'})
@@ -14,20 +14,30 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies', 'google-maps'])
       .when('/me', {templateUrl: views.me, controller: 'MeController'})
       .when('/:location', {templateUrl: views.list, controller: 'ListController'})
       .otherwise({redirectTo: '/:location'});
+  
+  	  $locationProvider.html5Mode(true);
 }])
 
 .config(['$httpProvider', function($httpProvider) {
 	$httpProvider.interceptors.push('interceptor'); 
 }])
 
-.run(['$rootScope', '$location', '$cookies', 
+.run(['$rootScope', '$location', '$cookies',
     function($rootScope, $location, $cookies) {
-	
-	$rootScope.location = 'Dusseldorf'; //TODO: get location
+
+	$rootScope.location = 'Düsseldorf'; //TODO: get location
+
+	$rootScope.$on("$routeChangeStart", function (event, next, current) {
+		if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
+			|| $location.path() == '/Dusseldorf'){
+			$location.path('/' + $rootScope.location);
+		}
+	});
 
 	if (!$cookies.token){
 		$location.path('/welcome');
-	} else if($location.path() == '/' || $location.path() == ''){
+	} else if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
+		|| $location.path() == '/Dusseldorf'){
 		$location.path('/' + $rootScope.location);
 	}
 		

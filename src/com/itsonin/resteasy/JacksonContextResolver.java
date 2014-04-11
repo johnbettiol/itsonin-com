@@ -1,5 +1,7 @@
 package com.itsonin.resteasy;
 
+import java.text.SimpleDateFormat;
+
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
@@ -22,6 +24,7 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
 	public JacksonContextResolver() {
     	objectMapper = new ObjectMapper();
+    	objectMapper.setDateFormat(new SimpleDateFormat(CustomDateTimeSerializer.ITSONIN_DATES));  
     	objectMapper.setSerializationInclusion(Include.NON_NULL);
     	objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     	objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);

@@ -1,4 +1,9 @@
 <div ng-show="readyToShow == true">
+	<div class="row text-center">
+		<h2>
+			<a href="/about">It's On In</a>
+		</h2>
+	</div>
 	<div class="row">
 		<div class="col-lg-8 search-panel">
 			<input type="text" class="form-control" ng-model="event.title" placeholder="Your event name">
@@ -32,13 +37,6 @@
 					<span ng-show="dateType == 'EMPTY'">Happening sometime</span>
 					<span ng-show="dateType == 'NOW'">Happening NOW</span>
 					<div ng-show="dateType == 'CUSTOM'">
-						<!-- <input type="text" b-datepicker ng-model="event.startTime" data-date-format="dd-mm-yyyy">
-						
-						<div class="input-daterange input-group" ng-model="event.startTime" b-datepicker>
-						    <input type="text" class="input-sm form-control" ng-model="event.startTime"/>
-						    <span class="input-group-addon">to</span>
-						    <input type="text" class="input-sm form-control" ng-model="event.endTime" />
-						</div>-->
 						<input size="16" type="text" ng-model="event.startTime" b-datetimepicker readonly class="form_datetime">
 						<span>to</span>
 						<input size="16" type="text" ng-model="event.endTime" b-datetimepicker readonly class="form_datetime">
@@ -60,16 +58,21 @@
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<span class="glyphicon glyphicon-{{sharabilityImg}} pull-left" ng-click="nextSharability()"></span>
 				<span class="glyphicon glyphicon-{{visibilityImg}} pull-right" ng-click="nextVisibility()"></span>
+				<span class="glyphicon glyphicon-{{sharabilityImg}} pull-left" ng-click="nextSharability()"></span>
 			</div>
 		</div>
 		<pre>{{event}}</pre>
-		<a href="" class="btn btn-default pull-right" ng-click="shareEvent()" ng-hide="event.eventId">
-			<span class="glyphicon glyphicon-share"></span><br>Share event
-		</a>
-		<a href="" class="btn btn-default pull-right" ng-click="updateEvent()" ng-show="event.eventId">
-			<span class="glyphicon glyphicon-save"></span><br>Save event
-		</a>
+		<div class="btn-group pull-right">
+			<a ng-href="/{{location}}" class="btn btn-default">
+				<span class="glyphicon glyphicon-arrow-left"></span><br>Cancel
+			</a>
+			<a href="" class="btn btn-default" ng-click="shareEvent()" ng-hide="event.eventId">
+				<span class="glyphicon glyphicon-share"></span><br>Share event
+			</a>
+			<a href="" class="btn btn-default" ng-click="updateEvent()" ng-show="event.eventId">
+				<span class="glyphicon glyphicon-save"></span><br>Save event
+			</a>
+		</div>
 	</div>
 </div>

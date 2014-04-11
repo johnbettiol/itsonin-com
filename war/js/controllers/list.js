@@ -2,8 +2,9 @@ angular.module('itsonin').controller('ListController',
   ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
    function ($scope, $rootScope, $routeParams, eventService, constants) {
 	  
+	  $scope.dateFilterState = 0;
+	  $scope.dateFilterText = ["All dates", "Custom", "Now"];
 	  $scope.allEvents = true;
-	  $scope.allDates = true;
 	  $scope.allPlaces = true;
 	  $scope.allCategories = true;
 	  $scope.eventTypes = constants.EVENT_TYPES;
@@ -13,7 +14,7 @@ angular.module('itsonin').controller('ListController',
 	  };
 	  
 	  $scope.isKnownLocation = function () {
-	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf', 'Düsseldorf'];
+	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf'];
 	      for(var i=0; i<knownLocations.length; i++){
 	          if($routeParams.location == knownLocations[i]){
 	              return true;
@@ -23,18 +24,29 @@ angular.module('itsonin').controller('ListController',
 	  }
 
 	  $scope.$watch('filter.startTime', function(newValue, oldValue) {
-		  if(newValue && (newValue+'').length == 16 ){//TODO: fix
+		  if(newValue && newValue instanceof Date && $scope.dateFilterState == 1){
 			  $scope.loadEvents();
 		  }
 	  });
 	  
 	  $scope.loadEvents = function () {
-	    if($scope.allEvents == true) {
-	        angular.extend($scope.filter, {allEvents: true});
-	    } else {
-	        angular.extend($scope.filter, {allEvents: false});
+		$scope.events = [];
+	    var params = {
+			allEvents: ($scope.allEvents == true)?true:false,
+			types: $scope.filter.types
 	    }
-		eventService.list($scope.filter, function(response) {
+	    
+	    console.log($scope.filter.startTime);
+	    
+	    if($scope.filter.startTime){
+	    	params.startTime = moment($scope.filter.startTime).format('YYYY-MM-DD HH:mm');
+	    }
+	    
+	    if($scope.filter.endTime){
+	    	params.endTime = moment($scope.filter.endTime).format('YYYY-MM-DD HH:mm');
+	    }
+	    
+		eventService.list(params, function(response) {
 			  $scope.events = response;
 		},
 		function(error) {
@@ -58,39 +70,41 @@ angular.module('itsonin').controller('ListController',
 	  $scope.eventImages = $scope.getEventImages();
 	  
 	  $scope.toggleEventsFilter = function() {
-		  $scope.resetFilter();
           $scope.allEvents = !$scope.allEvents;
-		  $scope.loadEvents();
-		  $scope.allDates = true;
-		  $scope.allPlaces = true;
-		  $scope.allCategories = true;
+       	  $scope.loadEvents();
 	  }
 	  
-	  $scope.toggleDatesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
-		  $scope.allDates = !$scope.allDates;
-		  $scope.allEvents = true;
-		  $scope.allPlaces = true;
-		  $scope.allCategories = true;
+	  $scope.toggleDateFilter = function(){
+		  $scope.dateFilterState = ($scope.dateFilterState + 1) % $scope.dateFilterText.length;
+		  
+		  switch($scope.dateFilterState) {
+			  case 0: {
+				  delete $scope.filter.startTime;
+				  delete $scope.filter.endTime;
+				  $scope.loadEvents();
+				  break;
+			  }case 2: {
+				  $scope.filter.startTime = new Date();
+				  $scope.filter.endTime = new Date();
+				  $scope.loadEvents();
+				  break; 
+			  }
+		  }
 	  }
 	  
 	  $scope.togglePlacesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
 		  $scope.allPlaces = !$scope.allPlaces;
-		  $scope.allDates = true;
-		  $scope.allEvents = true;
-		  $scope.allCategories = true;
+		  if($scope.allPlaces == true){
+			  $scope.loadEvents();
+		  }
 	  }
 	  
 	  $scope.toggleCategoriesFilter = function() {
-		  $scope.resetFilter();
-		  $scope.loadEvents();
 		  $scope.allCategories = !$scope.allCategories;
-		  $scope.allDates = true;
-		  $scope.allPlaces = true;
-		  $scope.allEvents = true;
+		  if($scope.allCategories == true){
+			  $scope.filter.types = [];
+			  $scope.loadEvents();
+		  }
 	  }
 	  
 	  $scope.toggleEventType = function(type) {
@@ -118,12 +132,6 @@ angular.module('itsonin').controller('ListController',
 			  }
 		  });
 		  return exist >= 0;
-	  }
-	  
-	  $scope.resetFilter = function() {
-		  $scope.filter = {
-			types: []
-		  };
 	  }
 	  
 }]);

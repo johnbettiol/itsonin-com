@@ -10,6 +10,7 @@ angular.module('itsonin').controller('ViewEventController',
 			$scope.event = response.event;
 			$scope.guests = response.guests;
 			$scope.comments = response.comments;
+			$scope.viewonly = response.viewonly;
 			$scope.readyToShow = true;
 		},
 		function(error) {

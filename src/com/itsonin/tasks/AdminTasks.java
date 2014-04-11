@@ -1,6 +1,8 @@
 package com.itsonin.tasks;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -8,13 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
-import com.itsonin.entity.Event;
-import com.itsonin.entity.Guest;
-import com.itsonin.enums.EventFlexibility;
-import com.itsonin.enums.EventSharability;
-import com.itsonin.enums.EventStatus;
-import com.itsonin.enums.EventType;
-import com.itsonin.enums.EventVisibility;
 import com.itsonin.service.EventService;
 
 /**
@@ -23,6 +18,7 @@ import com.itsonin.service.EventService;
  */
 @Path("/tasks")
 public class AdminTasks {
+	private static final Logger log = Logger.getLogger(AdminTasks.class.getName());
 	
 	private EventService eventService;
 	
@@ -32,18 +28,17 @@ public class AdminTasks {
 	}
 	
 	@GET
-	@Path("/initdb")
+	@Path("/deleteCompletedEvents")
 	@Produces("application/json")
-	public Response initdb() {
+	public Response deleteCompletedEvents() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.DAY_OF_MONTH, -2);
 		
-		Event event = new Event(EventType.PICNIC, EventSharability.NORMAL, EventVisibility.PUBLIC, 
-				EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, "event title", "event description", 
-				"event notes", new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
-        		"location address", new Date());
-		Guest guest = new Guest("Guest name");
-		eventService.create(event, guest);
+		eventService.deleteCompletedEvents(cal.getTime());
 		
-		return Response.ok().entity("Datastore initialized successfully").build();
+		log.info("Old events deleted successfully");
+		return Response.ok().build();
 	}
 
 }

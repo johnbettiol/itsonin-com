@@ -10,17 +10,17 @@ angular.module('itsonin').controller('EditEventController',
 	  $scope.event = {
 			  status: 'ACTIVE',
 			  sharability: 'NORMAL',
-			  visibility: 'PUBLIC',
+			  visibility: 'PRIVATE',
 			  flexibility: 'FIXED'
 	  };
 	  $scope.guest = {};
 	  
 	  $scope.$watch('event.startTime + event.endTime', function(newValue, oldValue) {
-	      if($scope.event.startTime && $scope.event.endTime){
+	      if($scope.event.startTime instanceof Date && $scope.event.endTime instanceof Date){
 	          if($scope.event.startTime > $scope.event.endTime){
-	              var endTime = new Date($scope.event.startTime);
-	              endTime.setHours($scope.event.startTime.getHours() + 1);
-	              $scope.event.endTime = endTime;
+	              //var endTime = new Date($scope.event.startTime);
+	              //endTime.setHours($scope.event.startTime.getHours() + 1);
+	              $scope.event.endTime = moment($scope.event.startTime).clone().add('hours', 1).toDate();
     	      }
 	      }
 	  });

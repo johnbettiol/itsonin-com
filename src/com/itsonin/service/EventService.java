@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.inject.Inject;
 import com.googlecode.objectify.Key;
+import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.CounterDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
+import com.itsonin.entity.Comment;
 import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
@@ -34,14 +38,16 @@ public class EventService {
 
 	private EventDao eventDao;
 	private GuestDao guestDao;
+	private CommentDao commentDao;
 	private CounterDao counterDao;
 	private AuthContextService authContextService;
 
 	@Inject
-	public EventService(EventDao eventDao, GuestDao guestDao,
+	public EventService(EventDao eventDao, GuestDao guestDao, CommentDao commentDao,
 			CounterDao counterDao, AuthContextService authContextService) {
 		this.eventDao = eventDao;
 		this.guestDao = guestDao;
+		this.commentDao = commentDao;
 		this.counterDao = counterDao;
 		this.authContextService = authContextService;
 	}
@@ -67,7 +73,7 @@ public class EventService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("event", event);
 		result.put("guest", guest);
-		result.put("shareUrl", HOST + "/#/i/" + event.getEventId() + '.'
+		result.put("shareUrl", HOST + "/i/" + event.getEventId() + '.'
 				+ guest.getGuestId());
 		return result;
 	}
@@ -120,6 +126,22 @@ public class EventService {
 						: GuestStatus.PENDING);
 		return event;
 	}
+	
+	public Map<String, Object> info(Long eventId){
+		Device device = authContextService.getDevice();
+		Map<String, Object> result = new HashMap<String, Object>();
+		Event event = get(eventId);
+		List<Guest> guests = guestDao.listByEvent(eventId,
+				GuestStatus.ATTENDING);
+		List<Comment> comments = commentDao.list(eventId, null);
+		Guest host = guestDao.getHostGuestForEvent(eventId);
+
+		result.put("event", event);
+		result.put("guests", guests);
+		result.put("comments", comments);
+		result.put("viewonly", !device.getDeviceId().equals(host.getDeviceId()));
+		return result;
+	}
 
 	public Guest attend(Long eventId) {
 		return storeGuestEntry(eventId, GuestStatus.ATTENDING);
@@ -136,7 +158,7 @@ public class EventService {
 			guest = new Guest(device.getDeviceId(),
 					counterDao.nextGuestId(eventId), eventId, null,
 					GuestType.GUEST, guestStatus, new Date());
-			guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId));
+			guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId).getGuestId());
 			Key<Guest> guestKey = guestDao.save(guest);
 			guest = guestDao.get(guestKey);
 		} else {
@@ -150,11 +172,11 @@ public class EventService {
 	}
 
 	public List<Event> list(Boolean allEvents, List<EventType> types,
-			String name, Date startTime, String comment, String sortField,
+			String name, Date startTime, Date endTime, String comment, String sortField,
 			SortOrder sortOrder, Integer numberOfLevels, Integer offset,
 			Integer limit) {
 		Device device = authContextService.getDevice();
-		List<Event> eventList = eventDao.list(types, name, startTime, comment,
+		List<Event> eventList = eventDao.list(types, name, startTime, endTime, comment,
 				sortField, sortOrder, numberOfLevels, offset, limit);
 		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
 		List<Event> filteredList = new ArrayList<Event>();
@@ -216,6 +238,50 @@ public class EventService {
 			return true;
 
 		return false;
+	}
+	
+    public String validate(Event event, Guest guest) {
+    	List<String> errors = new ArrayList<String>();
+    	if(event.getTitle() == null || StringUtils.isBlank(event.getTitle())){
+    		errors.add("Event name is required");
+    	}
+    	if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
+    		errors.add("Guest name is required");
+    	}
+    	if(event.getType() == null){
+    		errors.add("Event type is required");
+    	}
+    	if (!errors.isEmpty()) {
+    		return StringUtils.join(errors, ", ");
+    	}else{
+    		return null;
+    	}
+    }
+	
+	public void deleteCompletedEvents(Date date){
+		List<Event> events = eventDao.listByProperty("endTime <", date);
+		List<Guest> guests = new ArrayList<Guest>();
+		List<Comment> comments = new ArrayList<Comment>();
+		for(Event event : events){
+			List<Guest> eventGuests = guestDao.listByProperty("eventId", event.getEventId());
+			if(eventGuests.size() > 0){
+				guests.addAll(eventGuests);
+			}
+			List<Comment> eventComments = commentDao.listByProperty("eventId", event.getEventId());
+			if(eventComments.size() > 0){
+				comments.addAll(eventComments);
+			}
+		}
+		
+		if(events.size() > 0) {
+			eventDao.delete(events);
+		}
+		if(guests.size() > 0) {
+			guestDao.delete(guests);
+		}
+		if(comments.size() > 0) {
+			commentDao.delete(comments);
+		}
 	}
 
 }
