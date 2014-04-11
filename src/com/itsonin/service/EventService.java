@@ -25,6 +25,7 @@ import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
 import com.itsonin.enums.SortOrder;
+import com.itsonin.exception.BadRequestException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.security.AuthContextService;
 
@@ -53,6 +54,11 @@ public class EventService {
 	}
 
 	public Map<String, Object> create(Event event, Guest guest) {
+		String error = validate(event, guest);
+		if(error != null){
+			throw new BadRequestException(String.format("Error saving event: %s", error));
+		}
+		
 		Device device = authContextService.getDevice();
 
 		event.setEventId(counterDao.nextEventId());

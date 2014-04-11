@@ -5,11 +5,14 @@
 		</h2>
 	</div>
 	<div class="row">
-		<div class="col-lg-8 search-panel">
-			<input type="text" class="form-control" ng-model="event.title" placeholder="Your event name">
-		</div>
-	</div>
-	<div class="row">
+	    <div class="panel panel-default">
+            <div class="panel-body">
+                <label>Your name</label>
+                <input type="text" class="form-control" ng-model="guest.name">
+                <label>Event title</label>
+                <input type="text" class="form-control" ng-model="event.title">
+            </div>
+        </div>
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="toolbar toolbar-event">
@@ -24,12 +27,6 @@
 				</div>
 			</div>
 		</div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h5>Your name</h5>
-                <input type="text" class="form-control" ng-model="guest.name">
-            </div>
-        </div>
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<span class="glyphicon glyphicon-calendar pull-left" ng-click="nextDateType()"></span>
@@ -63,6 +60,9 @@
 			</div>
 		</div>
 		<pre>{{event}}</pre>
+		<div class="alert alert-danger" ng-show="error">
+			{{error}}
+		</div>
 		<div class="btn-group pull-right">
 			<a ng-href="/{{location}}" class="btn btn-default">
 				<span class="glyphicon glyphicon-arrow-left"></span><br>Cancel

@@ -260,6 +260,13 @@ angular.module('itsonin').controller('EditEventController',
 	  $scope.shareEvent = function () {
 		  eventService.create($scope.event, $scope.guest, function(resp) {
 			  $location.url('/e/' + resp.event.eventId + '/attend?hostId=' + resp.guest.guestId);
+		  },
+		  function(error) {
+			  if(error.status == 'error') {
+				  $scope.error = error.message;
+			  }else{
+				  $scope.error = 'Unknown server error. Please try again.';
+			  }
 		  });
 	  }
 	  

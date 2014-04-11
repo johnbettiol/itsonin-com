@@ -10,6 +10,7 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
+import com.itsonin.exception.mappers.BadRequestExceptionMapper;
 import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
@@ -40,6 +41,7 @@ public class AppModule extends AbstractModule {
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);
 		bind(UnauthorizedExceptionMapper.class);
+		bind(BadRequestExceptionMapper.class);
 		
 		bind(CommentDao.class).in(Singleton.class);
 		bind(DeviceDao.class).in(Singleton.class);
