@@ -1,7 +1,7 @@
 <div ng-show="readyToShow == true">
 	<div class="row text-center">
 		<h2>
-			<a href="/about">It's On In</a>
+			<a ng-href="/{{location}}">It's On In</a>
 		</h2>
 	</div>
 	<div class="text-center event-title">
@@ -30,8 +30,8 @@
 				<ul>
 					<li><a href="" ng-click="shareLink()"><span class="glyphicon glyphicon-link"></span><span>Share link</span></a></li>
 					<li><a href="" ng-click="shareByEmail()"><span class="glyphicon glyphicon-envelope"></span><span>Email</span></a></li>
-					<li><a href=""><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
-					<li><a href=""><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
+					<li><a ng-href="" ng-click="getFacebookUrl()"><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
+					<li><a ng-href="" ng-click="getGooglePlusUrl()"><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
 				</ul>
 			</div>
 		</div>

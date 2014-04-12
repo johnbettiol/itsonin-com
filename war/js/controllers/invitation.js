@@ -48,5 +48,15 @@ angular.module('itsonin').controller('InvitationController',
     $scope.shareByEmail = function () {
         shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
     }
+    
+    $scope.getGooglePlusUrl = function() {
+    	var url = 'https://plus.google.com/share?url=' + $location.host() + $location.path();
+    	window.open(url, 'Share', 'width=400,height=400,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    }
+    
+    $scope.getFacebookUrl = function() {
+    	var url = 'https://www.facebook.com/sharer/sharer.php?u=' + $location.host() + $location.path();
+    	window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    }
 		  
 }]);

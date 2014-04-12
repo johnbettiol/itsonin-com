@@ -337,6 +337,16 @@ angular.module('itsonin').controller('InvitationController',
     $scope.shareByEmail = function () {
         shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
     }
+    
+    $scope.getGooglePlusUrl = function() {
+    	var url = 'https://plus.google.com/share?url=' + $location.host() + $location.path();
+    	window.open(url, 'Share', 'width=400,height=400,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    }
+    
+    $scope.getFacebookUrl = function() {
+    	var url = 'https://www.facebook.com/sharer/sharer.php?u=' + $location.host() + $location.path();
+    	window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    }
 		  
 }]);
 angular.module('itsonin').controller('ListController',
@@ -419,18 +429,22 @@ angular.module('itsonin').controller('ListController',
 		  $scope.dateFilterState = ($scope.dateFilterState + 1) % $scope.dateFilterText.length;
 		  
 		  switch($scope.dateFilterState) {
-			  case 0: {
+			  case 0: {//all
 				  delete $scope.filter.startTime;
 				  delete $scope.filter.endTime;
 				  $scope.loadEvents();
 				  break;
-			  }case 2: {
+			  } case 2: {//now
 				  $scope.filter.startTime = new Date();
 				  $scope.filter.endTime = new Date();
 				  $scope.loadEvents();
 				  break; 
-			  }case 4: {
-				  
+			  } case 3: {//tomorrow
+				  $scope.filter.startTime = moment().add('days', 1)
+				  	.set('hour', 0).set('minute', 0).set('second', 0);
+				  $scope.filter.endTime = moment().add('days', 1)
+				  	.set('hour', 23).set('minute', 59).set('second', 59);
+				  $scope.loadEvents();
 			  }
 		  }
 	  }
@@ -727,7 +741,52 @@ angular.module('itsonin').directive('bDatepicker', function(){
 			});
 		}
 	}
-});angular.module('itsonin').factory('commentService',
+});angular.module('itsonin').directive('GooglePlus', ['$parse', function($parse) {
+    'use strict';
+
+    var options = {
+        counter: {
+            url: '{proxy}?url={url}&type=google-plus&callback=JSON_CALLBACK',
+            getNumber: function(data) {
+                return data.count;
+            }
+        },
+        popup: {
+            url: 'https://plus.google.com/share?url={url}',
+            width: 700,
+            height: 500
+        },
+        track: {
+            'name': 'Google+',
+            'action': 'share'
+        }
+    };
+    return {
+        restrict: 'C',
+        require: '^?ngSocialButtons',
+        scope: true,
+        replace: true,
+        transclude: true,
+        template: '<li> \
+                    <a ng-href="{{ctrl.link(options)}}" target="_blank" ng-click="ctrl.clickShare($event, options)" class="ng-social-button"> \
+                        <span class="ng-social-icon"></span> \
+                        <span class="ng-social-text" ng-transclude></span> \
+                    </a> \
+                    <span ng-show="count" class="ng-social-counter">{{ count }}</span> \
+                   </li>',
+        link: function(scope, element, attrs, ctrl) {
+            element.addClass('ng-social-google-plus');
+            if (!ctrl) {
+                return;
+            }
+            var proxyUrl = $parse(attrs.proxyUrl)(scope) || '/proxy.php';
+            options.counter.url = options.counter.url.replace('{proxy}', proxyUrl);
+            scope.options = options;
+            scope.ctrl = ctrl;
+            ctrl.init(scope, element, options);
+        }
+    };
+}]);angular.module('itsonin').factory('commentService',
 	['$http', '$q', '$rootScope', '$cacheFactory', function($http, $q, $rootScope, $cacheFactory) {
 
 	return {

@@ -78,18 +78,22 @@ angular.module('itsonin').controller('ListController',
 		  $scope.dateFilterState = ($scope.dateFilterState + 1) % $scope.dateFilterText.length;
 		  
 		  switch($scope.dateFilterState) {
-			  case 0: {
+			  case 0: {//all
 				  delete $scope.filter.startTime;
 				  delete $scope.filter.endTime;
 				  $scope.loadEvents();
 				  break;
-			  }case 2: {
+			  } case 2: {//now
 				  $scope.filter.startTime = new Date();
 				  $scope.filter.endTime = new Date();
 				  $scope.loadEvents();
 				  break; 
-			  }case 4: {
-				  
+			  } case 3: {//tomorrow
+				  $scope.filter.startTime = moment().add('days', 1)
+				  	.set('hour', 0).set('minute', 0).set('second', 0);
+				  $scope.filter.endTime = moment().add('days', 1)
+				  	.set('hour', 23).set('minute', 59).set('second', 59);
+				  $scope.loadEvents();
 			  }
 		  }
 	  }
