@@ -14,6 +14,7 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.CounterDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
+import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Comment;
 import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
@@ -124,53 +125,59 @@ public class EventService {
 		eventDao.save(toUpdate);
 	}
 
-	public Event get(Long eventId) {
+	public EventWithGuest get(Long eventId) {
 		Event event = eventDao.get(eventId);
-		storeGuestEntry(
-				eventId,
+		Guest guest = storeGuestEntry(eventId, null,
 				event.getVisibility() == EventVisibility.PUBLIC ? GuestStatus.VIEWED
 						: GuestStatus.PENDING);
-		return event;
+		return new EventWithGuest(event, guest);
 	}
 	
 	public Map<String, Object> info(Long eventId){
 		Device device = authContextService.getDevice();
 		Map<String, Object> result = new HashMap<String, Object>();
-		Event event = get(eventId);
+		EventWithGuest eventWithGuest = get(eventId);
+		//Event event = get(eventId);
 		List<Guest> guests = guestDao.listByEvent(eventId,
 				GuestStatus.ATTENDING);
 		List<Comment> comments = commentDao.list(eventId, null);
 		Guest host = guestDao.getHostGuestForEvent(eventId);
 
-		result.put("event", event);
+		result.put("event", eventWithGuest.getEvent());
+		result.put("guest", eventWithGuest.getGuest());
 		result.put("guests", guests);
 		result.put("comments", comments);
 		result.put("viewonly", !device.getDeviceId().equals(host.getDeviceId()));
 		return result;
 	}
 
-	public Guest attend(Long eventId) {
-		return storeGuestEntry(eventId, GuestStatus.ATTENDING);
+	public Guest attend(Long eventId, String guestName) {
+		if(StringUtils.isEmpty(guestName)){
+			throw new BadRequestException("Guest name is required");
+		}
+		return storeGuestEntry(eventId, guestName, GuestStatus.ATTENDING);
 	}
 
-	public Guest decline(Long eventId) {
-		return storeGuestEntry(eventId, GuestStatus.DECLINED);
+	public Guest decline(Long eventId, String guestName) {
+		return storeGuestEntry(eventId, guestName, GuestStatus.DECLINED);
 	}
 
-	private Guest storeGuestEntry(Long eventId, GuestStatus guestStatus) {
+	private Guest storeGuestEntry(Long eventId, String guestName, GuestStatus guestStatus) {
 		Device device = authContextService.getDevice();
 		Guest guest = guestDao.getGuestForEvent(eventId, device.getDeviceId());
+
 		if (guest == null) {
 			guest = new Guest(device.getDeviceId(),
-					counterDao.nextGuestId(eventId), eventId, null,
+					counterDao.nextGuestId(eventId), eventId, guestName,
 					GuestType.GUEST, guestStatus, new Date());
 			guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId).getGuestId());
 			Key<Guest> guestKey = guestDao.save(guest);
 			guest = guestDao.get(guestKey);
 		} else {
-			if (!guestStatus.equals(guest.getStatus())
+			if (!guestStatus.equals(guest.getStatus()) && guestStatus != GuestStatus.VIEWED
 					&& guest.getType() != GuestType.HOST) {
 				guest.setStatus(guestStatus);
+				guest.setName(guestName);
 				guestDao.save(guest);
 			}
 		}

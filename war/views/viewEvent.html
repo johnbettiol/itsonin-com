@@ -1,4 +1,9 @@
 <div ng-show="readyToShow == true">
+	<div class="row text-center">
+		<h2>
+			<a href="/about">It's On In</a>
+		</h2>
+	</div>
 	<div class="text-center event-title">
 		<span>{{event.title}}</span>
 		<div>
@@ -24,19 +29,6 @@
        		</div>
        	</div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="toolbar toolbar-share">
-                <ul>
-                    <li><a href="" ng-click="shareLink()"><span class="glyphicon glyphicon-link"></span><span>Share link</span></a></li>
-                    <li><a href="" ng-click="shareByEmail()"><span class="glyphicon glyphicon-envelope"></span><span>Email</span></a></li>
-                    <li><a href=""><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
-                    <li><a href=""><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
-                    <li><a href=""><span class="glyphicon glyphicon-text-height"></span><span>Twitter</span></a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
     <div class="panel panel-default" ng-repeat="guest in guests">
     	<div class="panel-body">
     	   <span class="glyphicon glyphicon-user pull-left"></span>
@@ -54,4 +46,21 @@
     	   </div>
     	</div>
     </div>
+    <div class="panel panel-default">
+		<div class="panel-body">
+			<label>Your name</label>
+			<input type="text" class="form-control" ng-model="guest.name">
+		</div>
+	</div>
+    <div class="alert alert-success" ng-show="success">{{success}}</div>
+    <div class="alert alert-danger" ng-show="error">{{error}}</div>
+    <div class="btn-group pull-right">
+    	<a href="" class="btn btn-default" ng-click="declineEvent()" ng-show="viewonly == true && guest.status=='ATTENDING'">
+			<span class="glyphicon glyphicon-remove"></span><br>Decline
+		</a>
+		<a href="" class="btn btn-default" ng-click="attendEvent()" 
+			ng-show="viewonly == true && (guest.status=='VIEWED' || guest.status=='DECLINED')">
+			<span class="glyphicon glyphicon-share"></span><br>Attend
+		</a>
+	</div>
 </div>

@@ -12,13 +12,15 @@ angular.module('itsonin').factory('eventService',
 			$http.put('/api/event/' + event.eventId + '/update', event).success(success).error(error);
 		},
 		info: function(eventId, success, error) {
-			$http.get('/api/event/' + eventId + '/info', event).success(success).error(error);
+			$http.get('/api/event/' + eventId + '/info').success(success).error(error);
 		},
-		attend: function(eventId, success, error) {
-			$http.get('/api/event/' + eventId + '/attend', event).success(success).error(error);
+		attend: function(eventId, guestName, success, error) {
+			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
+				.success(success).error(error);
 		},
-		decline: function(eventId, success, error) {
-			$http.get('/api/event/' + eventId + '/decline', event).success(success).error(error);
+		decline: function(eventId, guestName, success, error) {
+			$http.get('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
+				.success(success).error(error);
 		}
 	};
 }]);

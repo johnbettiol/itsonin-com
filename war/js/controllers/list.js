@@ -3,7 +3,7 @@ angular.module('itsonin').controller('ListController',
    function ($scope, $rootScope, $routeParams, eventService, constants) {
 	  
 	  $scope.dateFilterState = 0;
-	  $scope.dateFilterText = ["All dates", "Custom", "Now"];
+	  $scope.dateFilterText = ["All dates", "Custom", "Now", "Tomorrow"];
 	  $scope.allEvents = true;
 	  $scope.allPlaces = true;
 	  $scope.allCategories = true;
@@ -88,6 +88,8 @@ angular.module('itsonin').controller('ListController',
 				  $scope.filter.endTime = new Date();
 				  $scope.loadEvents();
 				  break; 
+			  }case 4: {
+				  
 			  }
 		  }
 	  }

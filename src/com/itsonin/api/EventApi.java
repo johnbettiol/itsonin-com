@@ -65,10 +65,10 @@ public class EventApi {
 	}
 
 	@GET
-	@Path("/event/{eventId}/attend")
+	@Path("/event/{eventId}/attend/{guestName}")
 	@Produces("application/json")
-	public Guest attend(@PathParam("eventId") Long eventId) {
-		return eventService.attend(eventId);
+	public Guest attend(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
+		return eventService.attend(eventId, guestName);
 	}
 
 	@GET
@@ -109,10 +109,10 @@ public class EventApi {
 	}
 
 	@GET
-	@Path("/event/{eventId}/decline")
+	@Path("/event/{eventId}/decline/{guestName}")
 	@Produces("application/json")
-	public Response decline(@PathParam("eventId") Long eventId) {
-		eventService.decline(eventId);
+	public Response decline(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
+		eventService.decline(eventId, guestName);
 		return Response.ok()
 				.entity(new SuccessResponse("Event declined successfully"))
 				.build();

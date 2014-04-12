@@ -1,7 +1,8 @@
 angular.module('itsonin').directive('googleMap', function(){
 	return {
 		restrict: 'E',
-		template: '<input id="pac-input" class="controls map-input" type="text">'+
+		scope: {place:'='},
+		template: '<input id="pac-input" class="form-control" style="margin-bottom:5px" type="text">'+
 		'<div id="map-canvas" style="height: 400px;"></div>',
 		link: function($scope, element, attrs){
 			var markers = [];
@@ -17,15 +18,9 @@ angular.module('itsonin').directive('googleMap', function(){
 				      new google.maps.LatLng(51.230501, 6.762852),
 				      new google.maps.LatLng(51.840701, 6.762852));
 				  map.fitBounds(defaultBounds);
-
-			/*
-            var map_options = {
-                center: center
-            };
-            var map = new google.maps.Map(document.getElementById('map-canvas'), map_options);*/
 				  
 			var input = document.getElementById('pac-input');
-			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+			//map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
 			var searchBox = new google.maps.places.SearchBox(input);
 
@@ -42,6 +37,10 @@ angular.module('itsonin').directive('googleMap', function(){
 				markers = [];
 				var bounds = new google.maps.LatLngBounds();
 				for (var i = 0, place; place = places[i]; i++) {
+					
+					$scope.$apply(function (){
+						$scope.place = place;
+					});
 
 					// Create a marker for each place.
 					var marker = new google.maps.Marker({
@@ -52,15 +51,11 @@ angular.module('itsonin').directive('googleMap', function(){
 					});
 					
 					google.maps.event.addListener(marker, 'click', function (mouseEvent) {
-						console.log(marker.getPosition().lat())
+						//console.log(marker.getPosition().lat())
 						//latitude: gMapMarker.getPosition().lat(),
 						//	longitude: gMapMarker.getPosition().lng(),
 						var pos = mouseEvent.latLng;
 
-						/*
-						scope.$apply(function (){
-							scope.mapMarkers = [marker];
-						});*/
 					});
 					
 					google.maps.event.addListener(marker, 'dragend', function() {

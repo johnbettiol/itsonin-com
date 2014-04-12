@@ -1,10 +1,15 @@
 <div class="modal-dialog" ng-controller="MapController">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h4 class="modal-title">Map</h4>
-    </div>
-    <div class="modal-body">       
-      <google-map></google-map>
-  </div>
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">Map</h4>
+		</div>
+		<div class="modal-body">
+			<google-map place="place"></google-map>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-click="select()">Ok</button>
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		</div>
+	</div>
 </div>

@@ -1,10 +1,9 @@
-angular.module('itsonin').controller('MapController',
-  ['$scope', function ($scope) {
-	  $scope.map = {
-			  center: {
-				  latitude: 51.230501,
-				  longitude: 6.762852
-			  },
-			  zoom: 8
-	  };
+angular.module('itsonin').controller('MapController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+	$scope.place = {};
+	  
+	$scope.select = function(){
+		$rootScope.$broadcast('event:setLocation', $scope.place);
+		$scope.hide();
+	}
+	
 }]);

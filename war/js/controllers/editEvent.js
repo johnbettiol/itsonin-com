@@ -24,6 +24,12 @@ angular.module('itsonin').controller('EditEventController',
     	      }
 	      }
 	  });
+	  
+	  $rootScope.$on("event:setLocation", function (event, place) {
+			$scope.event['locationAddress'] = place.name;
+			$scope.event['gpsLat'] = place.geometry.location.lat();
+			$scope.event['gpsLong'] = place.geometry.location.lng();
+	  });
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
@@ -116,7 +122,7 @@ angular.module('itsonin').controller('EditEventController',
 	  
 	  $scope.shareEvent = function () {
 		  eventService.create($scope.event, $scope.guest, function(resp) {
-			  $location.url('/e/' + resp.event.eventId + '/attend?hostId=' + resp.guest.guestId);
+			  $location.path('/i/' + resp.event.eventId + '.' + resp.guest.guestId);
 		  },
 		  function(error) {
 			  if(error.status == 'error') {

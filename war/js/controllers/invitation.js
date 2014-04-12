@@ -1,24 +1,30 @@
 angular.module('itsonin').controller('InvitationController',
-  ['$scope', '$routeParams', '$location', 'eventService', 
-   function ($scope, $routeParams, $location, eventService) {
+  ['$scope', '$routeParams', '$location', 'eventService', 'shareService',
+   function ($scope, $routeParams, $location, eventService, shareService) {
 	  
-	$scope.eventId = $routeParams.invitationId.split('.')[0];
-	$scope.parentGuestId = $routeParams.invitationId.split('.')[1];
+	$scope.hostId = $routeParams.hostId;
 			  
 	$scope.loadEvent = function () {
-		eventService.info($scope.eventId, function(response) {
-			$scope.event = response;
+		eventService.info($routeParams.eventId, function(response) {
+			$scope.event = response.event;
+			$scope.guest = response.guest;
+			$scope.readyToShow = true;
 		},
 		function(error) {
-						
+			console.log(error);
 		});
 	}
 				
 	$scope.loadEvent();
 	
 	$scope.attendEvent = function () {
-		eventService.attend($scope.eventId, function(response) {
-			$location.path('/i/' + $routeParams.invitationId + '/attend');
+		if(!$scope.guest.name){
+			$scope.error = 'Guest name is required';
+			return;
+		}
+		
+		eventService.attend($routeParams.eventId, $scope.guest.name, function(response) {
+			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
 		},
 		function(error) {
 						
@@ -26,12 +32,21 @@ angular.module('itsonin').controller('InvitationController',
 	}
 	
 	$scope.declineEvent = function () {
-		eventService.decline($scope.eventId, function(response) {
-			$location.path('/i/' + $routeParams.invitationId + '/decline');
+		eventService.decline($routeParams.eventId, function(response) {
+			$scope.guest.status = 'DECLINED';
+			$scope.success = response.message;
 		},
 		function(error) {
 						
 		});
 	}
+	
+    $scope.shareLink = function () {
+        shareService.shareLink($routeParams.eventId, $routeParams.hostId);
+    }
+    
+    $scope.shareByEmail = function () {
+        shareService.shareByEmail($routeParams.eventId, $routeParams.hostId);
+    }
 		  
 }]);
