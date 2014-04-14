@@ -169,14 +169,14 @@ angular.module('itsonin').controller('EditEventController',
 	  });
 	  
 	  $rootScope.$on("event:setLocation", function (event, place) {
-			$scope.event['locationAddress'] = place.name;
+			$scope.event['locationAddress'] = place.formatted_address;
 			$scope.event['gpsLat'] = place.geometry.location.lat();
 			$scope.event['gpsLong'] = place.geometry.location.lng();
 	  });
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
-			  eventService.info($routeParams.eventId, function(response) {
+			  eventService.info($routeParams.eventId, null, function(response) {
 				  $scope.event = response.event;
 				  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
 						  $scope.event.sharability);
@@ -294,7 +294,7 @@ angular.module('itsonin').controller('InvitationController',
 	$scope.hostId = $routeParams.hostId;
 			  
 	$scope.loadEvent = function () {
-		eventService.info($routeParams.eventId, function(response) {
+		eventService.info($routeParams.eventId, {forInvitation: true}, function(response) {
 			$scope.event = response.event;
 			$scope.guest = response.guest;
 			$scope.readyToShow = true;
@@ -340,18 +340,20 @@ angular.module('itsonin').controller('InvitationController',
     
     $scope.getGooglePlusUrl = function() {
     	var url = 'https://plus.google.com/share?url=' + $location.host() + $location.path();
-    	window.open(url, 'Share', 'width=400,height=400,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    	window.open(url, 'Share', ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
     }
     
     $scope.getFacebookUrl = function() {
     	var url = 'https://www.facebook.com/sharer/sharer.php?u=' + $location.host() + $location.path();
     	window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    	//TODO:https://developers.facebook.com/docs/sharing/reference/feed-dialog
+    	//https://github.com/esvit/angular-social/blob/master/src/scripts/03-twitter.js
     }
 		  
 }]);
 angular.module('itsonin').controller('ListController',
-  ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
-   function ($scope, $rootScope, $routeParams, eventService, constants) {
+  ['$scope', '$rootScope', '$routeParams', '$location', 'eventService', 'constants', 
+   function ($scope, $rootScope, $routeParams, $location, eventService, constants) {
 	  
 	  $scope.dateFilterState = 0;
 	  $scope.dateFilterText = ["All dates", "Custom", "Now", "Tomorrow"];
@@ -491,6 +493,25 @@ angular.module('itsonin').controller('ListController',
 		  return exist >= 0;
 	  }
 	  
+	  $scope.openEvent = function(eventId) {
+		  eventService.info(eventId, null, function(response) {
+			  var guest = response.guest;
+			  var path;
+			  if(guest.status == 'PENDING'){
+				  path = '/i/' + eventId + '.' + guest.parentGuestId;
+			  } if(guest.status == 'ATTENDING' || guest.status == 'DECLINED'){
+				  path = '/i/' + eventId + '.' + guest.guestId;
+			  } else {
+				  path = '/e/' + eventId;
+			  }
+				  
+			  $location.path(path);
+		  },
+		  function(error) {
+			  console.log(error);	
+		  });
+	  }
+	  
 }]);
 angular.module('itsonin').controller('MeController',
   ['$scope', 'eventService', 'constants', function ($scope, eventService, constants) {
@@ -547,8 +568,8 @@ angular.module('itsonin').controller('ViewEventController',
 	$scope.readyToShow = false;
 	$scope.event = {};
 
-	$scope.loadEvent = function () {console.log($routeParams.eventId)
-		eventService.info($routeParams.eventId, function(response) {
+	$scope.loadEvent = function () {
+		eventService.info($routeParams.eventId, null, function(response) {
 			$scope.event = response.event;
 			$scope.guest = response.guest;
 			$scope.guests = response.guests;
@@ -741,52 +762,7 @@ angular.module('itsonin').directive('bDatepicker', function(){
 			});
 		}
 	}
-});angular.module('itsonin').directive('GooglePlus', ['$parse', function($parse) {
-    'use strict';
-
-    var options = {
-        counter: {
-            url: '{proxy}?url={url}&type=google-plus&callback=JSON_CALLBACK',
-            getNumber: function(data) {
-                return data.count;
-            }
-        },
-        popup: {
-            url: 'https://plus.google.com/share?url={url}',
-            width: 700,
-            height: 500
-        },
-        track: {
-            'name': 'Google+',
-            'action': 'share'
-        }
-    };
-    return {
-        restrict: 'C',
-        require: '^?ngSocialButtons',
-        scope: true,
-        replace: true,
-        transclude: true,
-        template: '<li> \
-                    <a ng-href="{{ctrl.link(options)}}" target="_blank" ng-click="ctrl.clickShare($event, options)" class="ng-social-button"> \
-                        <span class="ng-social-icon"></span> \
-                        <span class="ng-social-text" ng-transclude></span> \
-                    </a> \
-                    <span ng-show="count" class="ng-social-counter">{{ count }}</span> \
-                   </li>',
-        link: function(scope, element, attrs, ctrl) {
-            element.addClass('ng-social-google-plus');
-            if (!ctrl) {
-                return;
-            }
-            var proxyUrl = $parse(attrs.proxyUrl)(scope) || '/proxy.php';
-            options.counter.url = options.counter.url.replace('{proxy}', proxyUrl);
-            scope.options = options;
-            scope.ctrl = ctrl;
-            ctrl.init(scope, element, options);
-        }
-    };
-}]);angular.module('itsonin').factory('commentService',
+});angular.module('itsonin').factory('commentService',
 	['$http', '$q', '$rootScope', '$cacheFactory', function($http, $q, $rootScope, $cacheFactory) {
 
 	return {
@@ -799,8 +775,10 @@ angular.module('itsonin').directive('bDatepicker', function(){
 	};
 }]);
 angular.module('itsonin').factory('eventService',
-	['$http', '$q', '$rootScope', '$cacheFactory', function($http, $q, $rootScope, $cacheFactory) {
+	['$http', '$rootScope', '$cacheFactory', function($http, $rootScope, $cacheFactory) {
 
+	var cache = $cacheFactory('eventsInfoCache');
+		
 	return {
 		list: function(queryParams, success, error) {
 			$http.get('/api/event/list', {params:queryParams}).success(success).error(error);
@@ -811,8 +789,21 @@ angular.module('itsonin').factory('eventService',
 		update: function(event, success, error) {
 			$http.put('/api/event/' + event.eventId + '/update', event).success(success).error(error);
 		},
-		info: function(eventId, success, error) {
-			$http.get('/api/event/' + eventId + '/info').success(success).error(error);
+		info: function(eventId, queryParams, success, error) {
+			var fromCache = cache.get(eventId);			
+        	if(!fromCache){
+        		$http.get('/api/event/' + eventId + '/info', {params:queryParams}).success(function(info) {
+	        		cache.put(eventId, info);
+	        	
+	        		if(angular.isFunction(success)){
+	        			success(info);
+	        		}
+	        	}).error(error);
+        	}else{
+        		if(angular.isFunction(success)){
+        			success(fromCache);
+        		}
+        	}
 		},
 		attend: function(eventId, guestName, success, error) {
 			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))

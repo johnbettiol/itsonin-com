@@ -60,8 +60,9 @@ public class EventApi {
 	@GET
 	@Path("/event/{eventId}/info")
 	@Produces("application/json")
-	public Map<String, Object> info(@PathParam("eventId") Long eventId) {
-		return eventService.info(eventId);
+	public Map<String, Object> info(@PathParam("eventId") Long eventId, 
+			@QueryParam("forInvitation") Boolean forInvitation) {
+		return eventService.info(eventId, forInvitation);
 	}
 
 	@GET

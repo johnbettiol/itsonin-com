@@ -4,15 +4,10 @@
 			<a ng-href="/{{location}}">It's On In</a>
 		</h2>
 	</div>
+	<div class="row text-center">
+		<h4>{{location}}</h4>
+	</div>
 	<div class="row">
-	    <div class="panel panel-default">
-            <div class="panel-body">
-                <label>Your name</label>
-                <input type="text" class="form-control" ng-model="guest.name">
-                <label>Event title</label>
-                <input type="text" class="form-control" ng-model="event.title">
-            </div>
-        </div>
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="toolbar toolbar-event">
@@ -27,6 +22,14 @@
 				</div>
 			</div>
 		</div>
+	    <div class="panel panel-default">
+            <div class="panel-body">
+                <label>Your name</label>
+                <input type="text" class="form-control" ng-model="guest.name">
+                <label>Event title</label>
+                <input type="text" class="form-control" ng-model="event.title">
+            </div>
+        </div>
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<span class="glyphicon glyphicon-calendar pull-left" ng-click="nextDateType()"></span>
@@ -59,7 +62,6 @@
 				<span class="glyphicon glyphicon-{{sharabilityImg}} pull-right" ng-click="nextSharability()"></span>
 			</div>
 		</div>
-		<pre>{{event}}</pre>
 		<div class="alert alert-danger" ng-show="error">
 			{{error}}
 		</div>

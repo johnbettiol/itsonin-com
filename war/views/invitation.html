@@ -4,6 +4,9 @@
 			<a ng-href="/{{location}}">It's On In</a>
 		</h2>
 	</div>
+	<div class="row text-center">
+		<h4>{{location}}</h4>
+	</div>
 	<div class="text-center event-title">
 		<span>{{event.title}}</span>
 		<div>
@@ -24,7 +27,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel panel-default" ng-show="hostId == guest.guestId">
+	<div class="panel panel-default" ng-show="event.sharability == 'PYRAMID'">
+		<div class="panel-body">
+			<h5>You are attending this event</h5>
+			<h5>NOTE. This is a pyramid event you are asked to share this event with your friends</h5>
+		</div>
+	</div>
+	<div class="panel panel-default" ng-show="hostId == guest.guestId && event.sharability != 'NOSHARE'">
 		<div class="panel-body">
 			<div class="toolbar">
 				<ul>

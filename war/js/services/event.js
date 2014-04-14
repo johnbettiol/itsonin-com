@@ -1,6 +1,8 @@
 angular.module('itsonin').factory('eventService',
-	['$http', '$q', '$rootScope', '$cacheFactory', function($http, $q, $rootScope, $cacheFactory) {
+	['$http', '$rootScope', '$cacheFactory', function($http, $rootScope, $cacheFactory) {
 
+	var cache = $cacheFactory('eventsInfoCache');
+		
 	return {
 		list: function(queryParams, success, error) {
 			$http.get('/api/event/list', {params:queryParams}).success(success).error(error);
@@ -11,8 +13,21 @@ angular.module('itsonin').factory('eventService',
 		update: function(event, success, error) {
 			$http.put('/api/event/' + event.eventId + '/update', event).success(success).error(error);
 		},
-		info: function(eventId, success, error) {
-			$http.get('/api/event/' + eventId + '/info').success(success).error(error);
+		info: function(eventId, queryParams, success, error) {
+			var fromCache = cache.get(eventId);			
+        	if(!fromCache){
+        		$http.get('/api/event/' + eventId + '/info', {params:queryParams}).success(function(info) {
+	        		cache.put(eventId, info);
+	        	
+	        		if(angular.isFunction(success)){
+	        			success(info);
+	        		}
+	        	}).error(error);
+        	}else{
+        		if(angular.isFunction(success)){
+        			success(fromCache);
+        		}
+        	}
 		},
 		attend: function(eventId, guestName, success, error) {
 			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))

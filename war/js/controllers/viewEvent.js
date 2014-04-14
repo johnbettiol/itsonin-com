@@ -5,8 +5,8 @@ angular.module('itsonin').controller('ViewEventController',
 	$scope.readyToShow = false;
 	$scope.event = {};
 
-	$scope.loadEvent = function () {console.log($routeParams.eventId)
-		eventService.info($routeParams.eventId, function(response) {
+	$scope.loadEvent = function () {
+		eventService.info($routeParams.eventId, null, function(response) {
 			$scope.event = response.event;
 			$scope.guest = response.guest;
 			$scope.guests = response.guests;

@@ -58,7 +58,6 @@
     				</div>
     			</div>
     		</div>
-            <pre>{{filter}}</pre>
     		<div class="panel panel-default" ng-show="dateFilterState==1">
     			<div class="panel-body">
     				Happening from
@@ -95,7 +94,7 @@
     					<span class="field italic">{{event.locationTitle}}</span>
     					<span class="field">{{event.locationAddress}}</span>
     				</div>
-    				<a ng-href="/e/{{event.eventId}}" class="pull-right">View</a>
+    				<a href="" ng-click="openEvent(event.eventId)" class="pull-right">View</a>
     			</div>
     		</div>
         </div>

@@ -1,6 +1,6 @@
 angular.module('itsonin').controller('ListController',
-  ['$scope', '$rootScope', '$routeParams', 'eventService', 'constants', 
-   function ($scope, $rootScope, $routeParams, eventService, constants) {
+  ['$scope', '$rootScope', '$routeParams', '$location', 'eventService', 'constants', 
+   function ($scope, $rootScope, $routeParams, $location, eventService, constants) {
 	  
 	  $scope.dateFilterState = 0;
 	  $scope.dateFilterText = ["All dates", "Custom", "Now", "Tomorrow"];
@@ -138,6 +138,25 @@ angular.module('itsonin').controller('ListController',
 			  }
 		  });
 		  return exist >= 0;
+	  }
+	  
+	  $scope.openEvent = function(eventId) {
+		  eventService.info(eventId, null, function(response) {
+			  var guest = response.guest;
+			  var path;
+			  if(guest.status == 'PENDING'){
+				  path = '/i/' + eventId + '.' + guest.parentGuestId;
+			  } if(guest.status == 'ATTENDING' || guest.status == 'DECLINED'){
+				  path = '/i/' + eventId + '.' + guest.guestId;
+			  } else {
+				  path = '/e/' + eventId;
+			  }
+				  
+			  $location.path(path);
+		  },
+		  function(error) {
+			  console.log(error);	
+		  });
 	  }
 	  
 }]);

@@ -5,7 +5,7 @@ angular.module('itsonin').controller('InvitationController',
 	$scope.hostId = $routeParams.hostId;
 			  
 	$scope.loadEvent = function () {
-		eventService.info($routeParams.eventId, function(response) {
+		eventService.info($routeParams.eventId, {forInvitation: true}, function(response) {
 			$scope.event = response.event;
 			$scope.guest = response.guest;
 			$scope.readyToShow = true;
@@ -51,12 +51,14 @@ angular.module('itsonin').controller('InvitationController',
     
     $scope.getGooglePlusUrl = function() {
     	var url = 'https://plus.google.com/share?url=' + $location.host() + $location.path();
-    	window.open(url, 'Share', 'width=400,height=400,personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    	window.open(url, 'Share', ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
     }
     
     $scope.getFacebookUrl = function() {
     	var url = 'https://www.facebook.com/sharer/sharer.php?u=' + $location.host() + $location.path();
     	window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+    	//TODO:https://developers.facebook.com/docs/sharing/reference/feed-dialog
+    	//https://github.com/esvit/angular-social/blob/master/src/scripts/03-twitter.js
     }
 		  
 }]);

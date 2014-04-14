@@ -26,14 +26,14 @@ angular.module('itsonin').controller('EditEventController',
 	  });
 	  
 	  $rootScope.$on("event:setLocation", function (event, place) {
-			$scope.event['locationAddress'] = place.name;
+			$scope.event['locationAddress'] = place.formatted_address;
 			$scope.event['gpsLat'] = place.geometry.location.lat();
 			$scope.event['gpsLong'] = place.geometry.location.lng();
 	  });
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
-			  eventService.info($routeParams.eventId, function(response) {
+			  eventService.info($routeParams.eventId, null, function(response) {
 				  $scope.event = response.event;
 				  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
 						  $scope.event.sharability);

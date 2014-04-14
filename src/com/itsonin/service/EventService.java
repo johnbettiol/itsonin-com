@@ -125,19 +125,26 @@ public class EventService {
 		eventDao.save(toUpdate);
 	}
 
-	public EventWithGuest get(Long eventId) {
+	public EventWithGuest get(Long eventId, Boolean forInvitation) {
 		Event event = eventDao.get(eventId);
-		Guest guest = storeGuestEntry(eventId, null,
-				event.getVisibility() == EventVisibility.PUBLIC ? GuestStatus.VIEWED
-						: GuestStatus.PENDING);
+		GuestStatus status;
+		if(event.getVisibility() == EventVisibility.PUBLIC){
+			if(forInvitation != null && forInvitation.equals(true)){
+				status = GuestStatus.PENDING;
+			} else {
+				status = GuestStatus.VIEWED;
+			}
+		} else {
+			status = GuestStatus.PENDING;
+		}
+		Guest guest = storeGuestEntry(eventId, null, status);
 		return new EventWithGuest(event, guest);
 	}
 	
-	public Map<String, Object> info(Long eventId){
+	public Map<String, Object> info(Long eventId, Boolean forInvitation){
 		Device device = authContextService.getDevice();
 		Map<String, Object> result = new HashMap<String, Object>();
-		EventWithGuest eventWithGuest = get(eventId);
-		//Event event = get(eventId);
+		EventWithGuest eventWithGuest = get(eventId, forInvitation);
 		List<Guest> guests = guestDao.listByEvent(eventId,
 				GuestStatus.ATTENDING);
 		List<Comment> comments = commentDao.list(eventId, null);
@@ -173,13 +180,11 @@ public class EventService {
 			guest.setParentGuestId(guestDao.getHostGuestForEvent(eventId).getGuestId());
 			Key<Guest> guestKey = guestDao.save(guest);
 			guest = guestDao.get(guestKey);
-		} else {
-			if (!guestStatus.equals(guest.getStatus()) && guestStatus != GuestStatus.VIEWED
-					&& guest.getType() != GuestType.HOST) {
-				guest.setStatus(guestStatus);
-				guest.setName(guestName);
-				guestDao.save(guest);
-			}
+		} else if (guestStatus != guest.getStatus() && guest.getType() != GuestType.HOST &&
+				guestStatus != GuestStatus.VIEWED && guestStatus != GuestStatus.PENDING) {
+			guest.setStatus(guestStatus);
+			guest.setName(guestName);
+			guestDao.save(guest);
 		}
 		return guest;
 	}
