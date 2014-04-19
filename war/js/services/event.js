@@ -30,10 +30,12 @@ angular.module('itsonin').factory('eventService',
         	}
 		},
 		attend: function(eventId, guestName, success, error) {
+			cache.remove(eventId);
 			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		},
 		decline: function(eventId, guestName, success, error) {
+			cache.remove(eventId);
 			$http.get('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		}

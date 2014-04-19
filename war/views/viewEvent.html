@@ -4,6 +4,9 @@
 			<a ng-href="/{{location}}">It's On In</a>
 		</h2>
 	</div>
+	<div class="row text-center">
+		<h4>{{location}}</h4>
+	</div>
 	<div class="text-center event-title">
 		<span>{{event.title}}</span>
 		<div>
@@ -19,7 +22,7 @@
      	<div class="panel-body">
        		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>
        		<div class="fields pull-left">
-       			<span class="field">{{event.startTime | date:'short'}}</span>
+       			<span class="field">{{event.startTime | calendar}}</span>
        			<span class="field">{{event.title}}</span>
        			<span class="field">{{event.locationTitle}}</span>
        			<span class="field">{{event.locationAddress}}</span>
@@ -29,7 +32,53 @@
        		</div>
        	</div>
     </div>
-    <div class="panel panel-default" ng-repeat="guest in guests">
+    <div class="panel panel-default" ng-show="event.sharability == 'PYRAMID'">
+		<div class="panel-body">
+			<h5>You are attending this event</h5>
+			<h5>NOTE. This is a pyramid event you are asked to share this event with your friends</h5>
+		</div>
+	</div>
+    <div class="panel panel-default" ng-show="guest.status == 'ATTENDING' && event.sharability != 'NOSHARE'">
+		<div class="panel-body">
+			<div class="toolbar">
+				<ul>
+					<li><a href="" ng-click="shareLink()"><span class="glyphicon glyphicon-link"></span><span>Share link</span></a></li>
+					<li><a href="" ng-click="shareByEmail()"><span class="glyphicon glyphicon-envelope"></span><span>Email</span></a></li>
+					<li><a href="" ng-click="getFacebookUrl()"><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
+					<li><a href="" ng-click="getGooglePlusUrl()"><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+    <div class="panel panel-default">
+		<div class="panel-body">
+			<label>Your name</label>
+			<input type="text" class="form-control" ng-model="guest.name">
+		</div>
+	</div>
+    <div class="alert alert-success" ng-show="success">{{success}}</div>
+    <div class="alert alert-danger" ng-show="error">{{error}}</div>
+    
+    <div class="panel panel-default" ng-show="guest.status == 'PENDING'">
+		<div class="panel-body">
+			<button class="btn btn-default pull-left" ng-click="attendEvent()">Attend</button>
+			<button class="btn btn-default pull-right" ng-click="declineEvent()">Decline</button>
+		</div>
+	</div>
+	<div class="panel panel-default" ng-show="viewonly == true && guest.status != 'PENDING'">
+		<div class="panel-body">
+			<button class="btn btn-default pull-right" ng-click="attendEvent()"
+				ng-show="guest.status=='VIEWED' || guest.status=='DECLINED'">
+				<span class="glyphicon glyphicon-share"></span><br>Attend
+			</button>
+			<a href="" class="btn btn-default pull-right" ng-click="declineEvent()" 
+				ng-show="guest.status=='ATTENDING'">
+				<span class="glyphicon glyphicon-remove"></span><br>Decline
+			</a>
+		</div>
+	</div>
+	
+	<div class="panel panel-default" ng-repeat="guest in guests">
     	<div class="panel-body">
     	   <span class="glyphicon glyphicon-user pull-left"></span>
     	   <div class="fields pull-left">
@@ -41,26 +90,9 @@
     	<div class="panel-body">
     	   <span class="glyphicon glyphicon-user pull-left"></span>
     	   <div class="fields pull-left">
-    	       <span class="field bold">{{comment.created | date:'short'}}</span>
+    	       <span class="field bold">{{comment.created | calendar}}</span>
                <span class="field">{{comment.comment}}</span>
     	   </div>
     	</div>
     </div>
-    <div class="panel panel-default">
-		<div class="panel-body">
-			<label>Your name</label>
-			<input type="text" class="form-control" ng-model="guest.name">
-		</div>
-	</div>
-    <div class="alert alert-success" ng-show="success">{{success}}</div>
-    <div class="alert alert-danger" ng-show="error">{{error}}</div>
-    <div class="btn-group pull-right">
-    	<a href="" class="btn btn-default" ng-click="declineEvent()" ng-show="viewonly == true && guest.status=='ATTENDING'">
-			<span class="glyphicon glyphicon-remove"></span><br>Decline
-		</a>
-		<a href="" class="btn btn-default" ng-click="attendEvent()" 
-			ng-show="viewonly == true && (guest.status=='VIEWED' || guest.status=='DECLINED')">
-			<span class="glyphicon glyphicon-share"></span><br>Attend
-		</a>
-	</div>
 </div>

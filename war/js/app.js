@@ -5,10 +5,7 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
       .when('/e/add', {templateUrl: views.editEvent, controller: 'EditEventController'})
       .when('/e/:eventId', {templateUrl: views.viewEvent, controller: 'ViewEventController'})
       .when('/e/:eventId/edit', {templateUrl: views.editEvent, controller: 'EditEventController'})
-      .when('/e/:eventId/attend', {templateUrl: views.attendEvent, controller: 'AttendEventController'})
-      .when('/i/:eventId.:hostId', {templateUrl: views.invitation, controller: 'InvitationController'})
-      .when('/i/:invitationId/attend', {templateUrl: views.attendInvitation, controller: 'AttendInvitationController'})
-      .when('/i/:invitationId/decline', {templateUrl: views.declineInvitation, controller: 'DeclineInvitationController'})
+      .when('/i/:eventId.:hostId', {templateUrl: views.viewEvent, controller: 'ViewEventController'})
       .when('/about', {templateUrl: views.about, controller: 'AboutController'})
       .when('/welcome', {templateUrl: views.welcome, controller: 'WelcomeController'})
       .when('/me', {templateUrl: views.me, controller: 'MeController'})
@@ -24,6 +21,22 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
 
 .run(['$rootScope', '$location', '$cookies',
     function($rootScope, $location, $cookies) {
+	
+	moment.lang('en', {
+	    calendar : {
+	        lastDay : '[Yesterday @] LT',
+	        sameDay : '[Today @] LT',
+	        nextDay : '[Tomorrow @] LT',
+	        lastWeek : '[last] dddd [@] LT',
+	        nextWeek : '[next] dddd [@] LT',
+	        /*	function () {
+	         * moment('2010-10-20').isAfter('2010-10-19'); // true
+	        	console.log(moment().endOf('week'));
+	            return '[((this.hours() !== 1) ? 's' : '') + '] LT';
+	        },*/
+	        sameElse : 'ddd, MMM Do [@] LT'
+	    }
+	});
 
 	$rootScope.location = 'Düsseldorf'; //TODO: get location
 

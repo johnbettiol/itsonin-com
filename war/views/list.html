@@ -89,7 +89,7 @@
     			<div class="panel-body">
     				<span class="glyphicon glyphicon-{{getEventImage(event.type)}} pull-left"></span>
     				<div class="fields pull-left">
-    					<span class="field bold">{{event.startTime | date:'short'}}</span>
+    					<span class="field bold">{{event.startTime | calendar}}</span>
     					<span class="field bold">{{event.title}}</span>
     					<span class="field italic">{{event.locationTitle}}</span>
     					<span class="field">{{event.locationAddress}}</span>

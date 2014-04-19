@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <!DOCTYPE HTML>
 
-<html ng-app="itsonin">
+<html ng-app="itsonin" id="ng-app">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -10,10 +10,11 @@
     <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/css/datepicker.css" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-datetimepicker.css" />
-	<link rel="stylesheet" type="text/css" href="/css/style.css?v=20140414200922">
+	<link rel="stylesheet" type="text/css" href="/css/style.css?v=20140419093220">
 	
 	<!--[if lt IE 9]>
 	    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	    <script src="/lib/respond.src.js" type="text/javascript"></script>
 	<![endif]-->
 	<base href="/">
 	
@@ -29,7 +30,7 @@
 	<script src="/lib/bootstrap-datetimepicker.js" type="text/javascript"></script>
 	<script src="/lib/underscore-min.js" type="text/javascript"></script>
 	<script src="/lib/moment.min.js" type="text/javascript"></script>
-	<script src="/js/all.js?v=20140414200922" type="text/javascript"></script>
+	<script src="/js/all.js?v=20140419093220" type="text/javascript"></script>
   </head>
 
   <body>

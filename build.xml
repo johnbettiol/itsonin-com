@@ -5,7 +5,7 @@
 	<property name="JS_MIN" value="${JS_DIR}/all.min.js" />
 	<property name="YUI" value="war/WEB-INF/lib/yuicompressor-2.4.7.jar"/>
 	
-	<property name="sdk.dir" location="d:/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.1/appengine-java-sdk-1.9.1" />
+	<property name="sdk.dir" location="d:/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.3/appengine-java-sdk-1.9.3" />
 
 	<import file="${sdk.dir}/config/user/ant-macros.xml" />
 

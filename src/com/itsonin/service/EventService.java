@@ -202,7 +202,7 @@ public class EventService {
 		if (DeviceLevel.NORMAL.equals(device.getLevel())) {
 			for (Event event : eventList) {
 				if (event.getVisibility() == EventVisibility.PUBLIC) {
-					if (allEvents.equals(true)) {
+					if (allEvents == null || allEvents == true) {
 						filteredList.add(event);
 					} else {
 						int guestCounter = -1;

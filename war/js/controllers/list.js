@@ -13,6 +13,10 @@ angular.module('itsonin').controller('ListController',
 		types: []
 	  };
 	  
+	  $scope.momentDate = function(date) {
+		  return moment(date).calendar();
+	  }
+	  
 	  $scope.isKnownLocation = function () {
 	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf'];
 	      for(var i=0; i<knownLocations.length; i++){
@@ -35,8 +39,6 @@ angular.module('itsonin').controller('ListController',
 			allEvents: ($scope.allEvents == true)?true:false,
 			types: $scope.filter.types
 	    }
-	    
-	    console.log($scope.filter.startTime);
 	    
 	    if($scope.filter.startTime){
 	    	params.startTime = moment($scope.filter.startTime).format('YYYY-MM-DD HH:mm');
@@ -146,16 +148,15 @@ angular.module('itsonin').controller('ListController',
 			  var path;
 			  if(guest.status == 'PENDING'){
 				  path = '/i/' + eventId + '.' + guest.parentGuestId;
-			  } if(guest.status == 'ATTENDING' || guest.status == 'DECLINED'){
+			  } else if(guest.status == 'ATTENDING' || guest.status == 'DECLINED'){
 				  path = '/i/' + eventId + '.' + guest.guestId;
 			  } else {
 				  path = '/e/' + eventId;
 			  }
-				  
 			  $location.path(path);
 		  },
 		  function(error) {
-			  console.log(error);	
+			  console.log(error);
 		  });
 	  }
 	  
