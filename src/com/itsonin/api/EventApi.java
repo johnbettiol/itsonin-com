@@ -15,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.google.inject.Inject;
+import com.itsonin.dto.EventInfo;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
@@ -60,7 +61,7 @@ public class EventApi {
 	@GET
 	@Path("/event/{eventId}/info")
 	@Produces("application/json")
-	public Map<String, Object> info(@PathParam("eventId") Long eventId, 
+	public EventInfo info(@PathParam("eventId") Long eventId, 
 			@QueryParam("forInvitation") Boolean forInvitation) {
 		return eventService.info(eventId, forInvitation);
 	}

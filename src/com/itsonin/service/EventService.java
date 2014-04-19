@@ -14,6 +14,7 @@ import com.itsonin.dao.CommentDao;
 import com.itsonin.dao.CounterDao;
 import com.itsonin.dao.EventDao;
 import com.itsonin.dao.GuestDao;
+import com.itsonin.dto.EventInfo;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Comment;
 import com.itsonin.entity.Device;
@@ -141,21 +142,21 @@ public class EventService {
 		return new EventWithGuest(event, guest);
 	}
 	
-	public Map<String, Object> info(Long eventId, Boolean forInvitation){
+	public EventInfo info(Long eventId, Boolean forInvitation){
 		Device device = authContextService.getDevice();
-		Map<String, Object> result = new HashMap<String, Object>();
 		EventWithGuest eventWithGuest = get(eventId, forInvitation);
 		List<Guest> guests = guestDao.listByEvent(eventId,
 				GuestStatus.ATTENDING);
 		List<Comment> comments = commentDao.list(eventId, null);
 		Guest host = guestDao.getHostGuestForEvent(eventId);
 
-		result.put("event", eventWithGuest.getEvent());
-		result.put("guest", eventWithGuest.getGuest());
-		result.put("guests", guests);
-		result.put("comments", comments);
-		result.put("viewonly", !device.getDeviceId().equals(host.getDeviceId()));
-		return result;
+		EventInfo eventInfo = new EventInfo();
+		eventInfo.setEvent(eventWithGuest.getEvent());
+		eventInfo.setGuest(eventWithGuest.getGuest());
+		eventInfo.setGuests(guests);
+		eventInfo.setComments(comments);
+		eventInfo.setViewonly(!device.getDeviceId().equals(host.getDeviceId()));
+		return eventInfo;
 	}
 
 	public Guest attend(Long eventId, String guestName) {
