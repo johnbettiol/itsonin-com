@@ -10,9 +10,6 @@
 	<div class="text-center event-title">
 		<span>{{event.title}}</span>
 		<div>
-			<a ng-href="/{{location}}" class="btn btn-default btn-big"> 
-				<span class="glyphicon glyphicon-home"></span>
-			</a> 
 			<a ng-href="/e/{{event.eventId}}/edit" class="btn btn-default btn-big" ng-show="viewonly == false"> 
 				<span class="glyphicon glyphicon-pencil"></span>
 			</a>
@@ -32,13 +29,13 @@
        		</div>
        	</div>
     </div>
-    <div class="panel panel-default" ng-show="event.sharability == 'PYRAMID'">
+    <div class="panel panel-default" ng-show="event.sharability == 'PYRAMID' && guest.status == 'ATTENDING'">
 		<div class="panel-body">
 			<h5>You are attending this event</h5>
 			<h5>NOTE. This is a pyramid event you are asked to share this event with your friends</h5>
 		</div>
 	</div>
-    <div class="panel panel-default" ng-show="guest.status == 'ATTENDING' && event.sharability != 'NOSHARE'">
+    <div class="panel panel-default" ng-show="(guest.status == 'ATTENDING' || guest.status == 'DECLINED') && event.sharability != 'NOSHARE'">
 		<div class="panel-body">
 			<div class="toolbar">
 				<ul>

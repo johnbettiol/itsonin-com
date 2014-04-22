@@ -1,6 +1,6 @@
 angular.module('itsonin').controller('EditEventController',
-  ['$scope', '$rootScope', '$routeParams', '$modal', '$q', '$location', 'views', 'eventService', 'constants', 
-   function ($scope, $rootScope, $routeParams, $modal, $q, $location, views, eventService, constants) {
+  ['$scope', '$rootScope', '$routeParams', '$modal', '$q', '$timeout', '$location', 'views', 'eventService', 'constants', 
+   function ($scope, $rootScope, $routeParams, $modal, $q, $timeout, $location, views, eventService, constants) {
 	  
 	  $scope.readyToShow = false;
 	  $scope.eventTypes = constants.EVENT_TYPES;
@@ -30,25 +30,41 @@ angular.module('itsonin').controller('EditEventController',
 			$scope.event['gpsLat'] = place.geometry.location.lat();
 			$scope.event['gpsLong'] = place.geometry.location.lng();
 	  });
+	  
+	  $scope.getObjById = function(array, id) {
+		  for(var i=0; i < array.length; i++){
+			  if(id == array[i].id){
+				  return array[i];
+			  }
+		  }
+	  }
+	  
+	  $scope.initUI = function(){
+		  var sharability = $scope.getObjById(constants.EVENT_SHARABILITIES,
+				  $scope.event.sharability);
+		  var visibility = $scope.getObjById(constants.EVENT_VISIBILITIES,
+				  $scope.event.visibility);
+		  $scope.sharabilityImg = sharability.img;
+		  $scope.sharabilityText = sharability.text;
+		  $scope.visibilityImg = visibility.img;
+		  $scope.visibilityText = visibility.text;
+		  $scope.readyToShow = true;
+	  }
 
 	  $scope.loadEvent = function () {
 		  if($routeParams.eventId){
 			  eventService.info($routeParams.eventId, null, function(response) {
 				  $scope.event = response.event;
-				  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
-						  $scope.event.sharability);
-				  $scope.visibilityImg = $scope.getImgById(constants.EVENT_VISIBILITIES,
-						  $scope.event.visibility);
-				  
+			  
 				  $scope.dateType = 'CUSTOM';
 				  $scope.locationType = 'MAP';
-				  $scope.readyToShow = true;
+				  $scope.initUI();
 			  },
 			  function(error) {
 	
 			  });
 		  } else {
-			  $scope.readyToShow = true;
+			  $scope.initUI();
 		  }
 	  }
 	  $scope.loadEvent();
@@ -79,12 +95,14 @@ angular.module('itsonin').controller('EditEventController',
 		  var sharability = $scope.cycle(constants.EVENT_SHARABILITIES, $scope.event.sharability);
 		  $scope.event.sharability = sharability.id;
 		  $scope.sharabilityImg = sharability.img;
+		  $scope.sharabilityText = sharability.text;
 	  }
 	  
 	  $scope.nextVisibility = function() {
 		  var visibility = $scope.cycle(constants.EVENT_VISIBILITIES, $scope.event.visibility);
 		  $scope.event.visibility = visibility.id;
 		  $scope.visibilityImg = visibility.img;
+		  $scope.visibilityText = visibility.text;
 	  }
 	  
 	  $scope.showMap = function() {
@@ -112,17 +130,12 @@ angular.module('itsonin').controller('EditEventController',
 		  return array[(currentIndex+1) >= array.length ? 0 : (currentIndex+1)];
 	  }
 	  
-	  $scope.getImgById = function(array, id) {
-		  for(var i=0; i < array.length; i++){
-			  if(id == array[i].id){
-				  return array[i].img;
-			  }
-		  }
-	  }
-	  
 	  $scope.shareEvent = function () {
 		  eventService.create($scope.event, $scope.guest, function(resp) {
-			  $location.path('/i/' + resp.event.eventId + '.' + resp.guest.guestId);
+			  $scope.success = 'New event was successfully created.';
+			  $timeout(function() {
+				  $location.path('/i/' + resp.event.eventId + '.' + resp.guest.guestId);
+			  }, 500);
 		  },
 		  function(error) {
 			  if(error.status == 'error') {
@@ -133,14 +146,14 @@ angular.module('itsonin').controller('EditEventController',
 		  });
 	  }
 	  
+	  $scope.saveEvent = function () {
+
+	  }
+	  
 	  $scope.updateEvent = function () {
 		  eventService.update($scope.event, function(response) {
 			  $location.path('/' + $rootScope.location);
 		  });
 	  }
-	  
-	  $scope.sharabilityImg = $scope.getImgById(constants.EVENT_SHARABILITIES,
-			  $scope.event.sharability);
-	  $scope.visibilityImg = $scope.getImgById(constants.EVENT_VISIBILITIES,
-			  $scope.event.visibility);
+
 }]);

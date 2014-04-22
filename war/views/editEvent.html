@@ -47,24 +47,24 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<span class="glyphicon glyphicon-map-marker pull-left" ng-click="nextLocationType()"></span>
+				<span ng-show="locationType == 'MAP'" class="glyphicon glyphicon-globe pull-right" ng-click="showMap()"></span>
 				<div class="text-center">
 					<span ng-show="locationType == 'EMPTY'">Happening somewhere</span>
-					<div ng-show="locationType == 'MAP'">
+					<div style="margin-left:50px;margin-right:50px" ng-show="locationType == 'MAP'">
 						<google-places event="event"></google-places>
-						<span class="glyphicon glyphicon-globe pull-right" ng-click="showMap()"></span>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel panel-default">
-			<div class="panel-body">
+			<div class="panel-body text-center">
+				<span>{{visibilityText}}, {{sharabilityText}}</span>
 				<span class="glyphicon glyphicon-{{visibilityImg}} pull-left" ng-click="nextVisibility()"></span>
 				<span class="glyphicon glyphicon-{{sharabilityImg}} pull-right" ng-click="nextSharability()"></span>
 			</div>
 		</div>
-		<div class="alert alert-danger" ng-show="error">
-			{{error}}
-		</div>
+		<div class="alert alert-success" ng-show="success">{{success}}</div>
+		<div class="alert alert-danger" ng-show="error">{{error}}</div>
 		<div class="btn-group pull-right">
 			<a ng-href="/{{location}}" class="btn btn-default">
 				<span class="glyphicon glyphicon-arrow-left"></span><br>Cancel

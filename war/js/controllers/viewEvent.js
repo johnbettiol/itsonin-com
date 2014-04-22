@@ -25,7 +25,7 @@ angular.module('itsonin').controller('ViewEventController',
     
 	$scope.attendEvent = function () {
 		if(!$scope.guest.name){
-			$scope.error = 'Guest name is required';
+			$scope.error = 'Host name is required';
 			return;
 		}
 		

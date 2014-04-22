@@ -12,13 +12,13 @@ angular.module('itsonin').constant('constants', {
         {id: 'PROTEST', img: 'fire', background: ''}
     ],
     EVENT_SHARABILITIES: [
-        {id: 'NOSHARE', img: 'picture'},
-        {id: 'NORMAL', img: 'gift'},
-        {id: 'PYRAMID', img: 'cutlery'}
+        {id: 'NOSHARE', img: 'picture', text: 'No sharing'},
+        {id: 'NORMAL', img: 'gift', text: 'Sharing allowed'},
+        {id: 'PYRAMID', img: 'cutlery', text: 'Pyramid sharing'}
     ],
     EVENT_VISIBILITIES: [
-        {id: 'PUBLIC', img: 'gift'},
-    	{id: 'PRIVATE', img: 'picture'}
+        {id: 'PUBLIC', img: 'gift', text: 'Public'},
+    	{id: 'PRIVATE', img: 'picture', text: 'Private'}
     ],
     DATE_TYPES: [
          {id: 'EMPTY'}, 

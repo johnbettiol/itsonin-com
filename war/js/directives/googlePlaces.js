@@ -3,7 +3,8 @@ angular.module('itsonin').directive('googlePlaces', function(){
 		restrict:'E',
 		replace:true,
 		scope: {event:'='},
-		template: '<input id="google_places_ac" name="google_places_ac" type="text" class="input-block-level" ng-model="event.locationAddress"/>',
+		template: '<input id="google_places_ac" name="google_places_ac" type="text" ' +
+			'class="input-block-level form-control" ng-model="event.locationAddress"/>',
 		link: function($scope, elm, attrs){
 			var autocomplete = new google.maps.places.Autocomplete($("#google_places_ac")[0], {});
 			google.maps.event.addListener(autocomplete, 'place_changed', function() {

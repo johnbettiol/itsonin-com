@@ -164,6 +164,13 @@
 	z-index: 10;
 }
 
-a:hover {
+a, a:hover, a:active, a:focus {
+	outline: none;
+	outline: 0;
+	outline-style: none;
 	text-decoration: none;
+}
+
+img {
+	border: none;
 }​

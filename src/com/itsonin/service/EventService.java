@@ -161,7 +161,7 @@ public class EventService {
 
 	public Guest attend(Long eventId, String guestName) {
 		if(StringUtils.isEmpty(guestName)){
-			throw new BadRequestException("Guest name is required");
+			throw new BadRequestException("Host name is required");
 		}
 		return storeGuestEntry(eventId, guestName, GuestStatus.ATTENDING);
 	}
@@ -265,7 +265,7 @@ public class EventService {
     		errors.add("Event name is required");
     	}
     	if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
-    		errors.add("Guest name is required");
+    		errors.add("Host name is required");
     	}
     	if(event.getType() == null){
     		errors.add("Event type is required");

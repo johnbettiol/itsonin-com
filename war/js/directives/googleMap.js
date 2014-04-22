@@ -36,7 +36,9 @@ angular.module('itsonin').directive('googleMap', function(){
 				// For each place, get the icon, place name, and location.
 				markers = [];
 				var bounds = new google.maps.LatLngBounds();
-				for (var i = 0, place; place = places[i]; i++) {
+				//for (var i = 0, place; place = places[i]; i++) { //using only 1st place
+				
+					var place = places[0];
 					
 					$scope.$apply(function (){
 						$scope.place = place;
@@ -58,7 +60,7 @@ angular.module('itsonin').directive('googleMap', function(){
 
 					});
 					
-					google.maps.event.addListener(marker, 'dragend', function() {
+					/*google.maps.event.addListener(marker, 'dragend', function() {
 						geocoder.geocode({
 						    latLng: marker.getPosition()
 						  }, function(responses) {
@@ -68,12 +70,12 @@ angular.module('itsonin').directive('googleMap', function(){
 						      console.log('Cannot determine address at this location.');
 						    }
 						  });
-					  });
+					  });*/
 
 					markers.push(marker);
 
 					bounds.extend(place.geometry.location);
-				}
+				//}
 
 				map.fitBounds(bounds);
 			});
