@@ -55,6 +55,7 @@ angular.module('itsonin').controller('EditEventController',
 		  if($routeParams.eventId){
 			  eventService.info($routeParams.eventId, null, function(response) {
 				  $scope.event = response.event;
+				  $scope.guest = response.guest;
 			  
 				  $scope.dateType = 'CUSTOM';
 				  $scope.locationType = 'MAP';
@@ -131,11 +132,12 @@ angular.module('itsonin').controller('EditEventController',
 	  }
 	  
 	  $scope.shareEvent = function () {
+		  delete $scope.error;
 		  eventService.create($scope.event, $scope.guest, function(resp) {
 			  $scope.success = 'New event was successfully created.';
 			  $timeout(function() {
 				  $location.path('/i/' + resp.event.eventId + '.' + resp.guest.guestId);
-			  }, 500);
+			  }, 800);
 		  },
 		  function(error) {
 			  if(error.status == 'error') {
@@ -146,12 +148,8 @@ angular.module('itsonin').controller('EditEventController',
 		  });
 	  }
 	  
-	  $scope.saveEvent = function () {
-
-	  }
-	  
 	  $scope.updateEvent = function () {
-		  eventService.update($scope.event, function(response) {
+		  eventService.update($scope.event, $scope.guest, function(response) {
 			  $location.path('/' + $rootScope.location);
 		  });
 	  }

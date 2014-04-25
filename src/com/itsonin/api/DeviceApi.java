@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -68,7 +67,7 @@ public class DeviceApi {
 		return deviceService.list(name, created, lastLogin, sortField, sortOrder, offset, limit);
 	}
 	
-	@DELETE
+	@POST
 	@Path("/device/{id}/delete")
 	@Produces("application/json")
 	public Response delete(@PathParam("id")Long id) {

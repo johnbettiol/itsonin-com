@@ -81,16 +81,22 @@ public class GuestService {
 		return previousGuests;
 	}
 
-	public void update(Long eventId, Long guestId, Guest guest) {
-		Guest toUpdate = guestDao.get(eventId + "_" + guestId);
+	public void update(Guest guest) {
+		Guest toUpdate = guestDao.get(guest.getId());
 		if (toUpdate == null) {
-			throw new NotFoundException("Guest with id= " + guestId
+			throw new NotFoundException("Guest with id= " + guest.getId()
 					+ " doesn't not exist");
 		}
 		if (guest.getType() != null) {
 			toUpdate.setType(guest.getType());
 		}
-
+		if (guest.getName() != null) {
+			toUpdate.setName(guest.getName());
+		}
+		if (guest.getStatus() != null) {
+			toUpdate.setStatus(guest.getStatus());
+		}
+		
 		guestDao.save(toUpdate);
 	}
 

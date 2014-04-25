@@ -2,10 +2,8 @@ package com.itsonin.api;
 
 import java.util.List;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -62,7 +60,7 @@ public class CommentApi {
 		return commentService.create(eventId, null, parentCommentId, comment);
 	}
 
-	@PUT
+	@POST
 	@Path("/event/{eventId}/{guestId}/comment/{commentId}/update")
 	@Produces("application/json")
 	public Response update(@PathParam("eventId") Long eventId,
@@ -73,7 +71,7 @@ public class CommentApi {
 				.build();
 	}
 
-	@PUT
+	@POST
 	@Path("/event/{eventId}/comment/{commentId}/update")
 	@Produces("application/json")
 	public Response update(@PathParam("eventId") Long eventId,
@@ -81,7 +79,7 @@ public class CommentApi {
 		return update(eventId, null, commentId, comment);
 	}
 
-	@DELETE
+	@POST
 	@Path("/event/{eventId}/{guestId}/comment/{commentId}/delete")
 	@Produces("application/json")
 	public Response delete(@PathParam("eventId") Long eventId,
@@ -93,7 +91,7 @@ public class CommentApi {
 				.build();
 	}
 
-	@DELETE
+	@POST
 	@Path("/event/{eventId}/comment/{commentId}/delete")
 	@Produces("application/json")
 	public Response delete(@PathParam("eventId") Long eventId,

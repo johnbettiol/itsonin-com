@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>itsonin</title>
 
-    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/css/datepicker.css" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-datetimepicker.css" />
-	<link rel="stylesheet" type="text/css" href="/css/style.css?v=20140422141141">
+	<link rel="stylesheet" type="text/css" href="/css/style.css?v=20140425190431">
 	
 	<!--[if lt IE 9]>
 	    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -30,7 +30,7 @@
 	<script src="/lib/bootstrap-datetimepicker.js" type="text/javascript"></script>
 	<script src="/lib/underscore-min.js" type="text/javascript"></script>
 	<script src="/lib/moment.min.js" type="text/javascript"></script>
-	<script src="/js/all.js?v=20140422141141" type="text/javascript"></script>
+	<script src="/js/all.js?v=20140425190431" type="text/javascript"></script>
   </head>
 
   <body>

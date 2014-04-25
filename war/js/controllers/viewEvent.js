@@ -25,7 +25,7 @@ angular.module('itsonin').controller('ViewEventController',
     
 	$scope.attendEvent = function () {
 		if(!$scope.guest.name){
-			$scope.error = 'Host name is required';
+			$scope.error = 'Guest name is required';
 			return;
 		}
 		
@@ -44,7 +44,8 @@ angular.module('itsonin').controller('ViewEventController',
 	$scope.declineEvent = function () {
 		eventService.decline($routeParams.eventId, $scope.guest.name, function(response) {
 			$scope.guest.status = 'DECLINED';
-			$scope.success = response.message;
+			$scope.success = 'Event declined successfully';
+			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
 		},
 		function(error) {
 			console.log(error);			

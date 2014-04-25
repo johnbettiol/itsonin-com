@@ -147,6 +147,9 @@ public class EventService {
 		EventWithGuest eventWithGuest = get(eventId, forInvitation);
 		List<Guest> guests = guestDao.listByEvent(eventId,
 				GuestStatus.ATTENDING);
+		List<Guest> declinedGuests = guestDao.listByEvent(eventId,
+				GuestStatus.DECLINED);
+		guests.addAll(declinedGuests);
 		List<Comment> comments = commentDao.list(eventId, null);
 		Guest host = guestDao.getHostGuestForEvent(eventId);
 
@@ -161,7 +164,7 @@ public class EventService {
 
 	public Guest attend(Long eventId, String guestName) {
 		if(StringUtils.isEmpty(guestName)){
-			throw new BadRequestException("Host name is required");
+			throw new BadRequestException("Guest name is required");
 		}
 		return storeGuestEntry(eventId, guestName, GuestStatus.ATTENDING);
 	}

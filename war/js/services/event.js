@@ -10,8 +10,9 @@ angular.module('itsonin').factory('eventService',
 		create: function(event, guest, success, error) {
 			$http.post('/api/event/create', {event:event, guest:guest}).success(success).error(error);
 		},
-		update: function(event, success, error) {
-			$http.put('/api/event/' + event.eventId + '/update', event).success(success).error(error);
+		update: function(event, guest, success, error) {
+			$http.post('/api/event/' + event.eventId + '/update', {event:event, guest:guest})
+				.success(success).error(error);
 		},
 		info: function(eventId, queryParams, success, error) {
 			var fromCache = cache.get(eventId);			
@@ -31,12 +32,12 @@ angular.module('itsonin').factory('eventService',
 		},
 		attend: function(eventId, guestName, success, error) {
 			cache.remove(eventId);
-			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
+			$http.post('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		},
 		decline: function(eventId, guestName, success, error) {
 			cache.remove(eventId);
-			$http.get('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
+			$http.post('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		}
 	};

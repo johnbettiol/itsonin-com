@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,6 +23,7 @@ import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
 import com.itsonin.resteasy.CustomDateFormat;
 import com.itsonin.service.EventService;
+import com.itsonin.service.GuestService;
 
 /**
  * @author nkislitsin
@@ -33,10 +33,12 @@ import com.itsonin.service.EventService;
 public class EventApi {
 
 	private EventService eventService;
+	private GuestService guestService;
 
 	@Inject
-	public EventApi(EventService eventService) {
+	public EventApi(EventService eventService, GuestService guestService) {
 		this.eventService = eventService;
+		this.guestService = guestService;
 	}
 
 	@POST
@@ -48,11 +50,15 @@ public class EventApi {
 				eventWithGuest.getGuest());
 	}
 
-	@PUT
+	@POST
 	@Path("/event/{eventId}/update")
+	@Consumes("application/json")
 	@Produces("application/json")
-	public Response update(@PathParam("eventId") Long eventId, Event event) {
-		eventService.update(eventId, event);
+	public Response update(@PathParam("eventId") Long eventId, EventWithGuest eventWithGuest) {
+		eventService.update(eventId, eventWithGuest.getEvent());
+		if(eventWithGuest.getGuest() != null){
+			guestService.update(eventWithGuest.getGuest());
+		}
 		return Response.ok()
 				.entity(new SuccessResponse("Event updated successfully"))
 				.build();
@@ -66,7 +72,7 @@ public class EventApi {
 		return eventService.info(eventId, forInvitation);
 	}
 
-	@GET
+	@POST
 	@Path("/event/{eventId}/attend/{guestName}")
 	@Produces("application/json")
 	public Guest attend(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
@@ -110,14 +116,11 @@ public class EventApi {
 		return cancel(eventId, null);
 	}
 
-	@GET
+	@POST
 	@Path("/event/{eventId}/decline/{guestName}")
 	@Produces("application/json")
-	public Response decline(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
-		eventService.decline(eventId, guestName);
-		return Response.ok()
-				.entity(new SuccessResponse("Event declined successfully"))
-				.build();
+	public Guest decline(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
+		return eventService.decline(eventId, guestName);
 	}
 
 }

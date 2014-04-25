@@ -6,7 +6,6 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,12 +73,12 @@ public class GuestApi {
 				sortOrder, numberOfLevels, offset, limit);
 	}
 
-	@PUT
+	@POST
 	@Path("/event/{eventId}/{guestId}/update")
 	@Produces("application/json")
 	public Response update(@PathParam("eventId") Long eventId,
 			@PathParam("guestId") Long guestId, Guest guest) {
-		guestService.update(eventId, guestId, guest);
+		guestService.update(guest);
 		return Response.ok()
 				.entity(new SuccessResponse("Guest updated successfully"))
 				.build();
