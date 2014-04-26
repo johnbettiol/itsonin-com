@@ -47,7 +47,9 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
 		}
 	});
 
-	if (!$cookies.token){
+	if ($cookies.welcome){
+		$rootScope.nextUrlAfterWelcome = $location.url();
+		delete $cookies.welcome;
 		$location.path('/welcome');
 	} else if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
 		|| $location.path() == '/Dusseldorf'){

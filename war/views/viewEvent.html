@@ -50,7 +50,8 @@
     <div class="panel panel-default">
 		<div class="panel-body">
 			<label>Your name</label>
-			<input type="text" class="form-control" ng-model="guest.name">
+			<input type="text" class="form-control" ng-model="guest.name" ng-show="guest.status != 'ATTENDING'">
+			<span class="field" ng-show="guest.status == 'ATTENDING'">{{guest.name}}</span>
 		</div>
 	</div>
     <div class="alert alert-success" ng-show="success">{{success}}</div>

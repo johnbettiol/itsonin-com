@@ -10,12 +10,9 @@ angular.module('itsonin').controller('ListController',
 	  $scope.eventTypes = constants.EVENT_TYPES;
 	  $scope.locationExist = ($routeParams.location == $rootScope.location);
 	  $scope.filter = {
-		types: []
+		types: [],
+		startTime: moment().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0)
 	  };
-	  
-	  $scope.momentDate = function(date) {
-		  return moment(date).calendar();
-	  }
 	  
 	  $scope.isKnownLocation = function () {
 	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf'];
@@ -81,7 +78,8 @@ angular.module('itsonin').controller('ListController',
 		  
 		  switch($scope.dateFilterState) {
 			  case 0: {//all
-				  delete $scope.filter.startTime;
+				  $scope.filter.startTime = moment().set('hour', 0).set('minute', 0)
+				  	.set('second', 0).set('millisecond', 0);
 				  delete $scope.filter.endTime;
 				  $scope.loadEvents();
 				  break;

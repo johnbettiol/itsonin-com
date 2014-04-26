@@ -30,8 +30,8 @@ angular.module('itsonin').controller('ViewEventController',
 		}
 		
 		eventService.attend($routeParams.eventId, $scope.guest.name, function(response) {
-			$scope.guest.status = 'ATTENDING';
 			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
+			$scope.loadEvent();
 		},function(error) {
 			if(error.status == 'error') {
 				$scope.error = error.message;
@@ -42,10 +42,9 @@ angular.module('itsonin').controller('ViewEventController',
 	}
 	
 	$scope.declineEvent = function () {
-		eventService.decline($routeParams.eventId, $scope.guest.name, function(response) {
-			$scope.guest.status = 'DECLINED';
-			$scope.success = 'Event declined successfully';
+		eventService.decline($routeParams.eventId, function(response) {
 			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
+			$scope.loadEvent();
 		},
 		function(error) {
 			console.log(error);			

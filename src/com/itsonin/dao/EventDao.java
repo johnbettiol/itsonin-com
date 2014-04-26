@@ -45,11 +45,11 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 		}
 
 		if(startTime != null){
-			q = q.filter("startTime >", startTime);
+			q = q.filter("startTime >=", startTime);
 		}
 			
 		if(endTime != null){
-			q = q.filter("endTime >", endTime);
+			q = q.filter("endTime >=", endTime);
 		}
 		
 		if(sortOrder != null && sortField != null && !sortField.isEmpty()){

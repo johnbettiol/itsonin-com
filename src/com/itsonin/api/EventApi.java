@@ -117,10 +117,10 @@ public class EventApi {
 	}
 
 	@POST
-	@Path("/event/{eventId}/decline/{guestName}")
+	@Path("/event/{eventId}/decline")
 	@Produces("application/json")
-	public Guest decline(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
-		return eventService.decline(eventId, guestName);
+	public Guest decline(@PathParam("eventId") Long eventId) {
+		return eventService.decline(eventId);
 	}
 
 }

@@ -10,7 +10,6 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.itsonin.enums.DeviceLevel;
-import com.itsonin.enums.DeviceType;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
@@ -26,17 +25,12 @@ public class Device implements Serializable{
 	
 	@Id
 	private Long deviceId;
-	private DeviceType type;
 	private String token;
 	private DeviceLevel level;
 	private Date created;
 	private Date lastLogin=new Date();
 
-	@SuppressWarnings("unused")
-	private Device(){}
-
-	public Device(DeviceType type) {
-		this.type = type;
+	public Device() {
 		this.level = DeviceLevel.NORMAL;
 	}
 
@@ -46,14 +40,6 @@ public class Device implements Serializable{
 
 	public void setDeviceId(Long deviceId) {
 		this.deviceId = deviceId;
-	}
-
-	public DeviceType getType() {
-		return type;
-	}
-
-	public void setType(DeviceType type) {
-		this.type = type;
 	}
 
 	public String getToken() {

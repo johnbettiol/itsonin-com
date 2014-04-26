@@ -47,7 +47,9 @@ angular.module('itsonin', ['ngRoute', 'ngSanitize', 'ngCookies'])
 		}
 	});
 
-	if (!$cookies.token){
+	if ($cookies.welcome){
+		$rootScope.nextUrlAfterWelcome = $location.url();
+		delete $cookies.welcome;
 		$location.path('/welcome');
 	} else if($location.path() == '/' || $location.path() == '' || $location.path() == '/Duesseldorf'
 		|| $location.path() == '/Dusseldorf'){
@@ -146,6 +148,7 @@ angular.module('itsonin').controller('EditEventController',
 		  if($routeParams.eventId){
 			  eventService.info($routeParams.eventId, null, function(response) {
 				  $scope.event = response.event;
+				  $scope.guest = response.guest;
 			  
 				  $scope.dateType = 'CUSTOM';
 				  $scope.locationType = 'MAP';
@@ -222,11 +225,12 @@ angular.module('itsonin').controller('EditEventController',
 	  }
 	  
 	  $scope.shareEvent = function () {
+		  delete $scope.error;
 		  eventService.create($scope.event, $scope.guest, function(resp) {
 			  $scope.success = 'New event was successfully created.';
 			  $timeout(function() {
 				  $location.path('/i/' + resp.event.eventId + '.' + resp.guest.guestId);
-			  }, 500);
+			  }, 800);
 		  },
 		  function(error) {
 			  if(error.status == 'error') {
@@ -237,12 +241,8 @@ angular.module('itsonin').controller('EditEventController',
 		  });
 	  }
 	  
-	  $scope.saveEvent = function () {
-
-	  }
-	  
 	  $scope.updateEvent = function () {
-		  eventService.update($scope.event, function(response) {
+		  eventService.update($scope.event, $scope.guest, function(response) {
 			  $location.path('/' + $rootScope.location);
 		  });
 	  }
@@ -260,12 +260,9 @@ angular.module('itsonin').controller('ListController',
 	  $scope.eventTypes = constants.EVENT_TYPES;
 	  $scope.locationExist = ($routeParams.location == $rootScope.location);
 	  $scope.filter = {
-		types: []
+		types: [],
+		startTime: moment().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0)
 	  };
-	  
-	  $scope.momentDate = function(date) {
-		  return moment(date).calendar();
-	  }
 	  
 	  $scope.isKnownLocation = function () {
 	      var knownLocations = ['Düsseldorf', 'Duesseldorf', 'Dusseldorf'];
@@ -331,7 +328,8 @@ angular.module('itsonin').controller('ListController',
 		  
 		  switch($scope.dateFilterState) {
 			  case 0: {//all
-				  delete $scope.filter.startTime;
+				  $scope.filter.startTime = moment().set('hour', 0).set('minute', 0)
+				  	.set('second', 0).set('millisecond', 0);
 				  delete $scope.filter.endTime;
 				  $scope.loadEvents();
 				  break;
@@ -486,13 +484,13 @@ angular.module('itsonin').controller('ViewEventController',
     
 	$scope.attendEvent = function () {
 		if(!$scope.guest.name){
-			$scope.error = 'Host name is required';
+			$scope.error = 'Guest name is required';
 			return;
 		}
 		
 		eventService.attend($routeParams.eventId, $scope.guest.name, function(response) {
-			$scope.guest.status = 'ATTENDING';
 			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
+			$scope.loadEvent();
 		},function(error) {
 			if(error.status == 'error') {
 				$scope.error = error.message;
@@ -503,9 +501,9 @@ angular.module('itsonin').controller('ViewEventController',
 	}
 	
 	$scope.declineEvent = function () {
-		eventService.decline($routeParams.eventId, $scope.guest.name, function(response) {
-			$scope.guest.status = 'DECLINED';
-			$scope.success = response.message;
+		eventService.decline($routeParams.eventId, function(response) {
+			$location.path('/i/' + $routeParams.eventId + '.' + response.guestId);
+			$scope.loadEvent();
 		},
 		function(error) {
 			console.log(error);			
@@ -713,8 +711,9 @@ angular.module('itsonin').factory('eventService',
 		create: function(event, guest, success, error) {
 			$http.post('/api/event/create', {event:event, guest:guest}).success(success).error(error);
 		},
-		update: function(event, success, error) {
-			$http.put('/api/event/' + event.eventId + '/update', event).success(success).error(error);
+		update: function(event, guest, success, error) {
+			$http.post('/api/event/' + event.eventId + '/update', {event:event, guest:guest})
+				.success(success).error(error);
 		},
 		info: function(eventId, queryParams, success, error) {
 			var fromCache = cache.get(eventId);			
@@ -734,12 +733,12 @@ angular.module('itsonin').factory('eventService',
 		},
 		attend: function(eventId, guestName, success, error) {
 			cache.remove(eventId);
-			$http.get('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
+			$http.post('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		},
-		decline: function(eventId, guestName, success, error) {
+		decline: function(eventId, success, error) {
 			cache.remove(eventId);
-			$http.get('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
+			$http.post('/api/event/' + eventId + '/decline')
 				.success(success).error(error);
 		}
 	};
@@ -750,6 +749,10 @@ angular.module('itsonin').factory('guestService',
 	return {
 	    create: function(eventId, type, status, success, error) {
 	        $http.post('/api/event/' + eventId + '/guest/create', {status: status, type: type})
+	        .success(success).error(error);
+	    },
+	    update: function(eventId, guest, success, error) {
+	        $http.post('/api/event/' + eventId + '/' + guest.guestId + '/update', guest)
 	        .success(success).error(error);
 	    },
 	    list: function(eventId, success, error) {

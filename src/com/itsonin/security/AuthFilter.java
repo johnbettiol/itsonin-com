@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.entity.Device;
-import com.itsonin.enums.DeviceType;
 import com.itsonin.service.DeviceService;
 import com.itsonin.utils.CookieUtils;
 
@@ -27,6 +26,7 @@ import com.itsonin.utils.CookieUtils;
 public class AuthFilter implements Filter {
 
 	private static final String TOKEN_COOKIE = "token";
+	private static final String SHOW_WELCOME = "welcome";
 
 	protected static final Logger log = Logger.getLogger(AuthFilter.class
 			.getName());
@@ -60,13 +60,10 @@ public class AuthFilter implements Filter {
 			}
 
 			if (device == null) {
-				// @TODO We no longer need device type, just create with nothing
-				device = deviceService.create(new Device(DeviceType.BROWSER));
+				device = deviceService.create(new Device());
 				CookieUtils.setCookie(TOKEN_COOKIE, device.getToken(), res);
 				if (servletRequest instanceof HttpServletRequest) {
-					if ("/".equals(req.getRequestURI())) {
-						res.sendRedirect("/welcome");
-					}
+					CookieUtils.setCookie(SHOW_WELCOME, "true", res);
 				}
 			}
 			authContextService.set(new AuthContext(device));

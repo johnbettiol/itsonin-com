@@ -23,7 +23,6 @@ import com.google.inject.Injector;
 import com.itsonin.dao.DeviceDao;
 import com.itsonin.entity.Device;
 import com.itsonin.enums.DeviceLevel;
-import com.itsonin.enums.DeviceType;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.exception.UnauthorizedException;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
@@ -52,7 +51,7 @@ public class DeviceApiTest {
         dispatcher.getProviderFactory().getExceptionMappers().put(UnauthorizedException.class, new UnauthorizedExceptionMapper());
         dispatcher.getRegistry().addSingletonResource(i.getInstance(DeviceApi.class));
 
-        device = new Device(DeviceType.BROWSER);
+        device = new Device();
         device.setLevel(DeviceLevel.SUPER);
 	}
 

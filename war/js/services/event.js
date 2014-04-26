@@ -35,9 +35,9 @@ angular.module('itsonin').factory('eventService',
 			$http.post('/api/event/' + eventId + '/attend/' + encodeURIComponent(guestName))
 				.success(success).error(error);
 		},
-		decline: function(eventId, guestName, success, error) {
+		decline: function(eventId, success, error) {
 			cache.remove(eventId);
-			$http.post('/api/event/' + eventId + '/decline/' + encodeURIComponent(guestName))
+			$http.post('/api/event/' + eventId + '/decline')
 				.success(success).error(error);
 		}
 	};

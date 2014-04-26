@@ -43,7 +43,6 @@ import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
-import com.itsonin.enums.DeviceType;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
@@ -136,22 +135,22 @@ public class FullApiTest {
 		
 		// Create 3 different devices
 		// @TODO SUPER user can only be assigned via server side, all devices are set to NORMAL on create
-		Device device1 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(1L));
+		Device device1 = createDevice(new Device(), Long.valueOf(1L));
 		device1.setLevel(DeviceLevel.SUPER);
 		deviceDao.save(device1);
 		allDevices.add(device1);
 		
-		Device device2 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(2L));
+		Device device2 = createDevice(new Device(), Long.valueOf(2L));
 		allDevices.add(device2);
-		Device device3 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(3L));
+		Device device3 = createDevice(new Device(), Long.valueOf(3L));
 		allDevices.add(device3);
-		Device device4 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(4L));
+		Device device4 = createDevice(new Device(), Long.valueOf(4L));
 		allDevices.add(device4);
-		Device device5 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(5L));
+		Device device5 = createDevice(new Device(), Long.valueOf(5L));
 		allDevices.add(device5);
-		Device device6 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(6L));
+		Device device6 = createDevice(new Device(), Long.valueOf(6L));
 		allDevices.add(device6);
-		Device device7 = createDevice(new Device(DeviceType.BROWSER), Long.valueOf(7L));
+		Device device7 = createDevice(new Device(), Long.valueOf(7L));
 		allDevices.add(device7);
 		// Authenticate Device 1 (SUPER),2,3,4
 		// * Should return in response a session to be used for all

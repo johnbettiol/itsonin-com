@@ -169,8 +169,8 @@ public class EventService {
 		return storeGuestEntry(eventId, guestName, GuestStatus.ATTENDING);
 	}
 
-	public Guest decline(Long eventId, String guestName) {
-		return storeGuestEntry(eventId, guestName, GuestStatus.DECLINED);
+	public Guest decline(Long eventId) {
+		return storeGuestEntry(eventId, null, GuestStatus.DECLINED);
 	}
 
 	private Guest storeGuestEntry(Long eventId, String guestName, GuestStatus guestStatus) {
@@ -187,7 +187,9 @@ public class EventService {
 		} else if (guestStatus != guest.getStatus() && guest.getType() != GuestType.HOST &&
 				guestStatus != GuestStatus.VIEWED && guestStatus != GuestStatus.PENDING) {
 			guest.setStatus(guestStatus);
-			guest.setName(guestName);
+			if(guestName != null){
+				guest.setName(guestName);
+			}
 			guestDao.save(guest);
 		}
 		return guest;
