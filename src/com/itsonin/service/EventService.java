@@ -70,7 +70,7 @@ public class EventService {
 		guest.setGuestId(counterDao.nextGuestId(event.getEventId()));
 		guest.setEventId(event.getEventId());
 		guest.setId(guest.getEventId() + "_" + guest.getGuestId() + "_"
-				+ event.getEventId());
+				+ device.getDeviceId());
 		guest.setType(GuestType.HOST);
 		guest.setStatus(GuestStatus.ATTENDING);
 		guest.setCreated(new Date());
