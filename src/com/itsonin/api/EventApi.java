@@ -98,7 +98,7 @@ public class EventApi {
 				sortField, sortOrder, numberOfLevels, offset, limit);
 	}
 
-	@GET
+	@POST
 	@Path("/event/{eventId}/{guestId}/cancel")
 	@Produces("application/json")
 	public Response cancel(@PathParam("eventId") Long eventId,
@@ -109,7 +109,7 @@ public class EventApi {
 				.build();
 	}
 
-	@GET
+	@POST
 	@Path("/event/{eventId}/cancel")
 	@Produces("application/json")
 	public Response cancel(@PathParam("eventId") Long eventId) {
