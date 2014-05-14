@@ -15,6 +15,7 @@ import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
 import com.itsonin.resteasy.JacksonContextResolver;
 import com.itsonin.security.ApiSecurityFilter;
+import com.itsonin.security.AuthAndRouteFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.AuthFilter;
 import com.itsonin.security.impl.AuthContextServiceImpl;
@@ -22,6 +23,8 @@ import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.service.GuestService;
+import com.itsonin.servlet.DefaultServlet;
+import com.itsonin.servlet.EventListServlet;
 import com.itsonin.tasks.AdminTasks;
 
 public class WebModule extends ServletModule {
@@ -30,12 +33,8 @@ public class WebModule extends ServletModule {
 	protected void configureServlets() {
 		super.configureServlets();
 		bind(AuthContextService.class).to(AuthContextServiceImpl.class);
-		bind(AuthFilter.class).in(Singleton.class);
-
 		bind(JacksonContextResolver.class);
 		bind(ApiSecurityFilter.class);
-		bind(AuthFilter.class).in(Singleton.class);
-
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);
 		bind(UnauthorizedExceptionMapper.class);
@@ -56,7 +55,10 @@ public class WebModule extends ServletModule {
 		bind(GuestApi.class);
 
 		bind(AdminTasks.class);
-
-		filter("/*").through(AuthFilter.class);
+		bind(AuthAndRouteFilter.class).in(Singleton.class);
+		
+		filter("/*").through(AuthAndRouteFilter.class);
+		serve("/DefaultServlet").with(DefaultServlet.class);
+		serve("/EventListServlet").with(EventListServlet.class);
 	}
 }
