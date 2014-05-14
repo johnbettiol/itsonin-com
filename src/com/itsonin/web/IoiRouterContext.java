@@ -6,6 +6,9 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.itsonin.entity.Device;
+import com.itsonin.enums.DeviceLevel;
+
 public class IoiRouterContext {
 
 	public String getLocale() {
@@ -54,8 +57,12 @@ public class IoiRouterContext {
 
 	private static final String REQ_HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
-	private static final String ALIASES_EVENTS = ",Events";
-	private static final String ALIASES_MYEVENTS = ",MyEvents";
+	private static final String URI_ALIASES_EVENTS = ",Events";
+	private static final String URI_ALIASES_MYEVENTS = ",MyEvents";
+	private static final String URI_PART_ADMIN = "Admin";
+	private static final String URI_PART_WELCOME = "Welcome";
+	private static final String URI_PART_INVITATION_BASE = "i";
+	private static final String URI_PART_EVENT_BASE = "e";
 
 	private static final String LOCALE_EN = "en";
 	private static final String LOCALE_DE = "de";
@@ -69,7 +76,7 @@ public class IoiRouterContext {
 	private static final String CITY_ALLOWED = "," + CITY_DUS + "," + CITY_AUS;
 
 	public enum IoiActionType {
-		E_400, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_LIST
+		E_400, E_403, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_LIST, ADMIN
 	}
 
 	private IoiActionType actionType;
@@ -77,10 +84,15 @@ public class IoiRouterContext {
 			locationFilter, dateFilter, categoryFilter, subCategoryFilter,
 			offsetFilter;
 	private boolean citySupported, myEvents, doRedirect;
+	private Device device;
 
 	public IoiRouterContext(HttpServletRequest req) {
-		parseActionData(req);
+		this(req, null);
+	}
 
+	public IoiRouterContext(HttpServletRequest req, Device device) {
+		this.device = device;
+		parseActionData(req);
 	}
 
 	private void parseActionData(HttpServletRequest req) {
@@ -131,20 +143,25 @@ public class IoiRouterContext {
 		// / en / Düsseldorf / e / 45
 
 		String actionTypeName = requestChunks[3];
-		if ("e".equals(actionTypeName)) {
+		if (URI_PART_EVENT_BASE.equals(actionTypeName)) {
 			parseEventInfoData(requestChunks);
-		} else if ("i".equals(actionTypeName)) {
+		} else if (URI_PART_INVITATION_BASE.equals(actionTypeName)) {
 			parseEventInvitationData(requestChunks);
-		} else if (ALIASES_EVENTS.indexOf("," + actionTypeName) >= 0) {
+		} else if (URI_ALIASES_EVENTS.indexOf("," + actionTypeName) >= 0) {
 			this.myEvents = false;
 			this.actionType = IoiActionType.EVENT_LIST;
 			parseEventListData(requestChunks);
-		} else if (ALIASES_MYEVENTS.indexOf("," + actionTypeName) >= 0) {
+		} else if (URI_ALIASES_MYEVENTS.indexOf("," + actionTypeName) >= 0) {
 			this.myEvents = true;
 			this.actionType = IoiActionType.EVENT_LIST;
 			parseEventListData(requestChunks);
-		} else if ("Welcome".equals(actionTypeName)) {
+		} else if (URI_PART_WELCOME.equals(actionTypeName)) {
 			this.actionType = IoiActionType.WELCOME;
+		} else if (URI_PART_ADMIN.equals(actionTypeName)) {
+			this.actionType = device != null
+					&& device.getLevel().getLevel() < DeviceLevel.ADMIN
+							.getLevel() ? IoiActionType.ADMIN
+					: IoiActionType.E_403;
 		} else {
 			// If we cannot recognize the action type then we bork!
 			this.actionType = IoiActionType.E_400;
@@ -215,7 +232,7 @@ public class IoiRouterContext {
 			locale = LOCALE_DEFAULT;
 		}
 	}
-	
+
 	public String getInternalServlet() {
 		switch (actionType) {
 		case EVENT_LIST:
@@ -248,6 +265,15 @@ public class IoiRouterContext {
 		case CITY_NOT_FOUND:
 			uri += "/" + locale + "/cityNotFound.jsp";
 			break;
+		case ADMIN:
+			uri += "/" + locale + "/admin/index.jsp";
+			break;
+		case E_400:
+			uri += "/" + locale + "/e_400.jsp";
+			break;
+		case E_403:
+			uri += "/" + locale + "/e_403.jsp";
+			break;
 		case E_404:
 		default:
 			uri += "/" + locale + "/e_404.jsp";
@@ -255,7 +281,7 @@ public class IoiRouterContext {
 		}
 		return uri;
 	}
-	
+
 	public String getPublicRoute() {
 		return getPublicRoute(actionType);
 	}
@@ -274,15 +300,21 @@ public class IoiRouterContext {
 		case CITY_NOT_FOUND:
 			uri = "/" + locale + "/" + encodeValue(city) + "/CityNotFound";
 			break;
+		case E_403:
+			uri = "/" + locale + "/Forbidden";
+			break;
 		case E_404:
-		default:
 			uri = "/" + locale + "/FileNotFound";
+			break;
+		case E_400:
+		default:
+			uri = "/" + locale + "/InvalidRequest";
 			break;
 		}
 
 		return uri;
 	}
-	
+
 	private String encodeValue(String source) {
 		try {
 			return URLEncoder.encode(source, "UTF-8");
@@ -290,7 +322,7 @@ public class IoiRouterContext {
 		}
 		return source;
 	}
-	
+
 	private String decode(String source) {
 		try {
 			return URLDecoder.decode(source, "UTF-8");

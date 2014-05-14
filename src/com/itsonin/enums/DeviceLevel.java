@@ -5,5 +5,15 @@ package com.itsonin.enums;
  *
  */
 public enum DeviceLevel {
-	NORMAL, SUPER;
+	NORMAL(0), ADMIN(500), SUPER(1000);
+	
+	private final int value;
+
+    private DeviceLevel(int value) {
+        this.value = value;
+    }
+    
+    public int getLevel() {
+    	return value;
+    }
 }

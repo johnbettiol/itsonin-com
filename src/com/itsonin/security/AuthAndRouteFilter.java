@@ -67,9 +67,10 @@ public class AuthAndRouteFilter implements Filter {
 			device = deviceService.getDeviceByToken(token);
 		}
 
-		IoiRouterContext ioiRouter = new IoiRouterContext(req);
-		req.setAttribute(REQ_ATTRIB_IOI_ROUTER_CONTEXT, ioiRouter);
+		IoiRouterContext ioiRouter;
 		if (device == null) {
+			ioiRouter = new IoiRouterContext(req);
+				req.setAttribute(REQ_ATTRIB_IOI_ROUTER_CONTEXT, ioiRouter);
 			// New user to site, redirect to related welcome page,
 			// set a destination cookie
 			device = deviceService.create(new Device());
@@ -80,6 +81,11 @@ public class AuthAndRouteFilter implements Filter {
 			res.sendRedirect(ioiRouter.getPublicRoute(IoiActionType.WELCOME)); 
 			return;
 		}
+		
+		authContextService.set(new AuthContext(device));
+		ioiRouter = new IoiRouterContext(req, device);
+			req.setAttribute(REQ_ATTRIB_IOI_ROUTER_CONTEXT, ioiRouter);
+			
 		// If device token exists, then check if there is a destination cookie
 		// pass destination cookie as a request attribute.
 		Cookie destCookie;
@@ -94,7 +100,6 @@ public class AuthAndRouteFilter implements Filter {
 			res.sendRedirect(ioiRouter.getPublicRoute()); 
 			return;
 		} 
-		authContextService.set(new AuthContext(device));
 		req.getRequestDispatcher(ioiRouter.getInternalServlet()).forward(req,
 				res);
 	}
