@@ -159,7 +159,7 @@ public class IoiRouterContext {
 			this.actionType = IoiActionType.WELCOME;
 		} else if (URI_PART_ADMIN.equals(actionTypeName)) {
 			this.actionType = device != null
-					&& device.getLevel().getLevel() < DeviceLevel.ADMIN
+					&& device.getLevel().getLevel() >= DeviceLevel.ADMIN
 							.getLevel() ? IoiActionType.ADMIN
 					: IoiActionType.E_403;
 		} else {
