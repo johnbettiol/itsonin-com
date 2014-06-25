@@ -22,7 +22,7 @@ import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventStatus;
-import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
@@ -92,8 +92,10 @@ public class EventService {
 			throw new NotFoundException("Event with id=" + id
 					+ " is not exists");
 
-		if (event.getType() != null)
-			toUpdate.setType(event.getType());
+		if (event.getCategory() != null)
+			toUpdate.setCategory(event.getCategory());
+		if (event.getSubCategory() != null)
+			toUpdate.setSubCategory(event.getSubCategory());
 		if (event.getSharability() != null)
 			toUpdate.setSharability(event.getSharability());
 		if (event.getVisibility() != null)
@@ -195,12 +197,12 @@ public class EventService {
 		return guest;
 	}
 
-	public List<Event> list(Boolean allEvents, List<EventType> types,
+	public List<Event> list(Boolean allEvents, List<EventCategory> categories,
 			String name, Date startTime, Date endTime, String comment, String sortField,
 			SortOrder sortOrder, Integer numberOfLevels, Integer offset,
 			Integer limit) {
 		Device device = authContextService.getDevice();
-		List<Event> eventList = eventDao.list(types, name, startTime, endTime, comment,
+		List<Event> eventList = eventDao.list(categories, name, startTime, endTime, comment,
 				sortField, sortOrder, numberOfLevels, offset, limit);
 		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
 		List<Event> filteredList = new ArrayList<Event>();
@@ -272,8 +274,11 @@ public class EventService {
     	if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
     		errors.add("Host name is required");
     	}
-    	if(event.getType() == null){
-    		errors.add("Event type is required");
+    	if(event.getCategory() == null){
+    		errors.add("Event category is required");
+    	}
+    	if(event.getSubCategory() == null){
+    		errors.add("Event subcategory is required");
     	}
     	if (!errors.isEmpty()) {
     		return StringUtils.join(errors, ", ");

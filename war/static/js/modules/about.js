@@ -1,0 +1,7 @@
+var AboutModule = {
+
+    init: function() {
+    
+    }
+
+};

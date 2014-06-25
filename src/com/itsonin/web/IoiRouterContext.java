@@ -76,7 +76,7 @@ public class IoiRouterContext {
 	private static final String CITY_ALLOWED = "," + CITY_DUS + "," + CITY_AUS;
 
 	public enum IoiActionType {
-		E_400, E_403, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_LIST, ADMIN
+		E_400, E_403, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_EDIT, EVENT_LIST, ADMIN
 	}
 
 	private IoiActionType actionType;
@@ -196,25 +196,27 @@ public class IoiRouterContext {
 
 	private void parseEventInvitationData(String[] requestChunks) {
 		String eventIdAndInvitation = requestChunks[4];
-		if (requestChunks.length != 4 || "".equals(eventIdAndInvitation)) {
+		if (requestChunks.length != 5 || "".equals(eventIdAndInvitation)) {
 			this.actionType = IoiActionType.E_400;
 		} else {
-			String[] eaiChunks = eventIdAndInvitation.split(".");
+			String[] eaiChunks = eventIdAndInvitation.split("\\.");
 			if (eaiChunks.length != 2 || "".equals(eaiChunks[0])
 					|| "".equals(eaiChunks[1])) {
+				this.actionType = IoiActionType.E_400;
+			} else {
 				this.eventId = eaiChunks[0];
 				this.inviterId = eaiChunks[1];
 				this.actionType = IoiActionType.EVENT_INVITATION;
-			} else {
-				this.actionType = IoiActionType.E_400;
 			}
 		}
 	}
 
 	private void parseEventInfoData(String[] requestChunks) {
 		String eventId = requestChunks[4];
-		if (requestChunks.length != 4 || "".equals(eventId)) {
+		if (requestChunks.length != 5 || "".equals(eventId)) {
 			this.actionType = IoiActionType.E_400;
+		} else if ("add".equals(eventId)) {
+			this.actionType = IoiActionType.EVENT_NEW;
 		} else {
 			this.eventId = eventId;
 			this.actionType = IoiActionType.EVENT_INFORMATION;
@@ -235,8 +237,13 @@ public class IoiRouterContext {
 
 	public String getInternalServlet() {
 		switch (actionType) {
+		case EVENT_INFORMATION:
+			return "/EventInformationServlet";
+		case EVENT_INVITATION:
+			return "/EventInvitationServlet";
+		case EVENT_NEW:
+			return "/EventNewServlet";
 		case EVENT_LIST:
-			// I've implemented this one as a demo!
 			return "/EventListServlet";
 		default:
 			return "/DefaultServlet";

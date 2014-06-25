@@ -3,12 +3,13 @@ package com.itsonin.dao;
 import static com.itsonin.ofy.OfyService.ofy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.googlecode.objectify.cmd.Query;
 import com.itsonin.entity.Event;
-import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.ofy.ObjectifyGenericDao;
 
@@ -17,27 +18,29 @@ import com.itsonin.ofy.ObjectifyGenericDao;
  *
  */
 public class EventDao extends ObjectifyGenericDao<Event>{
+	
+	private static final List SEARCHABLE_FIELDS = Arrays.asList("title");
 
 	public EventDao() {
 		super(Event.class);
 	}
 	
-	public List<Event> list(List<EventType> types, String name, Date startTime,
+	public List<Event> list(List<EventCategory> categories, String name, Date startTime,
 			Date endTime, String comment, String sortField, SortOrder sortOrder, 
 			Integer numberOfLevels, Integer offset, Integer limit) {
 		//TODO: improve
 		if(startTime != null && endTime != null && startTime.equals(endTime)){
-			return listCurrentEvents(types, name, startTime, comment, 
+			return listCurrentEvents(categories, name, startTime, comment, 
 					sortField, sortOrder, numberOfLevels, offset, limit);
 		} else if(startTime != null && endTime != null && !startTime.equals(endTime)){
-			return listTomorrowEvents(types, name, startTime, endTime, comment, 
+			return listTomorrowEvents(categories, name, startTime, endTime, comment, 
 					sortField, sortOrder, numberOfLevels, offset, limit);
 		}
 		
 		Query<Event> q = ofy().load().type(clazz);
 		
-		if(types != null && types.size() != 0){
-			q = q.filter("type in", types);
+		if(categories != null && categories.size() != 0){
+			q = q.filter("category in", categories);
 		}
 		
 		if(name != null){
@@ -71,14 +74,14 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 		return q.list();
 	}
 	
-	public List<Event> listCurrentEvents(List<EventType> types, String name, Date now,
+	public List<Event> listCurrentEvents(List<EventCategory> categories, String name, Date now,
 			String comment, String sortField, SortOrder sortOrder, 
 			Integer numberOfLevels, Integer offset, Integer limit) {
 		
 		Query<Event> q = ofy().load().type(clazz);
 		
-		if(types != null && types.size() != 0){
-			q = q.filter("type in", types);
+		if(categories != null && categories.size() != 0){
+			q = q.filter("category in", categories);
 		}
 
 		q = q.filter("startTime <", now);
@@ -103,14 +106,14 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 		return filteredList;
 	}
 	
-	public List<Event> listTomorrowEvents(List<EventType> types, String name, Date startTime,
+	public List<Event> listTomorrowEvents(List<EventCategory> categories, String name, Date startTime,
 			Date endTime, String comment, String sortField, SortOrder sortOrder, 
 			Integer numberOfLevels, Integer offset, Integer limit) {
 		
 		Query<Event> q = ofy().load().type(clazz);
 		
-		if(types != null && types.size() != 0){
-			q = q.filter("type in", types);
+		if(categories != null && categories.size() != 0){
+			q = q.filter("category in", categories);
 		}
 
 		q = q.filter("startTime <", endTime);

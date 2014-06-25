@@ -14,7 +14,8 @@ import com.itsonin.entity.Guest;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
-import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventCategory;
+import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.EventService;
@@ -41,8 +42,8 @@ public class EventListServlet extends DefaultServlet {
 		List<Event> events = eventService.list(true, null, null, null, null,
 				null, null, null, null, null, null);
 		// temp hack to add an event just for show
-		Guest guest = new Guest("Guest name");
-		Event event = new Event(EventType.PICNIC, EventSharability.NORMAL,
+		/*Guest guest = new Guest("Guest name");
+		Event event = new Event(EventCategory.GOTO, EventSubCategory.PARTY, EventSharability.NORMAL,
 				EventVisibility.PUBLIC, EventStatus.ACTIVE,
 				EventFlexibility.NEGOTIABLE, "event title" + events.size(),
 				"event description", "event notes", new Date(), new Date(),
@@ -50,8 +51,11 @@ public class EventListServlet extends DefaultServlet {
 				"location address", new Date());
 		eventService.create(event, guest);
 		events = eventService.list(true, null, null, null, null, null, null,
-				null, null, null, null);
+				null, null, null, null);*/
 		req.setAttribute("events", events);
+		
+		req.setAttribute("eventCategories", EventCategory.values());
+		req.setAttribute("eventSubCategories", EventSubCategory.values());
 	}
 
 }

@@ -1,0 +1,7 @@
+var VelcomeModule = {
+
+    init: function() {
+    
+    }
+
+};

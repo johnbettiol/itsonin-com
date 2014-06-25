@@ -18,7 +18,7 @@ import com.itsonin.dto.EventInfo;
 import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
-import com.itsonin.enums.EventType;
+import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
 import com.itsonin.resteasy.CustomDateFormat;
@@ -84,7 +84,7 @@ public class EventApi {
 	@Produces("application/json")
 	public List<Event> list(
 			@QueryParam("allEvents") Boolean allEvents,
-			@QueryParam("types") List<EventType> types,
+			@QueryParam("types") List<EventCategory> types,
 			@QueryParam("name") String name,
 			@QueryParam("startTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date startTime,
 			@QueryParam("endTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date endTime,
