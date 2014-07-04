@@ -20,7 +20,7 @@ public class EventNewServlet extends DefaultServlet {
 		super(authContextService);
 	}
 
-	public void doIoiGet(HttpServletRequest req, HttpServletResponse res) {
+	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 		req.setAttribute("eventCategories", EventCategory.values());
 		req.setAttribute("eventSubCategories", EventSubCategory.values());
 	}

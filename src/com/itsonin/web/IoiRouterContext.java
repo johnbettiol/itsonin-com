@@ -55,11 +55,20 @@ public class IoiRouterContext {
 		return myEvents;
 	}
 
+	public Device getDevice() {
+		return device;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
 	private static final String REQ_HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
 	private static final String URI_ALIASES_EVENTS = ",Events";
 	private static final String URI_ALIASES_MYEVENTS = ",MyEvents";
 	private static final String URI_PART_ADMIN = "Admin";
+	private static final String URI_PART_TOOLS = "Tools";
 	private static final String URI_PART_WELCOME = "Welcome";
 	private static final String URI_PART_INVITATION_BASE = "i";
 	private static final String URI_PART_EVENT_BASE = "e";
@@ -72,17 +81,19 @@ public class IoiRouterContext {
 
 	private static final String CITY_DUS = "Düsseldorf";
 	private static final String CITY_AUS = "Austin";
+	private static final String CITY_ADMIN = "Admin";
 	private static final String CITY_DEFAULT = CITY_DUS;
-	private static final String CITY_ALLOWED = "," + CITY_DUS + "," + CITY_AUS;
+	private static final String CITY_ALLOWED = "," + CITY_DUS + "," + CITY_AUS
+			+ "," + CITY_ADMIN;
 
 	public enum IoiActionType {
-		E_400, E_403, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_EDIT, EVENT_LIST, ADMIN
+		E_400, E_403, E_404, CITY_NOT_FOUND, WELCOME, EVENT_INVITATION, EVENT_INFORMATION, EVENT_NEW, EVENT_EDIT, EVENT_LIST, ADMIN, TOOLS
 	}
 
 	private IoiActionType actionType;
 	private String destination, locale, city, eventId, inviterId,
 			locationFilter, dateFilter, categoryFilter, subCategoryFilter,
-			offsetFilter;
+			offsetFilter, command;
 	private boolean citySupported, myEvents, doRedirect;
 	private Device device;
 
@@ -157,11 +168,17 @@ public class IoiRouterContext {
 			parseEventListData(requestChunks);
 		} else if (URI_PART_WELCOME.equals(actionTypeName)) {
 			this.actionType = IoiActionType.WELCOME;
+		} else if (city.equals(CITY_ADMIN)
+				&& URI_PART_TOOLS.equals(actionTypeName)) {
+			// later we restrict with basic auth
+			this.actionType = IoiActionType.TOOLS;
+			this.command = requestChunks.length > 4 ? requestChunks[4] : null;
 		} else if (URI_PART_ADMIN.equals(actionTypeName)) {
 			this.actionType = device != null
 					&& device.getLevel().getLevel() >= DeviceLevel.ADMIN
 							.getLevel() ? IoiActionType.ADMIN
 					: IoiActionType.E_403;
+			this.command = requestChunks.length > 4 ? requestChunks[4] : null;
 		} else {
 			// If we cannot recognize the action type then we bork!
 			this.actionType = IoiActionType.E_400;
@@ -245,6 +262,8 @@ public class IoiRouterContext {
 			return "/EventNewServlet";
 		case EVENT_LIST:
 			return "/EventListServlet";
+		case TOOLS:
+			return "/AdminToolsServlet";
 		default:
 			return "/DefaultServlet";
 		}
@@ -252,38 +271,41 @@ public class IoiRouterContext {
 
 	public String getInternalRoute() {
 		String locale = this.locale != null ? this.locale : LOCALE_DEFAULT;
-		String uri = "/dynamic";
+		String uri;
 		switch (actionType) {
 		case EVENT_NEW:
-			uri += "/" + locale + "/event/new.jsp";
+			uri = "/dynamic/" + locale + "/city/event/new.jsp";
 			break;
 		case EVENT_INFORMATION:
-			uri += "/" + locale + "/event/info.jsp";
+			uri = "/dynamic/" + locale + "/city/event/info.jsp";
 			break;
 		case EVENT_INVITATION:
-			uri += "/" + locale + "/event/invitation.jsp";
+			uri = "/dynamic/" + locale + "/city/event/invitation.jsp";
 			break;
 		case EVENT_LIST:
-			uri += "/" + locale + "/event/list.jsp";
+			uri = "/dynamic/" + locale + "/city/event/list.jsp";
 			break;
 		case WELCOME:
-			uri += "/" + locale + "/welcome.jsp";
+			uri = "/dynamic/" + locale + "/city/welcome.jsp";
+			break;
+		case TOOLS:
+			uri = "/dynamic/" + locale + "/admin/tools/index.jsp";
 			break;
 		case CITY_NOT_FOUND:
-			uri += "/" + locale + "/cityNotFound.jsp";
+			uri = "/dynamic/" + locale + "/city/cityNotFound.jsp";
 			break;
 		case ADMIN:
-			uri += "/" + locale + "/admin/index.jsp";
+			uri = "/dynamic/" + locale + "/city/admin/index.jsp";
 			break;
 		case E_400:
-			uri += "/" + locale + "/e_400.jsp";
+			uri = "/dynamic/" + locale + "/e_400.jsp";
 			break;
 		case E_403:
-			uri += "/" + locale + "/e_403.jsp";
+			uri = "/dynamic/" + locale + "/e_403.jsp";
 			break;
 		case E_404:
 		default:
-			uri += "/" + locale + "/e_404.jsp";
+			uri = "/dynamic/" + locale + "/e_404.jsp";
 			break;
 		}
 		return uri;

@@ -98,5 +98,10 @@ public class DeviceService {
 			return false;
 		}
 	}
+
+	public void updateDevice(Device device) {
+		deviceDao.save(device);
+		
+	}
 	
 }

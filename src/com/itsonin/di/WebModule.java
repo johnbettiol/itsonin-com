@@ -28,6 +28,7 @@ import com.itsonin.servlet.EventInformationServlet;
 import com.itsonin.servlet.EventInvitationServlet;
 import com.itsonin.servlet.EventListServlet;
 import com.itsonin.servlet.EventNewServlet;
+import com.itsonin.servlet.admin.AdminToolsServlet;
 import com.itsonin.tasks.AdminTasks;
 
 public class WebModule extends ServletModule {
@@ -63,6 +64,7 @@ public class WebModule extends ServletModule {
 		filter("/*").through(AuthAndRouteFilter.class);
 		serve("/DefaultServlet").with(DefaultServlet.class);
 		serve("/EventEditServlet").with(EventEditServlet.class);
+		serve("/AdminToolsServlet").with(AdminToolsServlet.class);
 		serve("/EventNewServlet").with(EventNewServlet.class);
 		serve("/EventInvitationServlet").with(EventInvitationServlet.class);
 		serve("/EventInformationServlet").with(EventInformationServlet.class);

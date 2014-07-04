@@ -24,19 +24,25 @@ public class DefaultServlet extends HttpServlet {
 	public DefaultServlet(AuthContextService authContextService) {
 		this.authContextService = authContextService;
 	}
-
+	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
+			throws IOException, ServletException {
+		doPost(req, res);
+	}
+
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException, ServletException {
 
 		/* @TODO Make this global */
 		irc = (IoiRouterContext) req
 				.getAttribute(AuthAndRouteFilter.REQ_ATTRIB_IOI_ROUTER_CONTEXT);
-		doIoiGet(req, res);
+		doIoiAction(req, res);
 		doIoiForward(req, res);
 	}
 
-	protected void doIoiGet(HttpServletRequest req, HttpServletResponse res) {
+	protected void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 		
 	}
 

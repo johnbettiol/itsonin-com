@@ -22,7 +22,7 @@ public class EventInvitationServlet extends DefaultServlet {
 		this.eventService = eventService;
 	}
 
-	public void doIoiGet(HttpServletRequest req, HttpServletResponse res) {
+	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 		EventInfo eventInfo = eventService.info(Long.parseLong(irc.getEventId()), false);
 		req.setAttribute("event", eventInfo.getEvent());
 		req.setAttribute("comments", eventInfo.getComments());

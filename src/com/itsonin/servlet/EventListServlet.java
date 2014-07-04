@@ -33,7 +33,7 @@ public class EventListServlet extends DefaultServlet {
 		this.eventService = eventService;
 	}
 
-	public void doIoiGet(HttpServletRequest req, HttpServletResponse res) {
+	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 
 		/*
 		 * @TODO - We need to move towards having all of the parameters passed

@@ -1,12 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
-<title>itsonin ${ioiContext.city} - City Admin</title>
+<title>itsonin ${ioiContext.city} - Admin Index</title>
 </head>
 <body>
-	<h1>Welcome to itsonin ${ioiContext.city} Admin Console</h1>
+	<h1>Welcome to itsonin Admin Console</h1>
 	<p>
-		This is the page where you can import more events!
+		This is the superuser administration area
 	</p>
 </body>
 </html>
