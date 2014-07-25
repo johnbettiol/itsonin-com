@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.dto.EventWithGuest;
@@ -17,6 +19,7 @@ import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.resteasy.CustomDateTimeSerializer;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.EventService;
 
@@ -49,11 +52,14 @@ public class EventListServlet extends DefaultServlet {
 				"event description", "event notes", new Date(), new Date(),
 				1.0d, 2.0d, "location.url", "location title",
 				"location address", new Date());
-		eventService.create(event, guest);
+		eventService.create(event, guest);*/
 		events = eventService.list(true, null, null, null, null, null, null,
-				null, null, null, null);*/
+				null, null, null, null);
 		req.setAttribute("events", events);
 		
+		Gson gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
+		req.setAttribute("eventsJson", gson.toJson(events));
+
 		req.setAttribute("eventCategories", EventCategory.values());
 		req.setAttribute("eventSubCategories", EventSubCategory.values());
 	}
