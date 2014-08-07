@@ -3,7 +3,7 @@
 <html>
 <head>
 	<title>itsonin</title>
-	<%@ include file="../head.jsp" %>
+	<%@ include file="head.jsp" %>
 </head>
 <body>
   <div id="wrap">

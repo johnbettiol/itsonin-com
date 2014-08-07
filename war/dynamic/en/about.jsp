@@ -4,7 +4,7 @@
 <head>
 	<title>itsonin</title>
 	<script type="text/javascript" src="/static/js/modules/about.js"></script>
-	<%@ include file="../head.jsp" %>
+	<%@ include file="head.jsp" %>
     <script type="text/javascript">
         $(document).ready(function() {
             AboutModule.init();

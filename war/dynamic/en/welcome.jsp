@@ -4,7 +4,7 @@
 <head>
 	<title>Welcome to itsonin ${ioiContext.city}</title>
 	<script type="text/javascript" src="/js/modules/welcome.js"></script>
-	<%@ include file="../head.jsp" %>
+	<%@ include file="head.jsp" %>
     <script type="text/javascript">
         $(document).ready(function() {
             WelcomeModule.init();

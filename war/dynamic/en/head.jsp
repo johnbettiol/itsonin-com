@@ -36,13 +36,14 @@
 <%-- COMMON SCRIPTS --%>
 <script src="/static/js/script.js" type="text/javascript"></script>
 
-<!-- FONT AWESOME -->
+<%-- FONT AWESOME --%>
 <link rel="stylesheet" href="/static/lib/font-awesome/css/font-awesome.min.css" />
 
-<!-- FONT - OPEN-SANS -->
+<%-- FONT - OPEN-SANS --%>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
 
 <%-- SITE STYLE --%>
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-custom.css">
 <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 
 <!--[if lt IE 9]>

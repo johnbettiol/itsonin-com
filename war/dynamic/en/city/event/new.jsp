@@ -22,7 +22,7 @@
         <div class="col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
 		    <div class="row text-center">
 				<h2>
-					<a href="/${ioiDestination}">It's On In</a>
+					<a href="/${ioiDestination}">It's On In1</a>
 				</h2>
 			</div>
 			<div class="row text-center">
