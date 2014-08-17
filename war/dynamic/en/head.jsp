@@ -11,12 +11,14 @@
 <%-- GOOGLE MAPS --%>
 <script src="http://maps.google.com/maps/api/js?sensor=true&libraries=places,visualization&language=en-US&v=3.14" type="text/javascript"></script>
 
-<%-- DATEPICKER --%>
-<script src="/static/lib/bootstrap-datetimepicker.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-datetimepicker.css" />
-
-<%-- UNDERSCORE --%>
-<script src="/static/lib/underscore-min.js" type="text/javascript"></script>
+<%-- PICKADATE --%>
+<link rel="stylesheet" href="/static/lib/pickadate/css/default.css" id="theme_base">
+<link rel="stylesheet" href="/static/lib/pickadate/css/default.date.css">
+<link rel="stylesheet" href="/static/lib/pickadate/css/default.time.css">
+<script src="/static/lib/pickadate/js/picker.js" type="text/javascript"></script>
+<script src="/static/lib/pickadate/js/picker.date.js" type="text/javascript"></script>
+<script src="/static/lib/pickadate/js/picker.time.js" type="text/javascript"></script>
+<script src="/static/lib/pickadate/js/legacy.js" type="text/javascript"></script>
 
 <%-- MOMENT --%>
 <script src="/static/lib/moment.min.js" type="text/javascript"></script>
@@ -30,7 +32,9 @@
 <%-- LESS --%>
 <link rel="stylesheet/less" type="text/css" href="/static/less/variables.less" />
 <link rel="stylesheet/less" type="text/css" href="/static/less/icons.less" />
+<link rel="stylesheet/less" type="text/css" href="/static/less/common.less" />
 <link rel="stylesheet/less" type="text/css" href="/static/less/style.less" />
+<link rel="stylesheet/less" type="text/css" href="/static/less/bootstrap-custom.less" />
 <script src="/static/lib/less/less-1.7.3.min.js" type="text/javascript"></script>
 
 <%-- COMMON SCRIPTS --%>
@@ -43,8 +47,8 @@
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
 
 <%-- SITE STYLE --%>
-<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-custom.css">
-<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<%--<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-custom.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">--%>
 
 <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>

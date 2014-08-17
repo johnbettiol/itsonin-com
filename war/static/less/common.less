@@ -1,0 +1,65 @@
+// common styles between all pages
+body {
+	color: #999;
+	font-family: "Open Sans", arial, sans-serif;
+}
+/*
+html *{
+	margin: 0px;
+	padding: 0px;
+}*/
+
+.header {
+	padding: 10px;
+	background-color: #00a6b5;
+	color: white;
+	height: 50px;
+	
+	.header-title {
+		font-size: 18px;
+	}
+}
+
+.header	a {
+	text-decoration: none;
+	color: white;
+}
+
+.pointer {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.btn-container {
+	position: relative;
+	padding: 10px 0px;
+}
+	
+.categories {
+	display: inline-block;
+	margin: 0px;
+	padding: 0px;
+}
+
+.categories > li {
+	float: left;
+	list-style: none;
+	text-align: center;
+}
+	
+.categories > li > span {
+	margin: 0 4px;
+}
+	
+.categories .category-title {
+	font-size: 11px;
+	display: block;
+}
+
+.categories > li.active > span.icon {
+	border: 1px solid #00a6b5;
+}
+
+.categories > li.active > span.category-title {
+	color: #00a6b5;
+}
