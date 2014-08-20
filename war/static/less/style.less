@@ -37,6 +37,11 @@
 		margin-top: 50px;
 	}
 
+	.col-sm-6 {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
 	.filter-bar-section {
 		padding-top: 3px;
 		padding-bottom: 3px;
@@ -56,9 +61,7 @@
 
 	.event-title {
 		color: #00a6b5;
-		display: block;
 		font-size: 15px;
-		margin-bottom: 5px;
 	}
 
 	.event-body {
@@ -71,7 +74,6 @@
 		color: #c51f4b;
 		font-weight: 400;
 		font-size: 15px;
-		display: block;
 	}
 
 	.event-arrow {
@@ -80,9 +82,29 @@
 		cursor: pointer;
 		font-size: 36px;
 		position: absolute;
-		right: 0px;
-		top: 0px;
+		right: 4px;
+		top: -webkit-calc(50% - 36px);
+		top: -moz-calc(50% - 36px);
+		top: calc(50% - 36px);
 		z-index: 1;
 	}
 
+	p {
+		margin: 0;
+	}
+
+	.list-group-item {
+		padding: 4px 6px;
+		/*border: 1px solid #f1f2f3;*/
+	}
+
+	.panel .panel-heading {
+		border-bottom: 0;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+
+	.media-body {
+		margin-right: 20px;
+	}
 }

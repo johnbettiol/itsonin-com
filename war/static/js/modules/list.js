@@ -9,8 +9,6 @@ var EventListModule = (function() {
 	var markers = [];
 	var isMapShown = false;
 	var isMapShownOnTop = false;
-	var highlightedIcon = new google.maps.MarkerImage('/static/img/marker/icon_9.png', new google.maps.Size(32,32));
-	var oldIcon;
 
 	return {
 		init: function() {
@@ -76,17 +74,16 @@ var EventListModule = (function() {
 			$('.categories li').on('click', function() {
 				$('.categories li').each(function (i) {
 					$(this).removeClass('active');
+					$(this).find('.icon').removeClass('active');
 				});
 				$(this).addClass('active');
+				$(this).find('.icon').addClass('active');
 				self.filterEvents('subCategory', $(this).attr('id'));
 			});
 
-			$('.event-item').on('mouseover', function() {
-				oldIcon = self.setMarkerIcon($(this).attr('id'), highlightedIcon);
-			});
-
-			$('.event-item').on('mouseout', function() {
-				self.setMarkerIcon($(this).attr('id'), oldIcon);
+			$('.event-item').on('click', function() {
+				var eventId = $(this).attr('id');
+				self.highlightMarker(eventId);
 			});
 
 			$('#date-field').pickadate();
@@ -94,10 +91,6 @@ var EventListModule = (function() {
 
 			//$(document).on('touchmove', self.handleScroll);
 			//$(document).on('scroll', self.handleScroll);
-			
-			/*$(window).resize(function() {
-				$('.filters').width($('#list-container').width());
-			});*/
 
 			$.views.helpers({
 				formatDate: function (val) {
@@ -141,14 +134,11 @@ var EventListModule = (function() {
 				}
 				prev = event;
 			});
-			$('#list-container .col-sm-12').html($('#eventTemplate').render(events));
+			$('#list-container').html($('#eventTemplate').render(events));
 
-			$('.event-item').on('mouseover', function() {
-				oldIcon = self.setMarkerIcon($(this).attr('id'), highlightedIcon);
-			});
-
-			$('.event-item').on('mouseout', function() {
-				self.setMarkerIcon($(this).attr('id'), oldIcon);
+			$('.event-item').on('click', function() {
+				var eventId = $(this).attr('id');
+				self.highlightMarker(eventId);
 			});
 		},
 
@@ -209,18 +199,16 @@ var EventListModule = (function() {
 					}
 				   	self.renderEvents(filteredEvents);
 				}
-				
-				//highlight marker: http://www.geocodezip.com/v3_MW_example_hoverchange.html
 			});
 
 		},
 
 		addMarker: function (event, index) {
 			var self = this;
-			var icon = new google.maps.MarkerImage('/static/img/marker/icon_' + index + '.png', new google.maps.Size(32,32))
+			//var icon = new google.maps.MarkerImage('/static/img/marker/marker_' + event.subCategory + '.png', new google.maps.Size(32,32))
 			var marker= new google.maps.Marker({
 				position:  new google.maps.LatLng(event.gpsLat, event.gpsLong),
-				icon: icon,
+				icon: '/static/img/marker/marker_' + event.subCategory.toLowerCase() + '.png',
 				map: map,
 				title: event.title});
 
@@ -235,23 +223,24 @@ var EventListModule = (function() {
 
 			return marker;
 		},
+		
+		highlightMarker: function(eventId) {
+			$.each(markers, function(index, marker) {
+				marker.setIcon('/static/img/marker/marker_party.png');//TODO: get icon
+			});
 
-		setMarkerIcon: function (eventId, icon) {//TODO:.split('-')[1]; 
-			var oldIcon;
 			if(isMapShown == true) {
 				$.each(events, function(index, event) {
 					if(eventId == event.eventId){	
 						$.each(markers, function(index, marker) {
 							if(marker['__gm_id'] == event['__gm_id']) {
-								oldIcon = marker.getIcon();
-								marker.setIcon(icon);
+								marker.setIcon('/static/img/marker/marker_highlighted.png');
 								marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 							}
 						});
 					}
 				});
 			}
-			return oldIcon;
 		},
 
 		handleScroll: function() {return;

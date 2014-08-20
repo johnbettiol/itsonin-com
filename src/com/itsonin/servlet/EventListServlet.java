@@ -55,7 +55,7 @@ public class EventListServlet extends DefaultServlet {
 			Guest guest = new Guest("Guest name");
 			Event event = new Event(EventCategory.GOTO, EventSubCategory.PARTY, EventSharability.NORMAL,
 					EventVisibility.PUBLIC, EventStatus.ACTIVE,
-					EventFlexibility.NEGOTIABLE, "Germany vs Argentina party number " + i,
+					EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
 					"event description", "event notes", new Date(), new Date(),
 					lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
 					"location address", new Date());

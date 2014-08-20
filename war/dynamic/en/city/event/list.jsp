@@ -17,16 +17,21 @@
 		});
 	</script>
 	<script id="eventTemplate" type="text/x-jsrender">
-	{{if !hideTime}}<div class="text-right"><span>{{:~formatDate(startTime)}} - {{:~formatDate(endTime)}}</span></div>{{/if}}
-	<div class="panel panel-default event-item" id="{{:eventId}}">
-		<div class="panel-body">
-			<img src="/static/img/party.png" class="pull-left" height="50" width="50">
-			<div class="event-body">
-				<span class="event-title">{{:title}}</span>
-				<span class="event-offer">FREE BEER FOR EVERY GOAL</span>
-				<div class="event-arrow" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
+	<div class="list-group-item event-item" id="{{:eventId}}">
+		<div class="media">
+			<div class="pull-left">
+				<img src="/static/img/party.png" class="pull-left" height="40" width="40">
+			</div>
+			<div class="media-body clearfix">
+				<div class="media-heading event-title"><c:out value="{{:title}}"/></div>
+				<div class="event-arrow pull-right" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
 					<i class="fa fa-angle-right"></i>
 				</div>
+				<p class="event-offer">
+					FREE VODKA FOR EVERY GOAL
+				</p>
+				<i class="fa fa-clock-o"></i>
+				<small class="text-muted">Today 5:00 pm - 10:00pm</small>
 			</div>
 		</div>
 	</div>
@@ -38,15 +43,11 @@
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
 				  <div class="row">
-					<div class="col-sm-12">
-						<div class="row">
-							<div class="col-sm-12 header">
-								<img src="/static/img/itsonin-white.png" height="20" width="20">
-								<span class="header-title">itsonin ${ioiContext.city}</span>
-								<i class="fa fa-2x fa-map-marker pull-right pointer" style="margin-left: 20px" id="map-btn"></i>
-								<i class="fa fa-2x fa-filter pull-right pointer" id="filter0-btn"></i>
-							</div>
-						</div>
+					<div class="col-sm-12 header">
+						<img src="/static/img/itsonin-white.png" height="20" width="20">
+						<span class="header-title">itsonin ${ioiContext.city}</span>
+						<i class="fa fa-2x fa-map-marker pull-right pointer" style="margin-left: 20px" id="map-btn"></i>
+						<i class="fa fa-2x fa-filter pull-right pointer" id="filter0-btn"></i>
 					</div>
 				  </div>
 				  <div class="row map">
@@ -128,50 +129,37 @@
 	<div class="container" id="events">
 	  <div class="row">
 		<div class="col-sm-offset-3 col-sm-6 events-container">
-			<div class="row date-bar">
-				<!-- TODO: show for tomorrow only -->
-				<div class="col-sm-12">
-					<span>TOMORROW AUGUST 25</span>
-					<a href="/${ioiContext.locale}/${ioiContext.city}/e/add" class="btn btn-default btn-sm pull-right">
-						<span class="glyphicon glyphicon-plus"></span>
-					</a>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<span>TOMORROW AUGUST 25</span>
+						<a href="/${ioiContext.locale}/${ioiContext.city}/e/add" class="btn btn-default btn-xs pull-right">
+							<span class="glyphicon glyphicon-plus"></span>
+						</a>
+					</div>
 				</div>
-			</div>
-			<div class="row" id="list-container">
-				<div class="col-sm-12">
-					<c:set var="prev"/>
+				<div class="list-group" id="list-container">
 					<c:forEach var="event" items="${events}" varStatus="status">
-						<c:if test="${empty prev}">
-							<div class="text-right">
-								<span>
-									<fmt:formatDate type="time" timeStyle="short" value="${event.startTime}"/> - 
-									<fmt:formatDate type="time" timeStyle="short" value="${event.endTime}"/>
-								</span>
-							</div>
-						</c:if>
-						<c:if test="${not empty prev}">
-							<c:if test="${event.startTime ne prev.startTime and event.endTime ne prev.endTime}">
-								<div class="text-right">
-									<span>
-										<fmt:formatDate type="time" timeStyle="short" value="${event.startTime}"/> - 
-										<fmt:formatDate type="time" timeStyle="short" value="${event.endTime}"/>
-									</span>
+						<div class="list-group-item event-item" id="${event.eventId}">
+							<div class="media">
+								<div class="pull-left">
+									<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
+									<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
 								</div>
-							</c:if>
-						</c:if>
-						<div class="panel panel-default event-item" id="${event.eventId}">
-							<div class="panel-body">
-								<img src="/static/img/party.png" class="pull-left" height="50" width="50">
-								<div class="event-body">
-									<span class="event-title"><c:out value="${event.title}"/></span>
-									<span class="event-offer">FREE BEER FOR EVERY GOAL</span>
-									<div class="event-arrow" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
+							<!-- 								<div style="clear:both"></div>-->
+								<div class="media-body clearfix">
+									<div class="media-heading event-title"><c:out value="${event.title}"/></div>
+									<div class="event-arrow pull-right" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
 										<i class="fa fa-angle-right"></i>
 									</div>
+									<p class="event-offer">
+										FREE VODKA FOR EVERY GOAL
+									</p>
+									<i class="fa fa-clock-o"></i>
+									<small class="text-muted">Today 5:00 pm - 10:00pm</small>
 								</div>
 							</div>
 						</div>
-						<c:set var="prev" value="${event}"/>
 					</c:forEach>
 				</div>
 			</div>
