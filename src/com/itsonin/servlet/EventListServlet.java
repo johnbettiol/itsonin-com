@@ -43,11 +43,10 @@ public class EventListServlet extends DefaultServlet {
 		 * @TODO - We need to move towards having all of the parameters passed
 		 * by the IoiRouterContext
 		 */
-		List<Event> events = new ArrayList<Event>();
-		//eventService.list(true, null, null, null, null,
-		//		null, null, null, null, null, null);
+		List<Event> events = eventService.list(true, null, null, null, null,
+				null, null, null, null, null, null);
 		// temp hack to add an event just for show
-		
+		/*
 		List<Double> lats = Arrays.asList(51.2384547, 51.218514, 51.2272899, 51.2201704, 51.2528229);
 		List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422, 6.772928, 6.7782096);
 		
@@ -61,7 +60,7 @@ public class EventListServlet extends DefaultServlet {
 					"location address", new Date());
 			event.setEventId(Long.valueOf(i));
 			events.add(event);		
-		}
+		}*/
 		//eventService.create(event, guest);
 		//events = eventService.list(true, null, null, null, null, null, null,
 		//		null, null, null, null);

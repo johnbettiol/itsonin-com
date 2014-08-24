@@ -140,7 +140,7 @@ public class EventService {
 		} else {
 			status = GuestStatus.PENDING;
 		}
-		Guest guest = storeGuestEntry(eventId, null, status);
+		Guest guest = null;//storeGuestEntry(eventId, null, status);
 		return new EventWithGuest(event, guest);
 	}
 	
@@ -159,8 +159,8 @@ public class EventService {
 		eventInfo.setEvent(eventWithGuest.getEvent());
 		eventInfo.setGuest(eventWithGuest.getGuest());
 		eventInfo.setGuests(guests);
-		eventInfo.setComments(comments);
-		eventInfo.setViewonly(!device.getDeviceId().equals(host.getDeviceId()));
+		//eventInfo.setComments(comments);
+		//eventInfo.setViewonly(!device.getDeviceId().equals(host.getDeviceId()));
 		return eventInfo;
 	}
 

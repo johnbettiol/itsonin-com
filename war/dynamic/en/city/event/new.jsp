@@ -42,11 +42,13 @@
 					<div class="col-xs-12">
 						<h4>ADD AN EVENT</h4>
 						<label>Your name</label>
-						<input type="text" class="form-control" id="guest-name">
+						<input type="text" class="form-control" id="guest-name-field">
 						<label>Event title</label>
-						<input type="text" class="form-control" id="title" name="title">
+						<input type="text" class="form-control" id="title-field" name="title-field">
 						<label>Event description</label>
-						<textarea class="form-control" id="description" name="description"></textarea>
+						<textarea class="form-control" id="description-field" name="description-field"></textarea>
+						<label>Offer</label>
+						<input type="text" class="form-control" id="offer-field" name="offer-field">
 					</div>
 				</div>
 				<hr>
@@ -113,7 +115,7 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<label>Event location</label>
-						<input type="text" class="form-control" id="event-location" placeholder="Enter a location">
+						<input type="text" class="form-control" id="location-title-field" placeholder="Enter a location">
 					</div>
 				</div>
 				<div class="row">
@@ -121,10 +123,10 @@
 						<div id="map-canvas" style="height: 100%; width: 100%"></div>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row" style="display:none">
 					<div class="col-xs-12">
 						<label>Location description</label>
-						<textarea class="form-control" id="location-description" name="loction-description"></textarea>
+						<textarea class="form-control" id="location-description-field" name="loction-description"></textarea>
 						<div class="btn-container">
 							<button class="btn btn-default" id="upload-photos-btn">Upload photos</button>
 						</div>
@@ -139,7 +141,7 @@
 							<div class="row">
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="dateFrom"/> 
+										<input type="text" class="form-control" id="dateFrom-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-calendar"></span>
@@ -149,7 +151,7 @@
 								</div>
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="timeFrom"/> 
+										<input type="text" class="form-control" id="timeFrom-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-time"></span>
@@ -164,7 +166,7 @@
 							<div class="row">
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="dateTo"/> 
+										<input type="text" class="form-control" id="dateTo-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-calendar"></span>
@@ -174,7 +176,7 @@
 								</div>
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="timeTo"/> 
+										<input type="text" class="form-control" id="timeTo-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-time"></span>
@@ -194,35 +196,52 @@
 							<div class="col-xs-6">
 								<i style="font-size: 12px">Visibility</i>
 								<div class="radio">
-									<label> <input type="radio" name="visibility" value="PUBLIC"> Public </label>
+									<label> <input type="radio" id="visibility-field" name="visibility-field" value="PUBLIC"> Public </label>
 								</div>
 								<div class="radio">
-									<label> <input type="radio" name="visibility" value="PRIVATE" checked> Private </label>
+									<label> <input type="radio" id="visibility-field" name="visibility-field" value="PRIVATE" checked> Private </label>
 								</div>
 								<div class="radio">
-									<label> <input type="radio" name="visibility" value="FRIENDS" disabled> <strike>Friends only</strike> </label>
+									<label> <input type="radio" id="visibility-field" name="visibility-field" value="FRIENDS" disabled> <strike>Friends only</strike> </label>
 								</div>
 							</div>
 							<div class="col-xs-6">
 								<i style="font-size: 12px">Sharing</i>
 								<div class="radio">
-									<label> <input type="radio" name="sharability" value="NOSHARE"> No share </label>
+									<label> <input type="radio" id="sharability-field" name="sharability-field" value="NOSHARE"> No share </label>
 								</div>
 								<div class="radio">
-									<label> <input type="radio" name="sharability" value="NORMAL" checked> Normal </label>
+									<label> <input type="radio" id="sharability-field" name="sharability-field" value="NORMAL" checked> Normal </label>
 								</div>
 								<div class="radio">
-									<label> <input type="radio" name="sharability" value="PYRAMID"> Pyramid </label>
+									<label> <input type="radio" id="sharability-field" name="sharability-field" value="PYRAMID"> Pyramid </label>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				<div class="row" style="display:none">
+					<div class="col-xs-12">
+				        <div class="alert alert-success alert-dismissable">
+			            	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			            	<span id="success-message"></span>
+			            	<a href="/${ioiContext.locale}/${ioiContext.city}/Events" class="btn btn-default btn-sm">go back</a>
+	            		</div>
+	            	</div>
+	            </div>
+	            <div class="row" style="display:none">
+					<div class="col-xs-12">
+			            <div class="alert alert-danger alert-dismissable">
+			              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			              <span id="error-message"></span>
+			            </div>
+	            	</div>
+	            </div>
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="btn-container pull-right">
-							<button class="btn btn-default" id="cancel-btn">Cancel</button>
-							<button class="btn btn-default" type="submit">Save</button>
+							<a href="/${ioiContext.locale}/${ioiContext.city}/Events" class="btn btn-default">Cancel</a>
+							<button class="btn btn-default" id="save-btn">Save</button>
 						</div>
 					</div>
 				</div>

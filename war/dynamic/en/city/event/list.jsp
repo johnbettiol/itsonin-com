@@ -23,12 +23,12 @@
 				<img src="/static/img/party.png" class="pull-left" height="40" width="40">
 			</div>
 			<div class="media-body clearfix">
-				<div class="media-heading event-title"><c:out value="{{:title}}"/></div>
+				<div class="media-heading event-title">{{:title}}</div>
 				<div class="event-arrow pull-right" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
 					<i class="fa fa-angle-right"></i>
 				</div>
 				<p class="event-offer">
-					FREE VODKA FOR EVERY GOAL
+					{{:offer}}
 				</p>
 				<i class="fa fa-clock-o"></i>
 				<small class="text-muted">Today 5:00 pm - 10:00pm</small>
@@ -146,14 +146,13 @@
 									<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
 									<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
 								</div>
-							<!-- 								<div style="clear:both"></div>-->
 								<div class="media-body clearfix">
 									<div class="media-heading event-title"><c:out value="${event.title}"/></div>
 									<div class="event-arrow pull-right" onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'">
 										<i class="fa fa-angle-right"></i>
 									</div>
 									<p class="event-offer">
-										FREE VODKA FOR EVERY GOAL
+										<c:out value="${event.offer}"/>
 									</p>
 									<i class="fa fa-clock-o"></i>
 									<small class="text-muted">Today 5:00 pm - 10:00pm</small>

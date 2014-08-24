@@ -39,6 +39,7 @@ public class Event implements Serializable {
 	private String title;
 	private String description;
 	private String notes;
+	private String offer;
 	private Date startTime;
 	private Date endTime;
 	private Double gpsLat;
@@ -221,6 +222,14 @@ public class Event implements Serializable {
 
 	public void setSubCategory(EventSubCategory subCategory) {
 		this.subCategory = subCategory;
+	}
+
+	public String getOffer() {
+		return offer;
+	}
+
+	public void setOffer(String offer) {
+		this.offer = offer;
 	}
 
 }

@@ -29,11 +29,11 @@ public class ApiSecurityFilter implements ContainerRequestFilter{
 
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
-		ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) context.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
+		/*ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) context.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
         Method method = methodInvoker.getMethod();
         if(!method.isAnnotationPresent(PermitAll.class) && authContextService.get() == null){
         	throw new UnauthorizedException("Not authenticated");
-        }
+        }*/
 	}
 
 }

@@ -9,137 +9,121 @@
 	<%@ include file="../../head.jsp" %>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
     <script type="text/javascript">
+		var eventJson = ${eventJson};
+
         $(document).ready(function() {
         	EventInfoModule.init();
         });
     </script>
 </head>
 <body>
-  <div id="wrap">
-    <div class="container">
-      <div class="row row-main">
-        <div class="col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
-		    <div class="row text-center">
-				<h2>
-					<a href="/">It's On In</a>
-				</h2>
-			</div>
-			<div class="row text-center">
-				<h4><c:out value="${ioiContext.city}"/></h4>
-			</div>
-			<div class="text-center event-title">
-				<span><c:out value="${event.title}"/></span>
-				<div>
-					<a href="/e/${event.eventId}/edit" class="btn btn-default btn-big"> 
-						<span class="glyphicon glyphicon-pencil"></span>
-					</a>
-				</div>
-			</div>
-		    <div class="panel panel-default">
-		     	<div class="panel-body">
-		       		<span class="glyphicon glyphicon-tree-conifer pull-left"></span>
-		       		<div class="fields pull-left">
-		       			<span class="field"><fmt:formatDate pattern="yyyy-MM-dd" value="${event.startTime}" /></span>
-		       			<span class="field"><c:out value="${event.title}"/></span>
-		       			<span class="field"><c:out value="${event.locationTitle}"/></span>
-		       			<span class="field"><c:out value="${event.locationAddress}"/></span>
-		       			<span class="field"><c:out value="${event.description}"/></span>
-		       			<span class="field"><c:out value="${event.sharability}"/></span>
-		       			<span class="field"><c:out value="${event.visibility}"/></span>
-		       		</div>
-		       	</div>
-		    </div>
-		    <c:if test="${event.sharability == 'PYRAMID' && guest.status == 'ATTENDING'}">
-			    <div class="panel panel-default">
-					<div class="panel-body">
-						<h5>You are attending this event</h5>
-						<h5>NOTE. This is a pyramid event you are asked to share this event with your friends</h5>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${(guest.status == 'ATTENDING' || guest.status == 'DECLINED') && event.sharability != 'NOSHARE'}">
-			    <div class="panel panel-default">
-					<div class="panel-body">
-						<div class="toolbar">
-							<ul>
-								<li><a href="javascript:void(0)" id="share-link"><span class="glyphicon glyphicon-link"></span><span>Share link</span></a></li>
-								<li><a href="javascript:void(0)" id="share-by-email"><span class="glyphicon glyphicon-envelope"></span><span>Email</span></a></li>
-								<li><a href="javascript:void(0)" id="share-on-facebook"><span class="glyphicon glyphicon-gbp"></span><span>Facebook</span></a></li>
-								<li><a href="javascript:void(0)" id="share-on-google"><span class="glyphicon glyphicon-usd"></span><span>Google+</span></a></li>
-							</ul>
+	<div style="position:fixed;top:0;left:0;right:0;z-index:1031;">
+		<div class="container" id="events_header">
+			<div class="row">
+				<div class="col-sm-offset-3 col-sm-6">
+					<div class="row">
+						<div class="col-sm-12 header">
+							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+								<img src="/static/img/itsonin-white.png" height="20" width="20">
+								<span class="header-title">itsonin ${ioiContext.city}</span>
+							</a>
 						</div>
 					</div>
+					<div class="row">
+							<div class="list-group-item">
+								<div class="media">
+									<div class="pull-left">
+										<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
+										<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
+									</div>
+									<div class="media-body clearfix">
+										<div class="media-heading event-title"><c:out value="${event.title}"/></div>
+										<p class="event-offer">
+											<c:out value="${event.offer}"/>
+										</p>
+										<i class="fa fa-clock-o"></i>
+										<small class="text-muted">Today 5:00 pm - 10:00pm</small>
+									</div>
+								</div>
+							</div>
+					</div>
+			   </div>
+			</div>
+		</div>
+	</div>
+	<div class="container" id="info">
+		<div class="row">
+			<div class="col-sm-offset-3 col-sm-6 event-container">
+				<div style="height: 200px; width: 100%; padding-top: 10px;padding-bottom: 10px">
+					<div id="map-canvas" style="height: 100%; width: 100%"></div>
 				</div>
-			</c:if>
-		    <div class="panel panel-default">
-				<div class="panel-body">
-					<form id="attend-event-form" method="post">
-						<label>Your name</label>
-						<c:if test="${guest.status != 'ATTENDING'}">
-							<input type="text" class="form-control" id="name" name="name" value="${guest.name}">
-						</c:if>
-						<c:if test="${guest.status == 'ATTENDING'}">
-							<span class="field"><c:out value="${guest.name}"/></span>
-						</c:if>
-					</form>
+				<p><c:out value="${event.locationAddress}"/></p>
+				<hr/>
+				<p><c:out value="${event.description}"/></p>
+				<hr/>
+				<div class="share">
+					<ul>
+						<li><a href="javascript:void(0)" id="share-link"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
+						<li><a href="javascript:void(0)" id="share-by-email"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
+						<li><a href="javascript:void(0)" id="share-on-facebook"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
+						<li><a href="javascript:void(0)" id="share-on-google"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
+					</ul>
+				</div>
+				<hr/>
+				<label>Your name</label>
+				<input type="text" class="form-control" id="guest-name-field">
+				<div class="clearfix">
+					<button class="btn btn-default pull-left" id="save-btn">Attend</button>
+					<button class="btn btn-default pull-right" id="save-btn">Decline</button>
+				</div>
+				<hr/>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<label>Guest list</label>
+						</div>
+					</div>
+					<div class="list-group">
+						<c:forEach var="guest" items="${guests}">
+							<div class="list-group-item guest-item" id="${guest.guestId}">
+								<div class="media">
+									<div class="pull-left">
+										<i class="fa fa-user"></i>									
+									</div>
+									<div class="media-body clearfix">
+										<span class="pull-left"><c:out value="${guest.name}"/></span>
+										<span class="pull-right"><c:out value="${guest.status}"/></span>
+									</div>
+								</div>
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<label>Comments</label>
+						</div>
+					</div>
+					<div class="list-group">
+						<c:forEach var="comment" items="${comments}">
+							<div class="list-group-item comment-item" id="${comment.commentId}">
+								<div class="media">
+									<div class="media-body ">
+		                                <small class="pull-right">2h ago</small><%--<c:out value="${comment.created}"/> --%>
+		                                <strong><small>John Bettiol</small></strong><br>
+		                                <small class="text-muted"><c:out value="${comment.comment}"/></small>
+		                            </div>
+								</div>
+							</div>
+						</c:forEach>
+					</div>
 				</div>
 			</div>
-		    <div class="alert alert-success hide" id="success-message"></div>
-		    <div class="alert alert-danger hide" id="error-message"></div>
-		    
-		    <c:if test="${guest.status == 'PENDING'}">
-			    <div class="panel panel-default">
-					<div class="panel-body">
-						<button class="btn btn-default pull-left">Attend</button>
-						<button class="btn btn-default pull-right">Decline</button>
-					</div>
-				</div>
-			</c:if>
-			<c:if test="${viewonly == true && guest.status != 'PENDING'}"><!-- TODO: viewonly -->
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<c:if test="${guest.status=='VIEWED' || guest.status=='DECLINED'}">
-							<button class="btn btn-default pull-right" id="attend-event-button">
-								<span class="glyphicon glyphicon-share"></span><br>Attend
-							</button>
-						</c:if>
-						<c:if test="${guest.status=='ATTENDING'}">
-							<button class="btn btn-default pull-right" id="decline-event-button">
-								<span class="glyphicon glyphicon-remove"></span><br>Decline
-							</button>
-						</c:if>
-					</div>
-				</div>
-			</c:if>
-			
-			<c:forEach var="guest" items="${guests}">
-				<div class="panel panel-default">
-			    	<div class="panel-body">
-			    	   <span class="glyphicon glyphicon-user pull-left"></span>
-			    	   <div class="fields pull-left">
-			    	       <span class="field"><c:out value="${guest.name}"/></span>
-			    	       <span class="field"><c:out value="${guest.status}"/></span>
-			    	   </div>
-			    	</div>
-			    </div>
-		    </c:forEach>
-		    <c:forEach var="comment" items="${comments}">
-			    <div class="panel panel-default">
-			    	<div class="panel-body">
-			    	   <span class="glyphicon glyphicon-user pull-left"></span>
-			    	   <div class="fields pull-left">
-			    	       <span class="field bold"><c:out value="${comment.created}"/></span>
-			               <span class="field"><c:out value="${comment.comment}"/></span>
-			    	   </div>
-			    	</div>
-			    </div>
-		    </c:forEach>
-        </div>
-      </div>
-    </div>
-  </div>
-  <%-- SHARE LINK MODAL --%>
-  <div class="modal" id="share-link-modal">
+		</div>
+	</div>
+	<%-- SHARE LINK MODAL --%>
+  	<div class="modal" id="share-link-modal">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">

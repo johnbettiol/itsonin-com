@@ -5,6 +5,12 @@ var EventNewModule = (function() {
 	var locationTypeState = 0;
 	var locationTypes = ["location-type-sometime", "date-type-now", "date-type-custom"];
 	var locationMarker = null;
+	var event = {//default values
+		status: 'ACTIVE',
+		visibility: 'PRIVATE',
+		sharability: 'NORMAL'
+	};
+	var guest = {};
 
 	return {
 		init: function() {
@@ -14,22 +20,40 @@ var EventNewModule = (function() {
 				alert('upload photos...');
 			});
 
-			$('#cancel-btn').on('click', function() {
-				alert('cancel...');
+			$('#save-btn').on('click', function() {
+				guest['name'] = $('#guest-name-field').val();
+				
+				event['title'] = $('#title-field').val();
+				event['description'] = $('#description-field').val();
+				event['offer'] = $('#offer-field').val();
+				event['visibility'] = $('#visibility-field').val();
+				event['sharability'] = $('#sharability-field').val();
+				event['startTime'] = $('#dateFrom-field').val() + 'T' + $('#timeFrom-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
+				event['endTime'] = $('#dateTo-field').val() + 'T' + $('#timeTo-field').val() + ':00';
+				
+				self.saveEvent();
+				console.log(event);
 			});
 
-			$('#event-form').submit(self.saveEvent);
-
-			$('#dateFrom').pickadate();
-			$('#dateTo').pickadate();
-			$('#timeFrom').pickatime();
-			$('#timeTo').pickatime();
+			var datepickerOptions = {
+				format: 'yyyy-mm-dd',
+				formatSubmit: 'yyyy-mm-dd'
+			}
+			var timepickerOptions = {
+				format: 'HH:i',
+				formatSubmit: 'HH:i'
+			}
+			$('#dateFrom-field').pickadate(datepickerOptions);
+			$('#dateTo-field').pickadate(datepickerOptions);
+			$('#timeFrom-field').pickatime(timepickerOptions);
+			$('#timeTo-field').pickatime(timepickerOptions);
 
 			$('.categories li').on('click', function() {
 				$('.categories li').each(function (i) {
 					$(this).removeClass('active');
 					$(this).find('.icon').removeClass('active');
 				});
+				event['subCategory'] = $(this).attr('id');
 				$(this).addClass('active');
 				$(this).find('.icon').addClass('active');
 			});
@@ -42,6 +66,7 @@ var EventNewModule = (function() {
 					$("#goto-categories").show();
 					$("#meet-categories").hide();
 				}
+				event['category'] = $(this).val();
 			});
 
 			self.initLocationAutocomplete();
@@ -49,23 +74,28 @@ var EventNewModule = (function() {
 			self.initMap();
 		},
 
-		saveEvent: function(event) {
-			if ($('#name').val().length == 0) {
-				$('#error-message').html('Guest name is required');
-				$('#error-message').show();
-				event.preventDefault();
-			}
-		},
-
-		createEvent: function(event, guest, callback) {
+		saveEvent: function() {
+			//event.preventDefault();
+			
 			$.ajax({
 				type: 'POST',
 				url: '/api/event/create',
 				data: JSON.stringify({event:event, guest:guest}),
-				success: callback,
+				success: this.saveEventCallback,
 				contentType: "application/json",
 				dataType: 'json'
 			});
+		},
+
+		validateEvent: function(event, guest) {
+			if ($('#name').val().length == 0) {
+				$('#error-message').html('Guest name is required');
+				$('#error-message').show();
+			}
+		},
+		
+		saveEventCallback: function(response) {
+			console.log(response);
 		},
 
 		updateEvent: function(event, guest, callback) {
@@ -80,14 +110,7 @@ var EventNewModule = (function() {
 		},
 
 		initLocationAutocomplete: function() {
-			var autocomplete = new google.maps.places.Autocomplete($("#event-location")[0], {});
-			/*google.maps.event.addListener(autocomplete, 'place_changed', function() {
-				var place = autocomplete.getPlace();
-				//TODO
-				$scope.event['locationAddress'] = place.name;
-				$scope.event['gpsLat'] = place.geometry.location.lat();
-				$scope.event['gpsLong'] = place.geometry.location.lng();
-			});*/
+			var autocomplete = new google.maps.places.Autocomplete($("#location-title-field")[0], {});
 
 			google.maps.event.addListener(autocomplete, 'place_changed', function() {
 				if(!locationMarker) {
@@ -107,6 +130,11 @@ var EventNewModule = (function() {
 					map.setCenter(place.geometry.location);
 					map.setZoom(17);  // Why 17? Because it looks good.
 				}
+				
+				event['locationAddress'] = place.name;
+				event['gpsLat'] = place.geometry.location.lat();
+				event['gpsLong'] = place.geometry.location.lng();
+				
 				locationMarker.setPosition(place.geometry.location);
 				locationMarker.setVisible(true);
 			});
