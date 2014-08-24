@@ -78,8 +78,9 @@ public class AuthAndRouteFilter implements Filter {
 			token = device.getToken();
 			CookieUtils.setCookie(COOKIE_TOKEN, token, res);
 			CookieUtils.setCookie(COOKIE_DESTINATION, ioiRouter.getDestination(), res);
-			res.sendRedirect(ioiRouter.getPublicRoute(IoiActionType.WELCOME)); 
-			return;
+			// Disabling welcome page!
+			// res.sendRedirect(ioiRouter.getPublicRoute(IoiActionType.WELCOME)); 
+			// return;
 		}
 		
 		authContextService.set(new AuthContext(device));
