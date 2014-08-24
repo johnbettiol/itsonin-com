@@ -1,16 +1,24 @@
 package com.itsonin.servlet.admin;
 
-import java.io.File;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.itsonin.entity.Event;
+import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
+import com.itsonin.enums.EventFlexibility;
+import com.itsonin.enums.EventSharability;
+import com.itsonin.enums.EventStatus;
+import com.itsonin.enums.EventSubCategory;
+import com.itsonin.enums.EventVisibility;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.DataImportService;
-import com.itsonin.service.DataImportServiceResult;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.servlet.DefaultServlet;
@@ -41,6 +49,21 @@ public class AdminToolsServlet extends DefaultServlet {
 			irc.getDevice().setLevel(DeviceLevel.valueOf(req.getParameter("level")));
 			deviceService.updateDevice(irc.getDevice());
 			req.setAttribute("message","Device Level Updated");
+			break;
+		case "QuickSeed":
+			List<Double> lats = Arrays.asList(51.2384547, 51.218514, 51.2272899, 51.2201704, 51.2528229);
+			List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422, 6.772928, 6.7782096);
+			for(int i=1;i<=5;i++) {
+				Guest guest = new Guest("Guest name");
+				Event event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL,
+						EventVisibility.PUBLIC, EventStatus.ACTIVE,
+						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
+						"event description", "event notes", new Date(), new Date(),
+						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
+						"location address", new Date());
+				event.setEventId(Long.valueOf(i));
+				eventService.create(event, guest);
+			}
 			break;
 		case "ImportData":
 			if (req.getParameter("type") == null) {

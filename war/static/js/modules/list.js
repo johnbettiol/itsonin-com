@@ -78,7 +78,7 @@ var EventListModule = (function() {
 				});
 				$(this).addClass('active');
 				$(this).find('.icon').addClass('active');
-				self.filterEvents('subCategory', $(this).attr('id'));
+				self.filterEvents('category', $(this).attr('id'));
 			});
 
 			$('.event-item').on('click', function() {

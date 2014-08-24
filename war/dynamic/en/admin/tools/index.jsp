@@ -33,7 +33,20 @@
 			</tr>
 		</tbody>
 	</table>
-		<table>
+	<table>
+		<thead>
+			<tr>
+				<th colspan="2">Quick Commands</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Quick Seed</td>
+				<td><a href="QuickSeed">Do it</a></td>
+			</tr>
+		</tbody>
+	</table>
+	<table>
 		<thead>
 			<tr>
 				<th colspan="2">Import Actions</th>

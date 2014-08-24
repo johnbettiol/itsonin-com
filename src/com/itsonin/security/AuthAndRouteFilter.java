@@ -54,9 +54,8 @@ public class AuthAndRouteFilter implements Filter {
 		HttpServletResponse res = (HttpServletResponse) servletResponse;
 
 		if (req.getRequestURI() != null
-				&& (req.getRequestURI().startsWith("/api/") || req
-						.getRequestURI().startsWith("/static/") || req
-						.getRequestURI().startsWith("/_ah/"))) {
+				&& (req.getRequestURI().startsWith("/static/") || 
+						req.getRequestURI().startsWith("/_ah/"))) {
 			filterChain.doFilter(req, res);
 			return;
 		}
@@ -84,6 +83,16 @@ public class AuthAndRouteFilter implements Filter {
 		}
 		
 		authContextService.set(new AuthContext(device));
+		
+		if (req.getRequestURI() != null
+				&& req.getRequestURI().startsWith("/api/"))
+		{
+			// Here is where you do the redirect!
+			filterChain.doFilter(req, res);
+			return;
+		}
+		
+		
 		ioiRouter = new IoiRouterContext(req, device);
 			req.setAttribute(REQ_ATTRIB_IOI_ROUTER_CONTEXT, ioiRouter);
 			

@@ -57,46 +57,12 @@
 						<div class="col-sm-12">
 							<div class="filter-bar-section" style="margin-top: 4px;">
 								<ul class="categories" id="goto-categories">
-									<li id="PARTY">
-										<span class="icon icon-bordered icon-party"></span>
-										<span class="category-title">Party</span>
-									</li>
-									<li id="SOCIAL">
-										<span class="icon icon-bordered icon-social"></span>
-										<span class="category-title">Social</span>
-									</li>
-									<li id="ACADEMY">
-										<span class="icon icon-bordered icon-academy"></span>
-										<span class="category-title">Academy</span>
-									</li>
-									<li id="HOBBIES">
-										<span class="icon icon-bordered icon-hobbies"></span>
-										<span class="category-title">Hobbies</span>
-									</li>
-									<li id="SINGLES">
-										<span class="icon icon-bordered icon-singles"></span>
-										<span class="category-title">Singles</span>
-									</li>
-								</ul>
-							</div>
-							<div class="filter-bar-section">
-								<ul class="categories" id="meet-categories">
-									<li id="CONCERT">
-										<span class="icon icon-bordered icon-concert"></span>
-										<span class="category-title">Concert</span>
-									</li>
-									<li id="SPORT">
-										<span class="icon icon-bordered icon-sport"></span>
-										<span class="category-title">Sport</span>
-									</li>
-									<li id="FESTIVAL">
-										<span class="icon icon-bordered icon-festival"></span>
-										<span class="category-title">Festival</span>
-									</li>
-									<li id="CONVENTION">
-										<span class="icon icon-bordered icon-convention"></span>
-										<span class="category-title">Convention</span>
-									</li>
+									<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
+										<li id="${eventCategory}">
+											<span class="icon icon-bordered icon-${eventCategory}"></span>
+											<span class="category-title">${eventCategory}</span>
+										</li>									
+									</c:forEach>
 								</ul>
 							</div>
 							<div class="filter-bar-section">

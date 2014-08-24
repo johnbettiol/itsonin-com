@@ -52,11 +52,11 @@ public class Event implements Serializable {
 	@SuppressWarnings("unused")
 	private Event(){}
 
-	public Event(EventCategory category, EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
+	public Event(EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
 			EventStatus status,	EventFlexibility flexibility, String title, String description,
 			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
 			String locationUrl, String locationTitle, String locationAddress, Date created) {
-		this.category = category;
+		this.category = subCategory.getParent();
 		this.subCategory = subCategory;
 		this.sharability = sharability;
 		this.visibility = visibility;
@@ -212,16 +212,13 @@ public class Event implements Serializable {
 		return category;
 	}
 
-	public void setCategory(EventCategory category) {
-		this.category = category;
-	}
-
 	public EventSubCategory getSubCategory() {
 		return subCategory;
 	}
 
 	public void setSubCategory(EventSubCategory subCategory) {
 		this.subCategory = subCategory;
+		this.category = subCategory.getParent();
 	}
 
 	public String getOffer() {

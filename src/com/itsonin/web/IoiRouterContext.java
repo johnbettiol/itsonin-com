@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.itsonin.entity.Device;
 import com.itsonin.enums.DeviceLevel;
+import com.itsonin.enums.EventCategory;
 
 public class IoiRouterContext {
 
@@ -35,16 +36,8 @@ public class IoiRouterContext {
 		return dateFilter;
 	}
 
-	public String getCategoryFilter() {
+	public EventCategory getCategoryFilter() {
 		return categoryFilter;
-	}
-
-	public String getSubCategoryFilter() {
-		return subCategoryFilter;
-	}
-
-	public String getOffsetFilter() {
-		return offsetFilter;
 	}
 
 	public boolean isCitySupported() {
@@ -92,8 +85,9 @@ public class IoiRouterContext {
 
 	private IoiActionType actionType;
 	private String destination, locale, city, eventId, inviterId,
-			locationFilter, dateFilter, categoryFilter, subCategoryFilter,
-			offsetFilter, command;
+			locationFilter, dateFilter,
+			command;
+	private EventCategory categoryFilter;
 	private boolean citySupported, myEvents, doRedirect;
 	private Device device;
 
@@ -194,20 +188,18 @@ public class IoiRouterContext {
 	}
 
 	private void parseEventListData(String[] requestChunks) {
-		if (requestChunks.length >= 4) {
-			locationFilter = requestChunks[3];
-		}
 		if (requestChunks.length >= 5) {
-			dateFilter = requestChunks[4];
+			locationFilter = requestChunks[4];
 		}
 		if (requestChunks.length >= 6) {
-			categoryFilter = requestChunks[5];
+			dateFilter = requestChunks[5];
 		}
 		if (requestChunks.length >= 7) {
-			subCategoryFilter = requestChunks[6];
-		}
-		if (requestChunks.length >= 8) {
-			offsetFilter = requestChunks[7];
+			try {
+				this.categoryFilter = EventCategory.valueOf(requestChunks[6].toUpperCase());
+			} catch (IllegalArgumentException iae) {
+				
+			}
 		}
 	}
 
@@ -367,7 +359,6 @@ public class IoiRouterContext {
 	public IoiActionType getActionType() {
 		return actionType;
 	}
-
 	public String getDestination() {
 		return destination;
 	}

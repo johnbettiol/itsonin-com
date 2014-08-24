@@ -54,18 +54,14 @@ var EventNewModule = (function() {
 					$(this).find('.icon').removeClass('active');
 				});
 				event['subCategory'] = $(this).attr('id');
+				alert($(this).attr('id'));
 				$(this).addClass('active');
 				$(this).find('.icon').addClass('active');
 			});
 
 			$('input:radio[name=category]').on('change', function() {
-				if($(this).val() == 'MEET') {
-					$("#goto-categories").hide();
-					$("#meet-categories").show();
-				} else {
-					$("#goto-categories").show();
-					$("#meet-categories").hide();
-				}
+				$(".subCategoryList").hide();
+				$("#category-" + $(this).val()).show();
 				event['category'] = $(this).val();
 			});
 

@@ -6,17 +6,26 @@ package com.itsonin.enums;
  */
 public enum EventSubCategory {
 	
-	PARTY(EventCategory.MEET),
-	SOCIAL(EventCategory.MEET),
-	ACADEMIC(EventCategory.MEET),
-	HOBBIES(EventCategory.MEET),
-	SINGLES(EventCategory.MEET),
-	
-	CULTURAL(EventCategory.GOTO),
-	CONCERTS(EventCategory.GOTO),
-	SPORTS(EventCategory.GOTO),
-	FESTIVAL(EventCategory.GOTO),
-	CONVENTIONS(EventCategory.GOTO);
+	// Taken from:
+	// https://docs.google.com/spreadsheets/d/1eFwAu_Ll4B_AYAGhUgIMm2WvethTq3IWsLiFumcnlzo/edit#gid=627971514
+	PARTY(EventCategory.NIGHTLIFE),
+	DJNIGHT(EventCategory.NIGHTLIFE),
+	OTHERNGT(EventCategory.NIGHTLIFE),
+	MEETUP(EventCategory.SOCIAL),
+	SINGLES(EventCategory.SOCIAL),
+	OTHERSOC(EventCategory.SOCIAL),
+	FOOTBALL(EventCategory.SPORT),
+	ICEHOCKEY(EventCategory.SPORT),
+	MOTORSPORT(EventCategory.SPORT),
+	OTHERSPR(EventCategory.SPORT),
+	CONCERT(EventCategory.FESTIVAL),
+	TOWN(EventCategory.FESTIVAL),
+	OTHERFST(EventCategory.FESTIVAL),
+	CONVENTION(EventCategory.CULTURAL),
+	ACADEMIC(EventCategory.CULTURAL),
+	MUSEUM(EventCategory.CULTURAL),
+	ART(EventCategory.CULTURAL),
+	OTHERCLT(EventCategory.CULTURAL);
 	
 	private EventCategory parent;
 	

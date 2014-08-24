@@ -46,22 +46,7 @@ public class EventListServlet extends DefaultServlet {
 		List<Event> events = eventService.list(true, null, null, null, null,
 				null, null, null, null, null, null);
 		// temp hack to add an event just for show
-		/*
-		List<Double> lats = Arrays.asList(51.2384547, 51.218514, 51.2272899, 51.2201704, 51.2528229);
-		List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422, 6.772928, 6.7782096);
-		
-		for(int i=1;i<=5;i++) {
-			Guest guest = new Guest("Guest name");
-			Event event = new Event(EventCategory.GOTO, EventSubCategory.PARTY, EventSharability.NORMAL,
-					EventVisibility.PUBLIC, EventStatus.ACTIVE,
-					EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
-					"event description", "event notes", new Date(), new Date(),
-					lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
-					"location address", new Date());
-			event.setEventId(Long.valueOf(i));
-			events.add(event);		
-		}*/
-		//eventService.create(event, guest);
+
 		//events = eventService.list(true, null, null, null, null, null, null,
 		//		null, null, null, null);
 		req.setAttribute("events", events);

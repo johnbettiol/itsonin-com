@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page session="false" %>
 <jsp:useBean id="now" class="java.util.Date"/>
 <!DOCTYPE html>
@@ -56,59 +57,27 @@
 					<div class="col-xs-12">
 						<label>Event category</label>
 						<div style="margin-top: 5px; margin-bottom: 5px">
-							<label class="radio-inline"> <input type="radio" id="category" name="category" value="MEET"> meet someone</label>
-							<label class="radio-inline"> <input type="radio" id="category" name="category" value="GOTO"> goto something</label>
+							<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
+								<label class="radio-inline"> <input type="radio" id="category" name="category" value="${eventCategory}"><c:out value="${eventCategory}"/></label>
+							</c:forEach>
 						</div>
-						<div class="filter-bar-section" id="meet-categories" style="display: none;">
-							<div style="margin-bottom: 5px; font-size:12px;">
-								<i>Please select one of the following</i>
+						<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
+							<div class="filter-bar-section subCategoryList" id="category-${eventCategory}" style="display: none;">
+								<div style="margin-bottom: 5px; font-size:12px;">
+									<i>Please select one of the following</i>
+								</div>
+								<ul class="categories">
+									<c:forEach var="eventSubCategory" items="${eventSubCategories}" varStatus="loop">
+										<c:if test="${eventSubCategory.parent == eventCategory}">
+											<li id="${eventSubCategory}">
+												<span class="icon icon-bordered icon-${fn:toLowerCase(eventSubCategory)}"></span>
+												<span class="category-title">${eventSubCategory}</span>
+											</li>
+										</c:if>
+									</c:forEach>
+								</ul>
 							</div>
-							<ul class="categories">
-								<li id="PARTY">
-									<span class="icon icon-bordered icon-party"></span>
-									<span class="category-title">Party</span>
-								</li>
-								<li id="SOCIAL">
-									<span class="icon icon-bordered icon-social"></span>
-									<span class="category-title">Social</span>
-								</li>
-								<li id="ACADEMY">
-									<span class="icon icon-bordered icon-academy"></span>
-									<span class="category-title">Academy</span>
-								</li>
-								<li id="HOBBIES">
-									<span class="icon icon-bordered icon-hobbies"></span>
-									<span class="category-title">Hobbies</span>
-								</li>
-								<li id="SINGLES">
-									<span class="icon icon-bordered icon-singles"></span>
-									<span class="category-title">Singles</span>
-								</li>
-							</ul>
-						</div>
-						<div class="filter-bar-section" id="goto-categories" style="display: none;">
-							<div style="margin-bottom: 5px; font-size:12px;">
-								<i>Please select one of the following</i>
-							</div>
-							<ul class="categories">
-								<li id="CONCERT">
-									<span class="icon icon-bordered icon-concert"></span>
-									<span class="category-title">Concert</span>
-								</li>
-								<li id="SPORT">
-									<span class="icon icon-bordered icon-sport"></span>
-									<span class="category-title">Sport</span>
-								</li>
-								<li id="FESTIVAL">
-									<span class="icon icon-bordered icon-festival"></span>
-									<span class="category-title">Festival</span>
-								</li>
-								<li id="CONVENTION">
-									<span class="icon icon-bordered icon-convention"></span>
-									<span class="category-title">Convention</span>
-								</li>
-							</ul>
-						</div>
+						</c:forEach>
 					</div>
 				</div>
 				<hr>

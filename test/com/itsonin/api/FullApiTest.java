@@ -191,7 +191,7 @@ public class FullApiTest {
 		// Device 2 creates event 1 (create a PRIVATE event)
 		// * On creation of event, device 2 should be returned both the
 		//   Event information and their new Guest information (and that they are a host)
-		EventWithGuest d2Event = createEvent(device2, new Event(EventCategory.GOTO, EventSubCategory.PARTY,
+		EventWithGuest d2Event = createEvent(device2, new Event(EventSubCategory.PARTY,
 				EventSharability.NORMAL, EventVisibility.PRIVATE, EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, 
 				"event title", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 

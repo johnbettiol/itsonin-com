@@ -92,8 +92,6 @@ public class EventService {
 			throw new NotFoundException("Event with id=" + id
 					+ " is not exists");
 
-		if (event.getCategory() != null)
-			toUpdate.setCategory(event.getCategory());
 		if (event.getSubCategory() != null)
 			toUpdate.setSubCategory(event.getSubCategory());
 		if (event.getSharability() != null)
@@ -273,9 +271,6 @@ public class EventService {
     	}
     	if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
     		errors.add("Host name is required");
-    	}
-    	if(event.getCategory() == null){
-    		errors.add("Event category is required");
     	}
     	if(event.getSubCategory() == null){
     		errors.add("Event subcategory is required");
