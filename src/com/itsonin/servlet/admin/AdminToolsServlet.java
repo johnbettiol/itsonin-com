@@ -42,9 +42,9 @@ public class AdminToolsServlet extends DefaultServlet {
 			deviceService.updateDevice(irc.getDevice());
 			req.setAttribute("message","Device Level Updated");
 			break;
-		case "LocationImport":
+		case "ImportData":
 			if (req.getParameter("type") == null) {
-				req.setAttribute("message","No upload type specified!");
+				req.setAttribute("message","No upload type specified!");	
 			}
 			if (req.getParameter("dataType") == null) {
 				req.setAttribute("message","No data type specified!");

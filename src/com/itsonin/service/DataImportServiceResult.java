@@ -1,20 +1,19 @@
 package com.itsonin.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.itsonin.enums.DataImportType;
 
 public class DataImportServiceResult {
 
-	public DataImportServiceResult(String source, String message, Exception e) {
+	public DataImportServiceResult(DataImportType dataType, String source, String message, Exception e) {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DataImportServiceResult(String source) {
+	public DataImportServiceResult(DataImportType dataType, String source) {
 		// TODO Auto-generated constructor stub
 	}
 
 
-	public DataImportServiceResult() {
+	public DataImportServiceResult(DataImportType dataType) {
 		// TODO Auto-generated constructor stub
 	}
 

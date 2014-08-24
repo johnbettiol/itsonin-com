@@ -18,7 +18,7 @@
 				<th colspan="2">Device Actions</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody>	
 			<tr>
 				<td>Change Type to NORMAL account</td>
 				<td><a href="UpdateAccount?level=NORMAL">process</a></td>
@@ -47,12 +47,6 @@
 						<input type="hidden" name="type" value="default" />
 				</td>
 				<td>
-					<select name="dataType">
-						<option value="location">Location</option>
-						<option value="event">Event</option>
-					</select>
-				</td>
-				<td>
 						<input type="submit" value="Process"/>
 				</td>
 				</form>
@@ -63,12 +57,6 @@
 				<td>
 						<input type="hidden" name="type" value="upload" />
 						<input type="file" name="importFile"/>
-				</td>
-				<td>
-					<select name="dataType">
-						<option value="location">Location</option>
-						<option value="event">Event</option>
-					</select>
 				</td>
 				<td>
 						<input type="submit" value="Process"/>
@@ -83,12 +71,6 @@
 					<input type="text" name="url"/>
 				</td>
 				<td>
-					<select name="dataType">
-						<option value="location">Location</option>
-						<option value="event">Event</option>
-					</select>
-				</td>
-				<td>
 					<input type="submit" value="Process"/>
 				</td>
 				</form>
@@ -99,12 +81,6 @@
 				<td>
 					<input type="hidden" name="type" value="text" />
 					<textarea name="data"></textarea>
-				</td>
-				<td>
-					<select name="dataType">
-						<option value="location">Location</option>
-						<option value="event">Event</option>
-					</select>
 				</td>
 				<td>
 					<input type="submit" value="Process"/>
