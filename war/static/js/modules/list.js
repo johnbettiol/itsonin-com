@@ -2,27 +2,30 @@ var EventListModule = (function() {
 
 	var filteredEvents = [];
 	var filter = {
-			types: [],
-			startTime: moment().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0)
+		favorites: false,
+		promo: false,
+		hot: false,
+		category: null,
+		date: moment()
 	};
 	var map = {};
 	var markers = [];
 	var isMapShown = false;
-	var isMapShownOnTop = false;
 
 	return {
 		init: function() {
 			var self = this;
 
 			//preload sprite
-			$('<img/>').attr('src', '/static/img/sprites.png').appendTo('body').css('display','none');
-			//init map
-			$('#map-canvas').width($('#list-container').width());
-			self.initMap();
-	
+			//$('<img/>').attr('src', '/static/img/sprites.png').appendTo('body').css('display','none');
+
 			$('#map-btn').on('click', function() {
 				filteredEvents = events;
 				$(".filters").hide();
+				$(this).toggleClass('active');
+				if($('#filter-btn').hasClass('active')){
+					$('#filter-btn').toggleClass('active');
+				}
 
 				if(isMapShown == true) {
 					$('.map').css('visibility', 'hidden');
@@ -31,54 +34,86 @@ var EventListModule = (function() {
 					$('.events-container').css('margin-top', '');
 				} else {
 					$('.map').css('visibility', 'inherit');
-					$('.map').css('position', '');
+					$('.map').css('position', 'relative');
 					$('.map').css('left', '');
-					$('.events-container').css('margin-top', '230px');
+					$('.events-container').css('margin-top', '200px');
 				}
-				//self.initMap();
-				//google.maps.event.trigger(self.map, 'resize');
-				//self.map.setCenter(new google.maps.LatLng(51.227741, 6.773456));
+				
 				isMapShown = !isMapShown;
 			});
 
-			$('#filter0-btn').on('click', function() {
+			$('#filter-btn').on('click', function() {
 				isMapShown = false;
 				$('.map').css("visibility", "hidden");
 				$('.map').css("position", "absolute");
 				$('.filters').toggle();
+				$(this).toggleClass('active');
+				if($('#map-btn').hasClass('active')){
+					$('#map-btn').toggleClass('active');
+				}
 
 				if($('.filters').is(':hidden') == true) {
 					$('.events-container').css('margin-top', '');
 				} else {
-					$('.events-container').css('margin-top', '230px');
+					$('.events-container').css('margin-top', '200px');
 				}
 				self.renderEvents(events);
 			});
 
-			$('#search-btn').on('click', function() {
-				$('.list-search-bar').removeClass('hidden');
-				$('.list-filters').addClass('hidden');
+			$('#favourites-button').on('click', function() {
+				filter.favourites = !filter.favourites;
+				if(filter.favourites == true) {
+					$('#filter-date').text('favourites');
+					$('#prev-day-button').hide();
+					$('#next-day-button').hide();
+					self.filterFavourites();
+				} else {
+					$('#filter-date').text(filter.date.calendar());
+					$('#prev-day-button').show();
+					$('#next-day-button').show();
+					//TODO: render events
+				}
+			});
 
-				$('#search-input').val('');
-				self.renderEvents(events);
+			$('#promo-button').on('click', function() {
+
 			});
 
 			$('#search-events-btn').on('click', function() {
 				self.filterEventsByText($('#search-input').val());
 			});
-	
-			$('#happening-now-btn').on('click', function() {
-				self.filterNowEvents();
+
+			$('#prev-day-button').on('click', function() {
+				filter.date = filter.date.subtract(1, 'days');
+				$('#filter-date').text(filter.date.calendar());
 			});
 
-			$('.categories li').on('click', function() {
-				$('.categories li').each(function (i) {
+			$('#next-day-button').on('click', function() {
+				filter.date = filter.date.add('days', 1);
+				$('#filter-date').text(filter.date.calendar());
+			});
+
+			$('#filter-categories a').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('#filter-categories a').each(function (i) {
 					$(this).removeClass('active');
-					$(this).find('.icon').removeClass('active');
 				});
-				$(this).addClass('active');
-				$(this).find('.icon').addClass('active');
+
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
 				self.filterEvents('category', $(this).attr('id'));
+			});
+
+			$('#filter-buttons a').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('#filter-buttons a').each(function (i) {
+					$(this).removeClass('active');
+				});
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
+				//self.filterEvents('category', $(this).attr('id'));
 			});
 
 			$('.event-item').on('click', function() {
@@ -86,17 +121,40 @@ var EventListModule = (function() {
 				self.highlightMarker(eventId);
 			});
 
-			$('#date-field').pickadate();
+			$('#filter-date').pickadate({
+			    onSet: function(context) {
+			        console.log('Just set stuff:', context)
+			        filter.date = moment(context.select)
+					$('#filter-date').text(filter.date.calendar());
+			    }
+			});
 			//TODO: use this one https://github.com/xdan/datetimepicker or this https://github.com/dbushell/Pikaday
 
-			//$(document).on('touchmove', self.handleScroll);
-			//$(document).on('scroll', self.handleScroll);
-
 			$.views.helpers({
+				formatTime: function (val) {
+					return moment(val).format('hh:mm A')
+				},
 				formatDate: function (val) {
-					return moment(val).format('h:mm')
+					return moment(val).format('MMM D, hh:mm A')
 				}
 			});
+
+			moment.locale('en', {
+			    calendar : {
+			        lastDay : '[Yesterday ] dddd MMMM D',
+			        sameDay : '[Today ] dddd MMMM D',
+			        nextDay : '[Tomorrow ] dddd MMMM D',
+			        lastWeek : '[last] dddd MMMM D',
+			        nextWeek : 'dddd MMMM D',
+			        sameElse : 'dddd MMMM D'
+			    }
+			});
+
+			self.loadScript();
+		},
+
+		getFilter: function() {
+			return filter;
 		},
 
 		filterEvents: function(field, value) {
@@ -121,6 +179,18 @@ var EventListModule = (function() {
 			this.renderEvents(filteredEvents);
 		},
 
+		filterFavourites: function() {//TODO
+			filteredEvents = $.grep(events, function(e, i) {
+				return true;
+			});
+
+			$.each(filteredEvents, function(index, event) {
+				event['favourite'] = true;
+			});
+
+			this.renderEvents(filteredEvents);
+		},
+
 		loadEvents: function(params, callback) {
 			$.get('/api/event/list', params, callback);
 		},
@@ -142,8 +212,18 @@ var EventListModule = (function() {
 			});
 		},
 
+		loadScript: function() {
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://maps.googleapis.com/maps/api/js?sensor=true' +
+				'&libraries=places,visualization&language=en-US&v=3.2&callback=EventListModule.initMap';
+			document.body.appendChild(script);
+		},
+
 		initMap: function(){
 			var self = this;
+			$('#map-canvas').width($('#list-container').width());
+
 			var mapOptions = {
 					zoom: 10,
 					center: new google.maps.LatLng(51.227741, 6.773456),
@@ -161,7 +241,7 @@ var EventListModule = (function() {
 			for(var i=0; i<events.length; i++) {
 				var marker = self.addMarker(events[i], i);
 				markers.push(marker);
-				events[i]['__gm_id'] = marker['__gm_id']
+				events[i]['__gm_id'] = marker['__gm_id'];console.log(marker['__gm_id'] )
 			}
 
 			zoomChangeListener = google.maps.event.addListener(map, 'zoom_changed', function (event) {
@@ -205,10 +285,9 @@ var EventListModule = (function() {
 
 		addMarker: function (event, index) {
 			var self = this;
-			//var icon = new google.maps.MarkerImage('/static/img/marker/marker_' + event.subCategory + '.png', new google.maps.Size(32,32))
 			var marker= new google.maps.Marker({
 				position:  new google.maps.LatLng(event.gpsLat, event.gpsLong),
-				icon: '/static/img/marker/marker_' + event.subCategory.toLowerCase() + '.png',
+				icon: 'http://labs.google.com/ridefinder/images/mm_20_green.png',
 				map: map,
 				title: event.title});
 
@@ -226,7 +305,7 @@ var EventListModule = (function() {
 		
 		highlightMarker: function(eventId) {
 			$.each(markers, function(index, marker) {
-				marker.setIcon('/static/img/marker/marker_party.png');//TODO: get icon
+				marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_green.png');
 			});
 
 			if(isMapShown == true) {
@@ -234,44 +313,12 @@ var EventListModule = (function() {
 					if(eventId == event.eventId){	
 						$.each(markers, function(index, marker) {
 							if(marker['__gm_id'] == event['__gm_id']) {
-								marker.setIcon('/static/img/marker/marker_highlighted.png');
+								marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_red.png');
 								marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 							}
 						});
 					}
 				});
-			}
-		},
-
-		handleScroll: function() {return;
-			if($(window).width() <= 640){
-				if($(window).scrollTop() > 0) {
-					if(isMapShown == true && isMapShownOnTop == false) {
-						$('.map').css({
-							'width': '100%',
-							'position': 'fixed',
-							'top': '50px',
-							'z-index': 10
-						});
-						/*$('.list-container').css({
-							'margin-top': '200px'//180
-						});*/
-					}
-					isMapShownOnTop = true;
-				} else {
-					if(isMapShown == true) {
-						/*$('.list-container').css({
-							'margin-top': ''
-						});*/
-						$('.map').css({
-							'width': '',
-							'position': '',
-							'top': ''
-						});
-
-					}
-					isMapShownOnTop = false;
-				}
 			}
 		},
 

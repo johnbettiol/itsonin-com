@@ -8,9 +8,6 @@
 <script src="/static/lib/bootstrap/js/bootstrap.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="/static/lib/bootstrap/css/bootstrap.css">
 
-<%-- GOOGLE MAPS --%>
-<script src="http://maps.google.com/maps/api/js?sensor=true&libraries=places,visualization&language=en-US&v=3.14" type="text/javascript"></script>
-
 <%-- PICKADATE --%>
 <link rel="stylesheet" href="/static/lib/pickadate/css/default.css" id="theme_base">
 <link rel="stylesheet" href="/static/lib/pickadate/css/default.date.css">
@@ -27,7 +24,7 @@
 <script src="/static/lib/jsrender/jsrender.min.js" type="text/javascript"></script>
 
 <%-- MAP CLUSTERER --%>
-<script src="/static/lib/map/markerclusterer_compiled.js" type="text/javascript"></script>
+<%--<script src="/static/lib/map/markerclusterer_compiled.js" type="text/javascript"></script> --%>
 
 <%-- LESS --%>
 <link rel="stylesheet/less" type="text/css" href="/static/less/variables.less" />

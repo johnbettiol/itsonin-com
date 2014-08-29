@@ -48,31 +48,44 @@ var EventNewModule = (function() {
 			$('#timeFrom-field').pickatime(timepickerOptions);
 			$('#timeTo-field').pickatime(timepickerOptions);
 
-			$('.categories li').on('click', function() {
-				$('.categories li').each(function (i) {
+			$('#categories a').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('#categories a').each(function (i) {
 					$(this).removeClass('active');
-					$(this).find('.icon').removeClass('active');
 				});
+
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
+
+				$(".subcategories").hide();
+				$("#category-" + $(this).attr('id')).show();
+				event['category'] = $(this).attr('id');
+			});
+
+			$('.subcategories a').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('.subcategories a').each(function (i) {
+					$(this).removeClass('active');
+				});
+
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
+
 				event['subCategory'] = $(this).attr('id');
-				alert($(this).attr('id'));
-				$(this).addClass('active');
-				$(this).find('.icon').addClass('active');
 			});
 
-			$('input:radio[name=category]').on('change', function() {
-				$(".subCategoryList").hide();
-				$("#category-" + $(this).val()).show();
-				event['category'] = $(this).val();
-			});
-
-			self.initLocationAutocomplete();
-
-			self.initMap();
+			self.loadScript();
 		},
 
 		saveEvent: function() {
 			//event.preventDefault();
-			
+
+			if(this.isEventValid() == false) {
+				return;
+			}
+
 			$.ajax({
 				type: 'POST',
 				url: '/api/event/create',
@@ -80,16 +93,35 @@ var EventNewModule = (function() {
 				success: this.saveEventCallback,
 				contentType: "application/json",
 				dataType: 'json'
+			}).done(function() {
+				$('#error-alert').hide();
+				$('#success-text').text('New event created successfully');
+				$('#success-alert').show();
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				var json = $.parseJSON(jqXHR.responseText);
+				if(json.message){
+					$('#error-text').text(json.message);
+				} else {
+					$('#error-text').text('Unknown server error. Please try again.');
+				}
+				$('#error-alert').show();
 			});
 		},
 
-		validateEvent: function(event, guest) {
-			if ($('#name').val().length == 0) {
-				$('#error-message').html('Guest name is required');
-				$('#error-message').show();
+		isEventValid: function() {
+			if(!event.locationAddress) {
+				$('#error-text').text('Location is required');
+				$('#error-alert').show();
+			} else if ($('#dateFrom-field').val() == '' ||	$('#dateTo-field').val() == '' ||
+					$('#timeFrom-field').val() == '' ||	$('#timeTo-field').val() == '') {
+				$('#error-text').text('Start date&time and end date&time are required');
+				$('#error-alert').show();
+				return false;
+			} else {
+				return true;
 			}
 		},
-		
+
 		saveEventCallback: function(response) {
 			console.log(response);
 		},
@@ -103,6 +135,14 @@ var EventNewModule = (function() {
 				contentType: "application/json",
 				dataType: 'json'
 			});
+		},
+
+		loadScript: function() {
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://maps.googleapis.com/maps/api/js?sensor=true' +
+				'&libraries=places,visualization&language=en-US&v=3.2&callback=EventNewModule.initMapAndAutocomplete';
+			document.body.appendChild(script);
 		},
 
 		initLocationAutocomplete: function() {
@@ -151,6 +191,11 @@ var EventNewModule = (function() {
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				  }
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		},
+
+		initMapAndAutocomplete: function(){
+			this.initLocationAutocomplete();
+			this.initMap();
 		}
 	}
 }());

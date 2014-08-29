@@ -20,7 +20,7 @@ var EventInfoModule = (function() {
 	        	self.shareOnGoogle();
 	        });
 
-	        self.initMap();
+	        self.loadScript();
 	    },
 	    
 	    attendEvent: function() {
@@ -50,6 +50,14 @@ var EventInfoModule = (function() {
 	    	window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 	    },
 
+		loadScript: function() {
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://maps.googleapis.com/maps/api/js?sensor=true' +
+				'&libraries=places,visualization&language=en-US&v=3.2&callback=EventInfoModule.initMap';
+			document.body.appendChild(script);
+		},
+
 		initMap: function(){
 			var self = this;
 			var latlng = new google.maps.LatLng(eventJson.gpsLat, eventJson.gpsLong);
@@ -70,7 +78,6 @@ var EventInfoModule = (function() {
 			var marker = new google.maps.Marker({
 				position: latlng,
 				map: map
-				//title: 'Hello World!'
 			});
 		}
 	}

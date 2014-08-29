@@ -7,6 +7,16 @@
 		background-color: @default-bgcolor;
 		margin-top: 50px;
 	}
+	
+	a:hover, a:focus {
+		color: #99a6ad;
+		text-decoration: none;
+	}
+
+	a.active {
+		color: #141719;
+		text-decoration: none;
+	}
 }
 
 #info {
@@ -21,62 +31,119 @@
 		list-style-type: none;
 		width: 100% !important;
 	}
-	
+
 	.share li {
 		display: inline-block; 
 		list-style-type: none;
 		text-align: center;
 		width: 24%; //TODO: fix, 25%
 	}
-	
+
 	.share a, .share a:hover {
 		text-decoration: none;
 		color: #999;
 	}
-	
+
 	.share ul li a span {
 		display: block;
 		margin-top: 5px;
 		font-size: 12px;
 	}
-	
+
 	.share .glyphicon {
 		font-size: 30px;
 		cursor: pointer;
 	}
 }
 
-#events_header {
+#info-header {
+	.main-info {
+		min-height: 100px;
+	}
+
+	.list-group-item {
+		border-radius: 0;
+	}
+}
+
+#events-header {
+
+	#prev-day-button, #filter-date, #next-day-button {
+		line-height: 22px;
+	}
+
+	#map-btn, #filter-btn, #plus-link {
+		margin-right: 12px;
+		color: white;
+	}
+
+	#map-btn.active, #filter-btn.active {
+		margin-right: 12px;
+		color: yellow;
+	}
+
 	.filters {
-		height: 181px;
+		height: 120px;
 		z-index: 1;
 		background-color: @default-bgcolor;
 		padding-bottom: 4px;
+		padding-top: 4px;
 		border-bottom: 1px solid #ddd;
 		display:none;
 	}
 
 	.map {
 		background-color: @default-bgcolor;
-		padding-bottom: 4px;
+		padding-bottom: 1px;
 		border-bottom: 1px solid #ddd;
-		height: 181px;
+		height: 120px;
 		visibility: hidden;
 		z-index: 1;
 		position: absolute;
 		left: -10000;
+	}
+
+	#map-canvas {
+		height: 100%;
+	}
+
+	.date {
+		background-color: @default-bgcolor;
+		text-transform: uppercase;
+		height:30px;
+		font-size: 16px;
+		text-align: center;
+		padding: 5px 0;
+	}
+
+	a:hover, a:focus {
+		color: #99a6ad;
+		text-decoration: none;
+	}
+
+	a.active {
+		color: #141719;
+		text-decoration: none;
 	}
 }
 
 #events {
 	.events-container {
 		background-color: @default-bgcolor;
-		margin-top: 50px;
+		margin-top: 80px;
 	}
 
 	.col-sm-6 {
 		padding-left: 0;
 		padding-right: 0;
+	}
+
+	.list-group-item {
+		border-radius: 0;
+	}
+
+	.media-heading {
+		margin: 0;
 	}
 
 	.filter-bar-section {
@@ -92,18 +159,9 @@
 		font-size: 18px;
 	}
 
-	.event-item {
-		
-	}
-
 	.event-title {
 		color: #00a6b5;
 		font-size: 15px;
-	}
-
-	.event-body {
-		margin-left:70px;
-		position: relative;
 	}
 
 	.event-offer {
@@ -113,17 +171,28 @@
 		font-size: 15px;
 	}
 
+	.event-icon {
+	    position: absolute;
+	    top: 50%;
+	    margin-top: -14px;
+	    padding: 0 5px;
+	}
+
 	.event-arrow {
-		color: #00a6b5;
-		cursor: hand;
-		cursor: pointer;
-		font-size: 36px;
+		font-size: 40px;
 		position: absolute;
-		right: 4px;
-		top: -webkit-calc(50% - 36px);
-		top: -moz-calc(50% - 36px);
-		top: calc(50% - 36px);
-		z-index: 1;
+		right: 14px;
+		top: 50%;
+		margin-top: -20px;
+	}
+
+	.event-time {
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+
+	.event-body {
+		margin-left: 50px;
 	}
 
 	p {

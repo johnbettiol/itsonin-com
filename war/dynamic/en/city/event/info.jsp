@@ -17,35 +17,35 @@
     </script>
 </head>
 <body>
-	<div style="position:fixed;top:0;left:0;right:0;z-index:1031;">
-		<div class="container" id="events_header">
+	<div class="header-container">
+		<div class="container" id="info-header">
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
 					<div class="row">
 						<div class="col-sm-12 header">
 							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
 								<img src="/static/img/itsonin-white.png" height="20" width="20">
-								<span class="header-title">itsonin ${ioiContext.city}</span>
+								<span class="header-title v-a-m">${ioiContext.city}</span>
 							</a>
 						</div>
 					</div>
 					<div class="row">
-							<div class="list-group-item">
-								<div class="media">
-									<div class="pull-left">
-										<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
-										<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
-									</div>
-									<div class="media-body clearfix">
-										<div class="media-heading event-title"><c:out value="${event.title}"/></div>
-										<p class="event-offer">
-											<c:out value="${event.offer}"/>
-										</p>
-										<i class="fa fa-clock-o"></i>
-										<small class="text-muted">Today 5:00 pm - 10:00pm</small>
-									</div>
+						<div class="list-group-item main-info">
+							<div class="media">
+								<div class="pull-left">
+									<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
+									<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
+								</div>
+								<div class="media-body clearfix">
+									<div class="media-heading event-title"><c:out value="${event.title}"/></div>
+									<p class="event-offer">
+										<c:out value="${event.offer}"/>
+									</p>
+									<i class="fa fa-clock-o"></i>
+									<small class="text-muted">Today 5:00 pm - 10:00pm</small>
 								</div>
 							</div>
+						</div>
 					</div>
 			   </div>
 			</div>
@@ -70,11 +70,14 @@
 					</ul>
 				</div>
 				<hr/>
-				<label>Your name</label>
-				<input type="text" class="form-control" id="guest-name-field">
-				<div class="clearfix">
-					<button class="btn btn-default pull-left" id="save-btn">Attend</button>
-					<button class="btn btn-default pull-right" id="save-btn">Decline</button>
+				<div class="attend">
+					<label>Your name</label>
+					<input type="text" class="form-control" id="guest-name-field">
+					<div class="btn-container text-center clearfix">
+						<button class="btn btn-default pull-left" id="save-btn">Attend</button>
+						<button class="btn btn-default" id="save-btn">Maybe</button>
+						<button class="btn btn-default pull-right" id="save-btn">Decline</button>
+					</div>
 				</div>
 				<hr/>
 				<div class="panel panel-default">
@@ -117,6 +120,14 @@
 								</div>
 							</div>
 						</c:forEach>
+					</div>
+					<div class="panel-footer">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Type your message here ...">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button">Send</button>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>

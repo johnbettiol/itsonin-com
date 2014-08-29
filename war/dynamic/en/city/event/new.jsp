@@ -16,7 +16,7 @@
 </script>
 </head>
 <body>
-	<div style="position:fixed;top:0;left:0;right:0;z-index:1031;">
+	<div class="header-container">
 		<div class="container" id="events_header">
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
@@ -24,10 +24,13 @@
 					<div class="col-sm-12">
 						<div class="row">
 							<div class="col-sm-12 header">
+								<img src="/static/img/itsonin-white.png" height="20" width="20">
+								<i class="fa fa-angle-right v-a-m fs-18"></i>
 								<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
-									<img src="/static/img/itsonin-white.png" height="20" width="20">
-									<span class="header-title">itsonin ${ioiContext.city}</span>
+									<span class="header-title v-a-m">${ioiContext.city}</span>
 								</a>
+								<i class="fa fa-angle-right v-a-m fs-18"></i>
+								<span class="header-title v-a-m">Add Event</span>
 							</div>
 						</div>
 					</div>
@@ -56,26 +59,43 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<label>Event category</label>
-						<div style="margin-top: 5px; margin-bottom: 5px">
-							<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
-								<label class="radio-inline"> <input type="radio" id="category" name="category" value="${eventCategory}"><c:out value="${eventCategory}"/></label>
-							</c:forEach>
+						<div id="categories" class="hbox text-center b-b b-light text-sm">
+							<a href="javascript:void(0)" class="col padder-v text-muted" id="NIGHTLIFE">
+								<span class="fa fa-glass fa-2x m-b-xs"></span>
+								<span class="block">NIGHTLIFE</span>
+							</a>
+							<a href="javascript:void(0)" class="col padder-v text-muted" id="SOCIAL">
+								<span class="fa fa-users fa-2x m-b-xs"></span>
+								<span class="block">SOCIAL</span>
+							</a>
+							<a href="javascript:void(0)" class="col padder-v text-muted" id="CULTURAL">
+								<span class="fa fa-university fa-2x m-b-xs"></span>
+								<span class="block">CULTURAL</span>
+							</a>
+							<a href="javascript:void(0)" class="col padder-v text-muted" id="FESTIVAL">
+								<span class="fa fa-ticket fa-2x m-b-xs"></span>
+								<span class="block">FESTIVAL</span>
+							</a>
+							<a href="javascript:void(0)" class="col padder-v text-muted" id="SPORT">
+								<span class="fa fa-futbol-o fa-2x m-b-xs"></span>
+								<span class="block">SPORT</span>
+							</a>
 						</div>
 						<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
-							<div class="filter-bar-section subCategoryList" id="category-${eventCategory}" style="display: none;">
+							<div class="subcategories" id="category-${eventCategory}" style="display: none;">
 								<div style="margin-bottom: 5px; font-size:12px;">
 									<i>Please select one of the following</i>
 								</div>
-								<ul class="categories">
+								<div class="hbox text-center b-b b-light text-sm">
 									<c:forEach var="eventSubCategory" items="${eventSubCategories}" varStatus="loop">
 										<c:if test="${eventSubCategory.parent == eventCategory}">
-											<li id="${eventSubCategory}">
-												<span class="icon icon-bordered icon-${fn:toLowerCase(eventSubCategory)}"></span>
-												<span class="category-title">${eventSubCategory}</span>
-											</li>
+											<a href="javascript:void(0)" class="col padder-v text-muted" id="${eventSubCategory}">
+												<span class="fa fa-glass fa-2x m-b-xs"></span>
+												<span class="block">${eventSubCategory}</span>
+											</a>
 										</c:if>
 									</c:forEach>
-								</ul>
+								</div>
 							</div>
 						</c:forEach>
 					</div>
@@ -189,20 +209,20 @@
 						</div>
 					</div>
 				</div>
-				<div class="row" style="display:none">
+				<div class="row" id="success-alert" style="display:none">
 					<div class="col-xs-12">
 				        <div class="alert alert-success alert-dismissable">
 			            	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			            	<span id="success-message"></span>
+							<span id="success-text"></span>
 			            	<a href="/${ioiContext.locale}/${ioiContext.city}/Events" class="btn btn-default btn-sm">go back</a>
 	            		</div>
 	            	</div>
 	            </div>
-	            <div class="row" style="display:none">
+	            <div class="row" id="error-alert" style="display:none">
 					<div class="col-xs-12">
 			            <div class="alert alert-danger alert-dismissable">
 			              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			              <span id="error-message"></span>
+			              <span id="error-text"></span>
 			            </div>
 	            	</div>
 	            </div>
