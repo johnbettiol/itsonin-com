@@ -1,5 +1,6 @@
 package com.itsonin.servlet.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.itsonin.crawl.EventimSeeder;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
@@ -62,6 +64,13 @@ public class AdminToolsServlet extends DefaultServlet {
 						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
 						"location address", new Date());
 				event.setEventId(Long.valueOf(i));
+				eventService.create(event, guest);
+			}
+			break;
+		case "SuperSeed":
+			Guest guest = new Guest("Joey McCloud");
+			ArrayList<Event> eventsList = EventimSeeder.getNewEvents();
+			for (Event event : eventsList) {
 				eventService.create(event, guest);
 			}
 			break;

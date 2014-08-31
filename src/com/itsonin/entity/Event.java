@@ -229,4 +229,9 @@ public class Event implements Serializable {
 		this.offer = offer;
 	}
 
+	public void setIconImage(String val) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
