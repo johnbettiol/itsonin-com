@@ -90,7 +90,6 @@ var EventNewModule = (function() {
 				type: 'POST',
 				url: '/api/event/create',
 				data: JSON.stringify({event:event, guest:guest}),
-				success: this.saveEventCallback,
 				contentType: "application/json",
 				dataType: 'json'
 			}).done(function() {
@@ -120,10 +119,6 @@ var EventNewModule = (function() {
 			} else {
 				return true;
 			}
-		},
-
-		saveEventCallback: function(response) {
-			console.log(response);
 		},
 
 		updateEvent: function(event, guest, callback) {

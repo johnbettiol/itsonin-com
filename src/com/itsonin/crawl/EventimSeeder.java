@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.jsoup.Jsoup;
@@ -13,6 +14,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.code.geocoder.Geocoder;
+import com.google.code.geocoder.GeocoderRequestBuilder;
+import com.google.code.geocoder.model.GeocodeResponse;
+import com.google.code.geocoder.model.GeocoderGeometry;
+import com.google.code.geocoder.model.GeocoderRequest;
+import com.google.code.geocoder.model.GeocoderResult;
+import com.google.code.geocoder.model.GeocoderStatus;
 import com.itsonin.entity.Event;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
@@ -31,7 +39,6 @@ public class EventimSeeder {
 	private static final SimpleDateFormat parserSDF = new SimpleDateFormat(
 			"MM/dd/yy / h:mm a");
 	private static final Date now = new Date();
-	private static final Random r = new Random();
 
 	public static void main(String[] args) {
 		getNewEvents();
@@ -41,6 +48,7 @@ public class EventimSeeder {
 	public static ArrayList<Event> getNewEvents() {
 		String startPage = START_URL;
 		Document doc;
+		Geocoder geocoder = new Geocoder();
 		ArrayList<Event> eventsList = new ArrayList<Event>();
 		while (startPage != null) {
 			try {
@@ -55,10 +63,17 @@ public class EventimSeeder {
 					Event newEvent = getEventData(event);
 					if (newEvent != null) {
 						String geoCodeSearch = newEvent.getLocationTitle() + "," + newEvent.getLocationAddress();
-						String googGeoURL = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(geoCodeSearch, "UTF-8") + "&key=API_KEY";
-						// @TODO Nikolai we need to use the google api to automatically get the gps coordinates for these location
-						newEvent.setGpsLat(51.218514 + (r.nextInt(1000) - 500)/10000.0);
-						newEvent.setGpsLong(6.7707483 + (r.nextInt(1000) - 500)/10000.0);
+						GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(/*URLEncoder.encode(*/geoCodeSearch/*, "UTF-8")*/).setLanguage("en").getGeocoderRequest();
+						GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
+						if(geocoderResponse.getStatus() == GeocoderStatus.OK){
+							List<GeocoderResult> results = geocoderResponse.getResults();
+
+							if(results.size() > 0) {
+								GeocoderGeometry geometry = results.get(0).getGeometry();
+								newEvent.setGpsLat(geometry.getLocation().getLat().doubleValue());
+								newEvent.setGpsLong(geometry.getLocation().getLng().doubleValue());
+							}
+						}
 						eventsList.add(newEvent);
 					}
 				}
@@ -143,13 +158,15 @@ public class EventimSeeder {
 				if (locationAddress != null) {
 					eventLocationAddress = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(locationAddress.text());
 					
-					System.out.println("eventIcon: " + eventIconImage);
-					System.out.println("href:      " + eventHref);
-					System.out.println("title:     " + eventTitle);
-					System.out.println("location:  " + eventLocationTitle);
-					System.out.println("dateStr:   " + eventDateStr);
-					System.out.println("date:      " + eventDateStart);
-					System.out.println("----------------");
+					System.out.println("eventIcon:       " + eventIconImage);
+					System.out.println("href:            " + eventHref);
+					System.out.println("title:           " + eventTitle);
+					System.out.println("location:        " + eventLocationTitle);
+					System.out.println("locationAddress: " + eventLocationAddress);
+					System.out.println("dateStr:         " + eventDateStr);
+					System.out.println("date:            " + eventDateStart);
+					System.out.println("date:            " + eventDateStart);
+					System.out.println("-----------------------------------");
 					
 			
 					

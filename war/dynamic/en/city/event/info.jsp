@@ -1,16 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page session="false" %>
 <!DOCTYPE html>
 <html>
 <head>
 	<title>itsonin - Events in ${ioiContext.city}</title>
 	<%@ include file="../../head.jsp" %>
+	<script type="text/javascript">
+		var event = ${eventJson};
+    </script>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
     <script type="text/javascript">
-		var eventJson = ${eventJson};
-
         $(document).ready(function() {
         	EventInfoModule.init();
         });
@@ -41,8 +43,12 @@
 									<p class="event-offer">
 										<c:out value="${event.offer}"/>
 									</p>
-									<i class="fa fa-clock-o"></i>
-									<small class="text-muted">Today 5:00 pm - 10:00pm</small>
+									<div class="text-muted">
+										<i class="fa fa-clock-o fs-11"></i>
+										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.startTime}"/>
+										 -
+										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -63,10 +69,10 @@
 				<hr/>
 				<div class="share">
 					<ul>
-						<li><a href="javascript:void(0)" id="share-link"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
-						<li><a href="javascript:void(0)" id="share-by-email"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
-						<li><a href="javascript:void(0)" id="share-on-facebook"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
-						<li><a href="javascript:void(0)" id="share-on-google"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
+						<li><a href="javascript:void(0)" id="share-link-btn"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
+						<li><a href="javascript:void(0)" id="share-by-email-btn"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
+						<li><a href="javascript:void(0)" id="share-on-facebook-btn"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
+						<li><a href="javascript:void(0)" id="share-on-google-btn"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
 					</ul>
 				</div>
 				<hr/>
@@ -74,9 +80,9 @@
 					<label>Your name</label>
 					<input type="text" class="form-control" id="guest-name-field">
 					<div class="btn-container text-center clearfix">
-						<button class="btn btn-default pull-left" id="save-btn">Attend</button>
-						<button class="btn btn-default" id="save-btn">Maybe</button>
-						<button class="btn btn-default pull-right" id="save-btn">Decline</button>
+						<button class="btn btn-default pull-left" id="attend-btn">Attend</button>
+						<button class="btn btn-default" id="maybe-attend-btn">Maybe</button>
+						<button class="btn btn-default pull-right" id="decline-btn">Decline</button>
 					</div>
 				</div>
 				<hr/>
@@ -123,9 +129,9 @@
 					</div>
 					<div class="panel-footer">
 						<div class="input-group">
-							<input type="text" class="form-control" placeholder="Type your message here ...">
+							<input type="text" class="form-control" placeholder="Type your message here ..." id="comment-field">
 							<span class="input-group-btn">
-								<button class="btn btn-default" type="button">Send</button>
+								<button class="btn btn-default" id="add-comment-btn">Add</button>
 							</span>
 						</div>
 					</div>

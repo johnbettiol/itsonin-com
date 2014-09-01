@@ -35,7 +35,7 @@
 					{{if favourite}}{{:~formatDate(startTime)}} - {{:~formatDate(endTime)}}{{/if}}
 				</div>
 				<i class="fa fa-angle-right event-arrow pointer"
-					onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'"></i>
+					onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}'"></i>
 			</div>
 		</div>
 	</div>

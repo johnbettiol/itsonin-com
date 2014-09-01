@@ -25,7 +25,7 @@ public class Comment {
 	private Long guestId;
 	private Long parentCommentId;
 	private String comment;
-	private Date created;
+	private Date created = new Date();
 	
 	@SuppressWarnings("unused")
 	private Comment(){}
