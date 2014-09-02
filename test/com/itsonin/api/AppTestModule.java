@@ -13,7 +13,6 @@ import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.mocks.MockHttpSession;
 import com.itsonin.resteasy.JacksonContextResolver;
 import com.itsonin.security.AuthContextService;
-import com.itsonin.security.SecurityInterceptor;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
@@ -27,7 +26,6 @@ public class AppTestModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(SecurityInterceptor.class);
 		bind(AuthContextService.class).in(Singleton.class);
 		bind(JacksonContextResolver.class);
 		
