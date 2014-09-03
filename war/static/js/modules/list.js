@@ -5,7 +5,7 @@ var EventListModule = (function() {
 		favorites: false,
 		promo: false,
 		hot: false,
-		category: null,
+		category: undefined,
 		date: moment()
 	};
 	var map = {};
@@ -59,7 +59,7 @@ var EventListModule = (function() {
 				} else {
 					$('.events-container').css('margin-top', '200px');
 				}
-				self.renderEvents(events);
+				//self.renderEvents(events);
 				$(window).trigger('resize');
 			});
 
@@ -80,10 +80,6 @@ var EventListModule = (function() {
 
 			$('#promo-button').on('click', function() {
 
-			});
-
-			$('#search-events-btn').on('click', function() {
-				self.filterEventsByText($('#search-input').val());
 			});
 
 			$('#prev-day-button').on('click', function() {
@@ -108,8 +104,12 @@ var EventListModule = (function() {
 
 				if(isActive == false) {
 					$(this).addClass('active');
+					filter.category = $(this).attr('id');
+				} else {
+					filter.category = undefined;
 				}
-				self.filterEvents('category', $(this).attr('id'));
+
+				self.filterEvents();
 			});
 
 			$('#filter-buttons a').on('click', function() {
@@ -120,7 +120,8 @@ var EventListModule = (function() {
 				if(isActive == false) {
 					$(this).addClass('active');
 				}
-				//self.filterEvents('category', $(this).attr('id'));
+
+				self.filterEvents();
 			});
 
 			$('.event-item').on('click', function() {
@@ -187,9 +188,13 @@ var EventListModule = (function() {
 			return filter;
 		},
 
-		filterEvents: function(field, value) {
-			filteredEvents = $.grep(events, function(e, i) {
-				return value === e[field];
+		filterEvents: function() {
+			filteredEvents = $.grep(events, function(event, i) {
+				var fits = true;
+				if(filter.category && filter.category != event.category) {
+					fits = false;
+				}
+				return fits;
 			});
 			this.renderEvents(filteredEvents);
 		},
@@ -198,26 +203,6 @@ var EventListModule = (function() {
 			filteredEvents = $.grep(events, function(e, i) {
 				return  e.title.toLowerCase().indexOf(text.toLowerCase()) > -1
 			});
-			this.renderEvents(filteredEvents);
-		},
-
-		filterNowEvents: function() {
-			var now = new Date();
-			filteredEvents = $.grep(events, function(e, i) {
-				return e.startTime < now && e.endTime > now;
-			});
-			this.renderEvents(filteredEvents);
-		},
-
-		filterFavourites: function() {//TODO
-			filteredEvents = $.grep(events, function(e, i) {
-				return true;
-			});
-
-			$.each(filteredEvents, function(index, event) {
-				event['favourite'] = true;
-			});
-
 			this.renderEvents(filteredEvents);
 		},
 
@@ -283,23 +268,6 @@ var EventListModule = (function() {
 				markers.push(marker);
 				events[i]['__gm_id'] = marker['__gm_id'];
 			}
-
-			zoomChangeListener = google.maps.event.addListener(map, 'zoom_changed', function (event) {
-	
-			});
-
-			zoomChangeListener = google.maps.event.addListener(map, 'dragend', function (event) {
-
-			});
-
-			var timeout;
-			zoomChangeBoundsListener = google.maps.event.addListener(map,'bounds_changed',function (event) {  
-				//google.maps.event.removeListener(zoomChangeBoundsListener);
-				/*window.clearTimeout(timeout);
-				timeout = window.setTimeout(function () {
-					...
-				}, 500);*/
-			});
 
 			google.maps.event.addListener(map, 'idle', function() {
 				//http://stackoverflow.com/questions/4338490/google-map-event-bounds-changed-triggered-multiple-times-when-dragging
