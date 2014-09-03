@@ -1,8 +1,5 @@
 package com.itsonin.servlet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,13 +10,8 @@ import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.entity.Event;
-import com.itsonin.entity.Guest;
 import com.itsonin.enums.EventCategory;
-import com.itsonin.enums.EventFlexibility;
-import com.itsonin.enums.EventSharability;
-import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
-import com.itsonin.enums.EventVisibility;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.EventService;

@@ -7,6 +7,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Index;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 
@@ -23,6 +24,8 @@ public class Comment {
 	private Long commentId;
 	private Long eventId;
 	private Long guestId;
+	@Ignore
+	private String guestName;
 	private Long parentCommentId;
 	private String comment;
 	private Date created = new Date();
@@ -30,13 +33,11 @@ public class Comment {
 	@SuppressWarnings("unused")
 	private Comment(){}
 
-	public Comment(Long eventId, Long guestId,
-			Long parentCommentId, String comment, Date created) {
+	public Comment(Long eventId, Long guestId, Long parentCommentId, String comment) {
 		this.eventId = eventId;
 		this.guestId = guestId;
 		this.parentCommentId = parentCommentId;
 		this.comment = comment;
-		this.created = created;
 	}
 
 	public Long getCommentId() {
@@ -86,6 +87,14 @@ public class Comment {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public String getGuestName() {
+		return guestName;
+	}
+
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
 	}
 
 }

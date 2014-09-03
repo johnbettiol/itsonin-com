@@ -1,13 +1,11 @@
 package com.itsonin.crawl;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,12 +25,12 @@ import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.SeedSource;
 
 public class EventimSeeder {
 
 	private static final String STR_ORDER_TICKETS = " - Order tickets";
-	private static final String BASE_WEBSITE = "http://www.eventim.de";
-	private static final String START_URL = BASE_WEBSITE
+	private static final String START_URL = SeedSource.EVENTIM.getUrl()
 			+ "/duesseldorf?language=en"; // http://www.eventim.de/duesseldorf?language=en
 	private static final String SAFARI_USERAGENT = "Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25";
 
@@ -80,7 +78,7 @@ public class EventimSeeder {
 
 				Element nextUrlElem = doc.getElementsByAttributeValue("name",
 						"Pager_Next_Button").first();
-				startPage = nextUrlElem != null ? BASE_WEBSITE + "/"
+				startPage = nextUrlElem != null ? SeedSource.EVENTIM.getUrl() + "/"
 						+ nextUrlElem.attr("href") + "&language=en" : null;
 				// temporary hack to only run once!
 				startPage = null;
@@ -114,7 +112,7 @@ public class EventimSeeder {
 			if (column.hasClass("taImage")) {
 				Elements imgElems = column.getElementsByTag("img");
 				if (imgElems.size() > 0) {
-					eventIconImage = BASE_WEBSITE
+					eventIconImage = SeedSource.EVENTIM.getUrl()
 							+ imgElems.first().attr("src");
 				}
 			}
@@ -122,7 +120,7 @@ public class EventimSeeder {
 				Element linkElem = column.getElementsByTag("h4")
 						.first().getElementsByAttribute("href")
 						.first();
-				eventHref = BASE_WEBSITE + "/" + linkElem.attr("href");
+				eventHref = SeedSource.EVENTIM.getUrl() + "/" + linkElem.attr("href");
 				eventTitle = linkElem.attr("title");
 				Element plElem = column.getElementsByTag("dl")
 						.first();
@@ -164,16 +162,16 @@ public class EventimSeeder {
 					System.out.println("location:        " + eventLocationTitle);
 					System.out.println("locationAddress: " + eventLocationAddress);
 					System.out.println("dateStr:         " + eventDateStr);
-					System.out.println("date:            " + eventDateStart);
-					System.out.println("date:            " + eventDateStart);
+					System.out.println("start date:      " + eventDateStart);
+					System.out.println("end date:        " + eventDateEnd);
 					System.out.println("-----------------------------------");
-					
-			
-					
-					return new Event(EventSubCategory.CONCERT, EventSharability.NORMAL, EventVisibility.PUBLIC, EventStatus.ACTIVE,
+
+					Event result = new Event(EventSubCategory.CONCERT, EventSharability.NORMAL, EventVisibility.PUBLIC, EventStatus.ACTIVE,
 							EventFlexibility.FIXED, eventTitle, eventDescription,
 							eventNotes, eventDateStart, eventDateEnd, eventGpsLat, eventGpsLong, 
-							eventLocationUrl, eventLocationTitle, eventLocationAddress, now);
+							eventLocationUrl, eventLocationTitle, eventLocationAddress);
+					result.setSource(SeedSource.EVENTIM);
+					return result;
 				}
 
 			} catch (IOException e) {

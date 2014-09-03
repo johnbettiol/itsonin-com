@@ -24,8 +24,8 @@ var EventInfoModule = (function() {
 				self.addComment(1, 1, $('#comment-field').val());
 			});
 
-			$('#attend-btn').on('click', function() {
-				self.attendEvent();
+			$('#attend-btn').on('click', function() {console.log(eventJson)
+				self.attendEvent(eventJson.eventId);
 			});
 
 			$('#decline-btn').on('click', function() {
@@ -36,18 +36,29 @@ var EventInfoModule = (function() {
 				self.maybeAttendEvent();
 			});
 
+			$('#scrollto-comments-btn').on('click', function() {
+				$('body,html').stop().animate({
+					scrollTop: $('.comments').position().top
+				});
+			});
+
+			$('#scrollto-guests-btn').on('click', function() {
+				$('body,html').stop().animate({
+					scrollTop: $('.guests').position().top
+				});
+			});
+
 			self.loadScript();
 		},
 
-		attendEvent: function(eventId, guestName) {
-			if ($('#guest-name-field').val().length == 0) {
-				$('#error-message').html('Guest name is required');
-				$('#error-message').show();
+		attendEvent: function(eventId) {
+			var guestName = $('#guest-name-field').val();
+			if (guestName.length == 0) {
+				alert('Guest name is required');
 			} else {
 				$.ajax({
-					type: 'GET',
+					type: 'POST',
 					url: '/api/event/' + eventId + '/attend/' + guestName,
-					data: JSON.stringify({eventId: eventId, guestId: guestId, comment: comment}),
 					contentType: "application/json",
 					dataType: 'json'
 				}).done(function() {
@@ -60,8 +71,7 @@ var EventInfoModule = (function() {
 
 		declineEvent: function() {
 			if ($('#guest-name-field').val().length == 0) {
-				$('#error-message').html('Guest name is required');
-				$('#error-message').show();
+				alert('Guest name is required');
 			} else {
 				//
 			}
@@ -69,8 +79,7 @@ var EventInfoModule = (function() {
 
 		maybeAttendEvent: function() {
 			if ($('#guest-name-field').val().length == 0) {
-				$('#error-message').html('Guest name is required');
-				$('#error-message').show();
+				alert('Guest name is required');
 			} else {
 				//
 			}
@@ -104,7 +113,7 @@ var EventInfoModule = (function() {
 
 		initMap: function(){
 			var self = this;
-			var latlng = new google.maps.LatLng(event.gpsLat, event.gpsLong);
+			var latlng = new google.maps.LatLng(eventJson.gpsLat, eventJson.gpsLong);
 			var mapOptions = {
 					zoom: 17,
 					center: latlng,

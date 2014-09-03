@@ -14,7 +14,6 @@ import com.itsonin.exception.mappers.ForbiddenExceptionMapper;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
 import com.itsonin.exception.mappers.UnauthorizedExceptionMapper;
 import com.itsonin.resteasy.JacksonContextResolver;
-import com.itsonin.security.ApiSecurityFilter;
 import com.itsonin.security.AuthAndRouteFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.impl.AuthContextServiceImpl;
@@ -38,7 +37,6 @@ public class WebModule extends ServletModule {
 		super.configureServlets();
 		bind(AuthContextService.class).to(AuthContextServiceImpl.class);
 		bind(JacksonContextResolver.class);
-		bind(ApiSecurityFilter.class);
 		bind(NotFoundExceptionMapper.class);
 		bind(ForbiddenExceptionMapper.class);
 		bind(UnauthorizedExceptionMapper.class);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.crawl.EventimSeeder;
+import com.itsonin.entity.Comment;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
@@ -19,7 +21,9 @@ import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.security.AuthContextService;
+import com.itsonin.service.CommentService;
 import com.itsonin.service.DataImportService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
@@ -31,14 +35,17 @@ public class AdminToolsServlet extends DefaultServlet {
 
 	private EventService eventService;
 	private DeviceService deviceService;
+	private CommentService commentService;
 	private DataImportService dis;
 
 	@Inject
 	public AdminToolsServlet(AuthContextService authContextService,
-			EventService eventService, DeviceService deviceService, DataImportService dis) {
+			EventService eventService, DeviceService deviceService, CommentService commentService, 
+			DataImportService dis) {
 		super(authContextService);
 		this.eventService = eventService;
 		this.deviceService = deviceService;
+		this.commentService = commentService;
 		this.dis = dis;
 	}
 
@@ -62,16 +69,21 @@ public class AdminToolsServlet extends DefaultServlet {
 						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
 						"event description", "event notes", new Date(), new Date(),
 						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
-						"location address", new Date());
+						"location address");
 				event.setEventId(Long.valueOf(i));
 				eventService.create(event, guest);
 			}
 			break;
 		case "SuperSeed":
 			Guest guest = new Guest("Joey McCloud");
+			guest.setStatus(GuestStatus.ATTENDING);
 			ArrayList<Event> eventsList = EventimSeeder.getNewEvents();
 			for (Event event : eventsList) {
-				eventService.create(event, guest);
+				Map<String, Object> created = eventService.create(event, guest);
+				Long eventId = ((Event)created.get("event")).getEventId();
+				Long guestId = ((Guest)created.get("guest")).getGuestId();
+				commentService.create(new Comment(eventId, guestId, null, "Question"));
+				commentService.create(new Comment(eventId, guestId, null, "Answer"));
 			}
 			break;
 		case "ImportData":

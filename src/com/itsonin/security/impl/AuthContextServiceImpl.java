@@ -1,9 +1,5 @@
 package com.itsonin.security.impl;
 
-import javax.servlet.http.HttpSession;
-
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.itsonin.entity.Device;
 import com.itsonin.security.AuthContext;

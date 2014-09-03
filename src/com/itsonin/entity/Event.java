@@ -15,6 +15,7 @@ import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.SeedSource;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
@@ -47,7 +48,8 @@ public class Event implements Serializable {
 	private String locationUrl;
 	private String locationTitle;
 	private String locationAddress;
-	private Date created;	
+	private SeedSource source;
+	private Date created = new Date();
 	
 	@SuppressWarnings("unused")
 	private Event(){}
@@ -55,7 +57,7 @@ public class Event implements Serializable {
 	public Event(EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
 			EventStatus status,	EventFlexibility flexibility, String title, String description,
 			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
-			String locationUrl, String locationTitle, String locationAddress, Date created) {
+			String locationUrl, String locationTitle, String locationAddress) {
 		this.category = subCategory.getParent();
 		this.subCategory = subCategory;
 		this.sharability = sharability;
@@ -71,7 +73,6 @@ public class Event implements Serializable {
 		this.locationUrl = locationUrl;
 		this.locationTitle = locationTitle;
 		this.locationAddress = locationAddress;
-		this.created = created;
 	}
 
 	public Long getEventId() {
@@ -232,6 +233,14 @@ public class Event implements Serializable {
 	public void setIconImage(String val) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public SeedSource getSource() {
+		return source;
+	}
+
+	public void setSource(SeedSource source) {
+		this.source = source;
 	}
 
 }

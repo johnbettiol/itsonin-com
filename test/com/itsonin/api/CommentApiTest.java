@@ -1,7 +1,6 @@
 package com.itsonin.api;
 
 import java.io.ByteArrayInputStream;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
@@ -49,7 +48,7 @@ public class CommentApiTest {
         dispatcher.getProviderFactory().getExceptionMappers().put(NotFoundException.class, new NotFoundExceptionMapper());
         dispatcher.getRegistry().addSingletonResource(i.getInstance(CommentApi.class));
         
-        comment = new Comment(1L, 1L, null, "comment", new Date());
+        comment = new Comment(1L, 1L, null, "comment");
 	}
 
 	@After

@@ -39,6 +39,8 @@ var EventListModule = (function() {
 					$('.events-container').css('margin-top', '200px');
 				}
 				
+				$(window).trigger('resize');
+				
 				isMapShown = !isMapShown;
 			});
 
@@ -58,6 +60,7 @@ var EventListModule = (function() {
 					$('.events-container').css('margin-top', '200px');
 				}
 				self.renderEvents(events);
+				$(window).trigger('resize');
 			});
 
 			$('#favourites-button').on('click', function() {
@@ -86,11 +89,15 @@ var EventListModule = (function() {
 			$('#prev-day-button').on('click', function() {
 				filter.date = filter.date.subtract(1, 'days');
 				$('#filter-date').text(filter.date.calendar());
+
+				self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
 			});
 
 			$('#next-day-button').on('click', function() {
 				filter.date = filter.date.add('days', 1);
 				$('#filter-date').text(filter.date.calendar());
+
+				self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
 			});
 
 			$('#filter-categories a').on('click', function() {
@@ -123,7 +130,6 @@ var EventListModule = (function() {
 
 			$('#filter-date').pickadate({
 			    onSet: function(context) {
-			        console.log('Just set stuff:', context)
 			        filter.date = moment(context.select)
 					$('#filter-date').text(filter.date.calendar());
 			    }
@@ -132,10 +138,18 @@ var EventListModule = (function() {
 
 			$.views.helpers({
 				formatTime: function (val) {
-					return moment(val).format('hh:mm A')
+					if(val) {
+						return moment(val).format('hh:mm A')
+					} else {
+						return '';
+					}
 				},
 				formatDate: function (val) {
-					return moment(val).format('MMM D, hh:mm A')
+					if(val) {
+						return moment(val).format('MMM D, hh:mm A')
+					} else {
+						return '';
+					}
 				}
 			});
 
@@ -151,6 +165,22 @@ var EventListModule = (function() {
 			});
 
 			self.loadScript();
+
+			$(window).on('resize', function(){
+				var $lastEvent = $('#list-container').children().last();
+				if($lastEvent) {
+					$('#free-space').height($(this).height() - ($lastEvent.height() + 215));
+				}
+			}).trigger('resize');
+
+			$(window).scroll(function() {
+				$('.event-item').each(function (i) {
+					var isTop = self.isTopVisibleEvent($(this))
+					if(isTop == true){
+						self.highlightMarker($(this).attr('id'));
+					}
+				});
+			});
 		},
 
 		getFilter: function() {
@@ -191,8 +221,18 @@ var EventListModule = (function() {
 			this.renderEvents(filteredEvents);
 		},
 
-		loadEvents: function(params, callback) {
-			$.get('/api/event/list', params, callback);
+		loadEvents: function(params) {
+			$.ajax({
+				type: 'GET',
+				url: '/api/event/list',
+				data: params,
+				contentType: "application/json",
+				dataType: 'json'
+			}).done(function(data, textStatus, jqXHR) {
+				console.log(data);
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				//TODO
+			});
 		},
 
 		renderEvents: function(events) {
@@ -241,7 +281,7 @@ var EventListModule = (function() {
 			for(var i=0; i<events.length; i++) {
 				var marker = self.addMarker(events[i], i);
 				markers.push(marker);
-				events[i]['__gm_id'] = marker['__gm_id'];console.log(marker['__gm_id'] )
+				events[i]['__gm_id'] = marker['__gm_id'];
 			}
 
 			zoomChangeListener = google.maps.event.addListener(map, 'zoom_changed', function (event) {
@@ -293,6 +333,11 @@ var EventListModule = (function() {
 
 			google.maps.event.addListener(marker, "click", function() {
 				//self.map.panTo(marker.getPosition());
+				$.each(markers, function(index, marker) {
+					marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_green.png');
+				});
+				marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_red.png');
+				marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 				self.scroll(event.eventId);
 			});
 			
@@ -322,10 +367,17 @@ var EventListModule = (function() {
 			}
 		},
 
-		scroll: function (id) {
+		scroll: function(id) {
 			$('body,html').stop().animate({
 				scrollTop: $("#"+id).position().top
 			});
+		},
+
+		isTopVisibleEvent: function(elem) {
+			var docViewTop = $(window).scrollTop();
+			var elemTop = $(elem).offset().top;
+			var elemBottom = elemTop + $(elem).height();
+			return (elemTop+5 >= docViewTop+200 && elemTop <= docViewTop + 200 + $(elem).height());
 		}
 	}
 }());

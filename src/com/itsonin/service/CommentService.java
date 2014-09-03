@@ -1,6 +1,5 @@
 package com.itsonin.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -14,7 +13,7 @@ import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventVisibility;
-import com.itsonin.enums.GuestType;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.exception.ForbiddenException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.security.AuthContextService;
@@ -39,18 +38,12 @@ public class CommentService {
 		this.authContextService = authContextService;
 	}
 
-	public Comment create(Long eventId, Long guestId, Long parentCommentId,
-			Comment comment) {
-		if (!isAllowed(eventId, guestId)) {
+	public Comment create(Comment comment) {
+		if (!isAllowed(comment.getEventId(), comment.getGuestId())) {
 			throw new ForbiddenException("Not allowed");
 		}
 
-		comment.setEventId(eventId);
-		comment.setGuestId(guestId);
-		comment.setParentCommentId(parentCommentId);
-		comment.setCreated(new Date());
 		Key<Comment> key = commentDao.save(comment);
-
 		return commentDao.get(key);
 	}
 
@@ -98,8 +91,7 @@ public class CommentService {
 	public List<Comment> list(Long eventId, Long guestId) {
 		Event event = eventDao.get(eventId);
 		if (event == null) {
-			throw new NotFoundException("Event with id=" + eventId
-					+ " does not exist");
+			throw new NotFoundException("Event with id=" + eventId + " does not exist");
 		}
 
 		if (EventVisibility.PRIVATE.equals(event.getVisibility())
@@ -113,8 +105,7 @@ public class CommentService {
 	public Comment get(Long id) {
 		Comment comment = commentDao.get(id);
 		if (comment == null) {
-			throw new NotFoundException("Comment with id=" + id
-					+ " does not exist");
+			throw new NotFoundException("Comment with id=" + id	+ " does not exist");
 		} else {
 			return comment;
 		}
@@ -126,8 +117,8 @@ public class CommentService {
 			return true;
 		}
 
-		Guest guest = guestDao.get(eventId + "_" + guestId);
-		if (guest != null && GuestType.HOST.equals(guest.getType())) {
+		Guest guest = guestDao.get(eventId + "_" + guestId + "_" + device.getDeviceId());
+		if (guest != null && guest.getStatus() != GuestStatus.VIEWED) {//TODO: check attending, declined etc
 			return true;
 		}
 		return false;

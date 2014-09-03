@@ -28,8 +28,8 @@ public class CommentDao extends ObjectifyGenericDao<Comment> {
 		if (guestId != null) {
 			q = q.filter("guestId", guestId);
 		}
-
-		return q.list();
+		List<Comment> list = q.list();
+		return list;
 	}
 
 }

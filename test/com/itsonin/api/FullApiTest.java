@@ -46,7 +46,6 @@ import com.itsonin.enums.DeviceLevel;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
-import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestType;
@@ -60,7 +59,6 @@ import com.itsonin.mocks.MockAuthContextService;
 import com.itsonin.ofy.OfyService;
 import com.itsonin.resteasy.CustomDateTimeSerializer;
 import com.itsonin.resteasy.JacksonContextResolver;
-import com.itsonin.security.ApiSecurityFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
@@ -119,7 +117,6 @@ public class FullApiTest {
 		exceptionMappers.put(ForbiddenException.class, new ForbiddenExceptionMapper());
 		
 		dispatcher.getProviderFactory().register(JacksonContextResolver.class);
-		dispatcher.getProviderFactory().register(new ApiSecurityFilter(authContextService));
 
 		// @TODO You should never be able to create a SUPER device (only update
 		// an existing to SUPER)
@@ -195,7 +192,7 @@ public class FullApiTest {
 				EventSharability.NORMAL, EventVisibility.PRIVATE, EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, 
 				"event title", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
-        		"location address", null));
+        		"location address"));
 		
 		List <Event> allEvents = new ArrayList<Event>();
 		allEvents.add(d2Event.getEvent());
@@ -482,7 +479,7 @@ public class FullApiTest {
 			throws URISyntaxException, IOException {
 		mockAuthContextService.setActiveSession(device);
 		
-		String requestJson = mapper.writeValueAsString(new Comment(eventId, 1L, parentCommentId, comment, null));
+		String requestJson = mapper.writeValueAsString(new Comment(eventId, 1L, parentCommentId, comment));
 		MockHttpRequest request = MockHttpRequest.post("api/event/" + eventId + "/1/comment/create");
 		request.accept(MediaType.APPLICATION_JSON);
 		request.contentType(MediaType.APPLICATION_JSON);

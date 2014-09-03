@@ -31,8 +31,8 @@
 				</p>
 				<div class="event-time text-muted">
 					<i class="fa fa-clock-o"></i>
-					{{if !favourite}}{{:~formatTime(startTime)}} - {{:~formatTime(endTime)}}{{/if}}
-					{{if favourite}}{{:~formatDate(startTime)}} - {{:~formatDate(endTime)}}{{/if}}
+					{{if !favourite}}{{:~formatTime(startTime)}}{{if endTime}} - {{/if}}{{:~formatTime(endTime)}}{{/if}}
+					{{if favourite}}{{:~formatDate(startTime)}}{{if endTime}} - {{/if}}{{:~formatDate(endTime)}}{{/if}}
 				</div>
 				<i class="fa fa-angle-right event-arrow pointer"
 					onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}'"></i>
@@ -131,7 +131,7 @@
 									<div class="event-time text-muted">
 										<i class="fa fa-clock-o fs-11"></i>
 										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.startTime}"/>
-										 -
+										<c:if test="${not empty event.endTime}"> - </c:if>
 										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
 									</div>
 									<i class="fa fa-angle-right event-arrow pointer" 
@@ -145,5 +145,6 @@
 		</div>
 	  </div>
 	</div>
+	<div id="free-space"></div>
 </body>
 </html>

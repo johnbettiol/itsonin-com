@@ -1,15 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.itsonin.utils.TimeUtil"%>
+<%@ page import="com.itsonin.entity.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page session="false" %>
+
+<jsp:useBean id="timeUtil" class="com.itsonin.utils.TimeUtil"/>
 <!DOCTYPE html>
 <html>
 <head>
 	<title>itsonin - Events in ${ioiContext.city}</title>
 	<%@ include file="../../head.jsp" %>
 	<script type="text/javascript">
-		var event = ${eventJson};
+		var eventJson = ${eventJson};
     </script>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
     <script type="text/javascript">
@@ -29,6 +33,8 @@
 								<img src="/static/img/itsonin-white.png" height="20" width="20">
 								<span class="header-title v-a-m">${ioiContext.city}</span>
 							</a>
+							<i class="fa fa-2x fa-users pull-right pointer" id="scrollto-guests-btn"></i>
+							<i class="fa fa-2x fa-comment-o pull-right pointer" id="scrollto-comments-btn"></i>
 						</div>
 					</div>
 					<div class="row">
@@ -45,8 +51,8 @@
 									</p>
 									<div class="text-muted">
 										<i class="fa fa-clock-o fs-11"></i>
-										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.startTime}"/>
-										 -
+										<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.startTime}"/>
+										<c:if test="${not empty event.endTime}"> - </c:if>
 										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
 									</div>
 								</div>
@@ -60,22 +66,26 @@
 	<div class="container" id="info">
 		<div class="row">
 			<div class="col-sm-offset-3 col-sm-6 event-container">
-				<div style="height: 200px; width: 100%; padding-top: 10px;padding-bottom: 10px">
-					<div id="map-canvas" style="height: 100%; width: 100%"></div>
+				<div class="row">
+					<div style="height: 200px; width: 100%; padding-bottom: 10px">
+						<div id="map-canvas" style="height: 100%; width: 100%"></div>
+					</div>
 				</div>
 				<p><c:out value="${event.locationAddress}"/></p>
 				<hr/>
 				<p><c:out value="${event.description}"/></p>
-				<hr/>
-				<div class="share">
-					<ul>
-						<li><a href="javascript:void(0)" id="share-link-btn"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
-						<li><a href="javascript:void(0)" id="share-by-email-btn"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
-						<li><a href="javascript:void(0)" id="share-on-facebook-btn"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
-						<li><a href="javascript:void(0)" id="share-on-google-btn"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
-					</ul>
-				</div>
-				<hr/>
+				<c:if test="${not empty event.description}"><hr/></c:if>
+				<%--<c:if test="${(guest.status == 'ATTENDING' || guest.status == 'DECLINED') && event.sharability != 'NOSHARE'}"> --%>
+					<div class="share">
+						<ul>
+							<li><a href="javascript:void(0)" id="share-link-btn"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
+							<li><a href="javascript:void(0)" id="share-by-email-btn"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
+							<li><a href="javascript:void(0)" id="share-on-facebook-btn"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
+							<li><a href="javascript:void(0)" id="share-on-google-btn"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
+						</ul>
+					</div>
+					<hr/>
+				<%--</c:if> --%>
 				<div class="attend">
 					<label>Your name</label>
 					<input type="text" class="form-control" id="guest-name-field">
@@ -86,53 +96,57 @@
 					</div>
 				</div>
 				<hr/>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<div class="panel-title">
-							<label>Guest list</label>
-						</div>
-					</div>
-					<div class="list-group">
-						<c:forEach var="guest" items="${guests}">
-							<div class="list-group-item guest-item" id="${guest.guestId}">
-								<div class="media">
-									<div class="pull-left">
-										<i class="fa fa-user"></i>									
-									</div>
-									<div class="media-body clearfix">
-										<span class="pull-left"><c:out value="${guest.name}"/></span>
-										<span class="pull-right"><c:out value="${guest.status}"/></span>
+				<div class="row guests">
+					<label style="margin-left: 15px">Guests</label>
+					<div class="panel panel-default">
+						<div class="list-group">
+							<c:forEach var="guest" items="${guests}">
+								<div class="list-group-item guest-item" id="${guest.guestId}">
+									<div class="media">
+										<div class="pull-left">
+											<i class="fa fa-user"></i>									
+										</div>
+										<div class="media-body clearfix">
+											<span class="pull-left"><c:out value="${guest.name}"/></span>
+											<span class="pull-right"><c:out value="${guest.status}"/></span>
+										</div>
 									</div>
 								</div>
-							</div>
-						</c:forEach>
+							</c:forEach>
+						</div>
 					</div>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<div class="panel-title">
-							<label>Comments</label>
-						</div>
-					</div>
-					<div class="list-group">
-						<c:forEach var="comment" items="${comments}">
-							<div class="list-group-item comment-item" id="${comment.commentId}">
-								<div class="media">
-									<div class="media-body ">
-		                                <small class="pull-right">2h ago</small><%--<c:out value="${comment.created}"/> --%>
-		                                <strong><small>John Bettiol</small></strong><br>
-		                                <small class="text-muted"><c:out value="${comment.comment}"/></small>
-		                            </div>
+				<hr/>
+				<div class="row comments">
+					<label style="margin-left: 15px">Comments</label>
+					<div class="panel panel-default">
+						<div class="list-group">
+							<c:forEach var="comment" items="${comments}">
+								<div class="list-group-item comment-item" id="${comment.commentId}">
+									<div class="media">
+										<div class="media-body ">
+			                                <small class="pull-right">
+			                                <%= TimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated()) %>
+			                                </small>
+			                                <!-- TODO
+			                                http://stackoverflow.com/questions/2179644/how-to-calculate-elapsed-time-from-now-with-joda-time
+			                                http://stackoverflow.com/questions/3471397/pretty-print-duration-in-java
+			                                http://ocpsoft.org/prettytime/
+			                                -->
+			                                <strong><small><c:out value="${comment.guestName}"/></small></strong><br>
+			                                <small class="text-muted"><c:out value="${comment.comment}"/></small>
+			                            </div>
+									</div>
 								</div>
+							</c:forEach>
+						</div>
+						<div class="panel-footer">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Type your message here ..." id="comment-field">
+								<span class="input-group-btn">
+									<button class="btn btn-default" id="add-comment-btn">Add</button>
+								</span>
 							</div>
-						</c:forEach>
-					</div>
-					<div class="panel-footer">
-						<div class="input-group">
-							<input type="text" class="form-control" placeholder="Type your message here ..." id="comment-field">
-							<span class="input-group-btn">
-								<button class="btn btn-default" id="add-comment-btn">Add</button>
-							</span>
 						</div>
 					</div>
 				</div>
@@ -148,7 +162,7 @@
 	        <h4 class="modal-title">Share link</h4>
 	      </div>
 	      <div class="modal-body">
-	        <input type="text" class="form-control" id="link">
+	        <input type="text" class="form-control" id="share-link-field">
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -166,7 +180,7 @@
 	      </div>
 	      <div class="modal-body">
 	        <label>Email</label>
-    		<input type="text" class="form-control" id="email">
+    		<input type="text" class="form-control" id="share-by-email-field">
 	      </div>
 	      <div class="modal-footer"><!-- TODO -->
 	        <a href="mailto:{{email}}?subject=Invitation&amp;body={{link}}" class="btn btn-primary">Send</a>

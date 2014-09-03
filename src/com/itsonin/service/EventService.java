@@ -60,7 +60,7 @@ public class EventService {
 		if(error != null){
 			throw new BadRequestException(String.format("Error saving event: %s", error));
 		}
-		
+
 		Device device = authContextService.getDevice();
 
 		event.setEventId(counterDao.nextEventId());
@@ -145,19 +145,32 @@ public class EventService {
 	public EventInfo info(Long eventId, Boolean forInvitation){
 		Device device = authContextService.getDevice();
 		EventWithGuest eventWithGuest = get(eventId, forInvitation);
-		List<Guest> guests = guestDao.listByEvent(eventId,
-				GuestStatus.ATTENDING);
-		List<Guest> declinedGuests = guestDao.listByEvent(eventId,
-				GuestStatus.DECLINED);
+
+		List<Guest> guests = guestDao.listByEvent(eventId, GuestStatus.ATTENDING);	
+		List<Guest> declinedGuests = guestDao.listByEvent(eventId, GuestStatus.DECLINED);
 		guests.addAll(declinedGuests);
+
+		Map<Long, String> guestsMap = new HashMap<Long, String>();
+		if(guests != null) {
+			for(Guest guest : guests) {
+				guestsMap.put(guest.getGuestId(), guest.getName());
+			}
+		}
+
 		List<Comment> comments = commentDao.list(eventId, null);
+		if(comments != null) { 
+			for(Comment comment : comments) {
+				comment.setGuestName(guestsMap.get(comment.getGuestId()));
+			}
+		}
+
 		Guest host = guestDao.getHostGuestForEvent(eventId);
 
 		EventInfo eventInfo = new EventInfo();
 		eventInfo.setEvent(eventWithGuest.getEvent());
 		eventInfo.setGuest(eventWithGuest.getGuest());
 		eventInfo.setGuests(guests);
-		//eventInfo.setComments(comments);
+		eventInfo.setComments(comments);
 		//eventInfo.setViewonly(!device.getDeviceId().equals(host.getDeviceId()));
 		return eventInfo;
 	}

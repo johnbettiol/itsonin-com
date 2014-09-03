@@ -33,7 +33,9 @@ public class CommentApi {
 	@Produces("application/json")
 	public Comment create(@PathParam("eventId") Long eventId,
 			@PathParam("guestId") Long guestId, Comment comment) {
-		return commentService.create(eventId, guestId, null, comment);
+		comment.setEventId(eventId);
+		comment.setGuestId(guestId);
+		return commentService.create(comment);
 	}
 
 	@POST
@@ -49,7 +51,9 @@ public class CommentApi {
 	public Comment createChild(@PathParam("eventId") Long eventId,
 			@PathParam("guestId") Long guestId,
 			@PathParam("parentCommentId") Long parentCommentId, Comment comment) {
-		return commentService.create(eventId, guestId, parentCommentId, comment);
+		comment.setGuestId(guestId);
+		comment.setParentCommentId(parentCommentId);
+		return commentService.create(comment);
 	}
 
 	@POST
@@ -57,7 +61,9 @@ public class CommentApi {
 	@Produces("application/json")
 	public Comment createChild(@PathParam("eventId") Long eventId,
 			@PathParam("parentCommentId") Long parentCommentId, Comment comment) {
-		return commentService.create(eventId, null, parentCommentId, comment);
+		comment.setEventId(eventId);
+		comment.setParentCommentId(parentCommentId);
+		return commentService.create(comment);
 	}
 
 	@POST

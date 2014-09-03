@@ -20,6 +20,10 @@
 }
 
 #info {
+	.guests, .comments {
+
+	}
+
 	.event-container {
 		background-color: @default-bgcolor;
 		margin-top: 150px;
@@ -64,10 +68,13 @@
 	.list-group-item {
 		border-radius: 0;
 	}
+	
+	#scrollto-guests-btn, #scrollto-comments-btn {
+		margin-right: 12px;
+	}
 }
 
 #events-header {
-
 	#prev-day-button, #filter-date, #next-day-button {
 		line-height: 22px;
 	}
@@ -202,12 +209,6 @@
 	.list-group-item {
 		padding: 4px 6px;
 		/*border: 1px solid #f1f2f3;*/
-	}
-
-	.panel .panel-heading {
-		border-bottom: 0;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
 	}
 
 	.media-body {
