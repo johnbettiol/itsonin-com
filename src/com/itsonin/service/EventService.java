@@ -56,6 +56,8 @@ public class EventService {
 	}
 
 	public Map<String, Object> create(Event event, Guest guest) {
+		event.setCreated(new Date());
+		event.setSource("guest"); // later this will be:  guest/admin/sales etc depending on device role
 		String error = validate(event, guest);
 		if(error != null){
 			throw new BadRequestException(String.format("Error saving event: %s", error));

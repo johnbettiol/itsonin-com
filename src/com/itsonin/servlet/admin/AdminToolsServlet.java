@@ -69,7 +69,7 @@ public class AdminToolsServlet extends DefaultServlet {
 						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
 						"event description", "event notes", new Date(), new Date(),
 						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
-						"location address");
+						"location address", new Date(), "qseed");
 				event.setEventId(Long.valueOf(i));
 				eventService.create(event, guest);
 			}

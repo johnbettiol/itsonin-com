@@ -58,7 +58,7 @@ public class EventApiTest {
         event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL, EventVisibility.PUBLIC, EventStatus.ACTIVE, 
         		EventFlexibility.NEGOTIABLE, "event title", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
-        		"location address");
+        		"location address", new Date(), "test");
 	}
 
 	@After
