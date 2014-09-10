@@ -5,5 +5,5 @@ package com.itsonin.enums;
  *
  */
 public enum GuestStatus {
-	VIEWED, PENDING, ATTENDING, DECLINED;
+	YES, NO, MAYBE, VIEWED;
 }

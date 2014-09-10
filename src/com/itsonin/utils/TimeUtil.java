@@ -31,7 +31,7 @@ public class TimeUtil {
 			} else if (period.getMinutes() > 0) {
 				fmt = new PeriodFormatterBuilder().appendMinutes().appendSuffix(" min");				
 			} else if (period.getSeconds() > 0){
-				fmt = new PeriodFormatterBuilder().appendSeconds().appendSuffix("s");				
+				fmt = new PeriodFormatterBuilder().appendSeconds().appendSuffix(" sec");
 			} else {
 				return "moment ago";
 			}

@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.itsonin.utils.TimeUtil"%>
 <%@ page import="com.itsonin.entity.*"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page session="false" %>
 
 <jsp:useBean id="timeUtil" class="com.itsonin.utils.TimeUtil"/>
+<%
+	String shareUrl = request.getScheme() + "://" + request.getServerName() + request.getAttribute("javax.servlet.forward.servlet_path");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,13 +18,26 @@
 	<%@ include file="../../head.jsp" %>
 	<script type="text/javascript">
 		var eventJson = ${eventJson};
-    </script>
+		var guestJson = ${guestJson};
+		var commentsJson = ${commentsJson};
+	</script>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-        	EventInfoModule.init();
-        });
-    </script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			EventInfoModule.init();
+		});
+	</script>
+	<script id="commentTemplate" type="text/x-jsrender">
+		<div class="list-group-item comment-item" id="{{:commentId}}">
+			<div class="media">
+				<div class="media-body">
+					<small class="pull-right">{{:~formatTime(created)}}</small>
+					<strong><small>{{:guestName}}</small></strong><br>
+					<small class="text-muted">{{:comment}}</small>
+				</div>
+			</div>
+		</div>
+	</script>
 </head>
 <body>
 	<div class="header-container">
@@ -59,7 +76,7 @@
 							</div>
 						</div>
 					</div>
-			   </div>
+				 </div>
 			</div>
 		</div>
 	</div>
@@ -75,7 +92,17 @@
 				<hr/>
 				<p><c:out value="${event.description}"/></p>
 				<c:if test="${not empty event.description}"><hr/></c:if>
-				<%--<c:if test="${(guest.status == 'ATTENDING' || guest.status == 'DECLINED') && event.sharability != 'NOSHARE'}"> --%>
+				<div class="attend">
+					<label>Are you attending this events?</label>
+					<input type="text" class="form-control" id="guest-name-field" placeholder="Your name" value="${guest.name}">
+					<div class="btn-container text-center clearfix">
+						<button class="btn btn-default pull-left" id="decline-btn">No</button>
+						<button class="btn btn-default" id="maybe-attend-btn">Maybe</button>
+						<button class="btn btn-default pull-right" id="attend-btn">Yes</button>
+					</div>
+				</div>
+				<hr/>
+				<c:if test="${(guest.status == 'YES' || guest.status == 'NO') && event.sharability != 'NOSHARE'}">
 					<div class="share">
 						<ul>
 							<li><a href="javascript:void(0)" id="share-link-btn"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
@@ -85,19 +112,9 @@
 						</ul>
 					</div>
 					<hr/>
-				<%--</c:if> --%>
-				<div class="attend">
-					<label>Your name</label>
-					<input type="text" class="form-control" id="guest-name-field">
-					<div class="btn-container text-center clearfix">
-						<button class="btn btn-default pull-left" id="attend-btn">Attend</button>
-						<button class="btn btn-default" id="maybe-attend-btn">Maybe</button>
-						<button class="btn btn-default pull-right" id="decline-btn">Decline</button>
-					</div>
-				</div>
-				<hr/>
+				</c:if>
 				<div class="row guests">
-					<label style="margin-left: 15px">Guests</label>
+					<label style="margin-left: 15px">Guests</label> <span class="badge ng-binding" style="font-size:10px"><c:out value="${fn:length(guests)}"/></span>
 					<div class="panel panel-default">
 						<div class="list-group">
 							<c:forEach var="guest" items="${guests}">
@@ -118,24 +135,19 @@
 				</div>
 				<hr/>
 				<div class="row comments">
-					<label style="margin-left: 15px">Comments</label>
+					<label style="margin-left: 15px">Comments</label> <span class="badge ng-binding" style="font-size:10px"><c:out value="${fn:length(comments)}"/></span>
 					<div class="panel panel-default">
 						<div class="list-group">
 							<c:forEach var="comment" items="${comments}">
 								<div class="list-group-item comment-item" id="${comment.commentId}">
 									<div class="media">
 										<div class="media-body ">
-			                                <small class="pull-right">
-			                                <%= TimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated()) %>
-			                                </small>
-			                                <!-- TODO
-			                                http://stackoverflow.com/questions/2179644/how-to-calculate-elapsed-time-from-now-with-joda-time
-			                                http://stackoverflow.com/questions/3471397/pretty-print-duration-in-java
-			                                http://ocpsoft.org/prettytime/
-			                                -->
-			                                <strong><small><c:out value="${comment.guestName}"/></small></strong><br>
-			                                <small class="text-muted"><c:out value="${comment.comment}"/></small>
-			                            </div>
+											<small class="pull-right">
+											<%= TimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated()) %>
+											</small>
+											<strong><small><c:out value="${comment.guestName}"/></small></strong><br>
+											<small class="text-muted"><c:out value="${comment.comment}"/></small>
+										</div>
 									</div>
 								</div>
 							</c:forEach>
@@ -154,40 +166,40 @@
 		</div>
 	</div>
 	<%-- SHARE LINK MODAL --%>
-  	<div class="modal" id="share-link-modal">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title">Share link</h4>
-	      </div>
-	      <div class="modal-body">
-	        <input type="text" class="form-control" id="share-link-field">
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-	  </div>
+	<div class="modal" id="share-link-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Share link</h4>
+				</div>
+				<div class="modal-body">
+					<input type="text" class="form-control" id="share-link-field" value="<%=shareUrl%>">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<%-- SHARE BY EMAIL MODAL --%>
 	<div class="modal" id="share-by-email-modal">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title">Share by email</h4>
-	      </div>
-	      <div class="modal-body">
-	        <label>Email</label>
-    		<input type="text" class="form-control" id="share-by-email-field">
-	      </div>
-	      <div class="modal-footer"><!-- TODO -->
-	        <a href="mailto:{{email}}?subject=Invitation&amp;body={{link}}" class="btn btn-primary">Send</a>
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-	  </div>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Share by email</h4>
+				</div>
+				<div class="modal-body">
+					<label>Email</label>
+					<input type="text" class="form-control" id="share-by-email-field">
+				</div>
+				<div class="modal-footer"><!-- TODO -->
+					<button class="btn btn-primary" id="send-by-email-btn">Send</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

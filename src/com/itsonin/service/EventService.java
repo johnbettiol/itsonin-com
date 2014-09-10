@@ -1,6 +1,7 @@
 package com.itsonin.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class EventService {
 		guest.setId(guest.getEventId() + "_" + guest.getGuestId() + "_"
 				+ device.getDeviceId());
 		guest.setType(GuestType.HOST);
-		guest.setStatus(GuestStatus.ATTENDING);
+		guest.setStatus(GuestStatus.YES);
 		guest.setCreated(new Date());
 		guest.setDeviceId(device.getDeviceId());
 		Key<Guest> guestKey = guestDao.save(guest);
@@ -131,14 +132,14 @@ public class EventService {
 		GuestStatus status;
 		if(event.getVisibility() == EventVisibility.PUBLIC){
 			if(forInvitation != null && forInvitation.equals(true)){
-				status = GuestStatus.PENDING;
+				status = GuestStatus.MAYBE;
 			} else {
 				status = GuestStatus.VIEWED;
 			}
 		} else {
-			status = GuestStatus.PENDING;
+			status = GuestStatus.MAYBE;
 		}
-		Guest guest = null;//storeGuestEntry(eventId, null, status);
+		Guest guest = storeGuestEntry(eventId, null, status);
 		return new EventWithGuest(event, guest);
 	}
 	
@@ -146,8 +147,8 @@ public class EventService {
 		Device device = authContextService.getDevice();
 		EventWithGuest eventWithGuest = get(eventId, forInvitation);
 
-		List<Guest> guests = guestDao.listByEvent(eventId, GuestStatus.ATTENDING);	
-		List<Guest> declinedGuests = guestDao.listByEvent(eventId, GuestStatus.DECLINED);
+		List<Guest> guests = guestDao.listByEvent(eventId, GuestStatus.YES);	
+		List<Guest> declinedGuests = guestDao.listByEvent(eventId, GuestStatus.NO);
 		guests.addAll(declinedGuests);
 
 		Map<Long, String> guestsMap = new HashMap<Long, String>();
@@ -158,6 +159,7 @@ public class EventService {
 		}
 
 		List<Comment> comments = commentDao.list(eventId, null);
+		Collections.sort(comments, CommentService.COMMENT_COMPARATOR);
 		if(comments != null) { 
 			for(Comment comment : comments) {
 				comment.setGuestName(guestsMap.get(comment.getGuestId()));
@@ -179,11 +181,11 @@ public class EventService {
 		if(StringUtils.isEmpty(guestName)){
 			throw new BadRequestException("Guest name is required");
 		}
-		return storeGuestEntry(eventId, guestName, GuestStatus.ATTENDING);
+		return storeGuestEntry(eventId, guestName, GuestStatus.YES);
 	}
 
 	public Guest decline(Long eventId) {
-		return storeGuestEntry(eventId, null, GuestStatus.DECLINED);
+		return storeGuestEntry(eventId, null, GuestStatus.NO);
 	}
 
 	private Guest storeGuestEntry(Long eventId, String guestName, GuestStatus guestStatus) {
@@ -198,7 +200,7 @@ public class EventService {
 			Key<Guest> guestKey = guestDao.save(guest);
 			guest = guestDao.get(guestKey);
 		} else if (guestStatus != guest.getStatus() && guest.getType() != GuestType.HOST &&
-				guestStatus != GuestStatus.VIEWED && guestStatus != GuestStatus.PENDING) {
+				guestStatus != GuestStatus.VIEWED && guestStatus != GuestStatus.MAYBE) {
 			guest.setStatus(guestStatus);
 			if(guestName != null){
 				guest.setName(guestName);

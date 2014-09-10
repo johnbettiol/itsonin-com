@@ -1,6 +1,9 @@
 var EventListModule = (function() {
 
-	var filteredEvents = [];
+	var RED_MARKER = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
+
+	var filteredEvents = events;
+	var filteredByMapEvents = [];
 	var filter = {
 		favorites: false,
 		promo: false,
@@ -11,16 +14,14 @@ var EventListModule = (function() {
 	var map = {};
 	var markers = [];
 	var isMapShown = false;
+	var highlightMarkerOnScroll = true;
 
 	return {
 		init: function() {
 			var self = this;
 
-			//preload sprite
-			//$('<img/>').attr('src', '/static/img/sprites.png').appendTo('body').css('display','none');
-
 			$('#map-btn').on('click', function() {
-				filteredEvents = events;
+				filteredByMapEvents = filteredEvents;
 				$(".filters").hide();
 				$(this).toggleClass('active');
 				if($('#filter-btn').hasClass('active')){
@@ -37,8 +38,9 @@ var EventListModule = (function() {
 					$('.map').css('position', 'relative');
 					$('.map').css('left', '');
 					$('.events-container').css('margin-top', '200px');
+					map.panTo(new google.maps.LatLng(51.227741, 6.773456));
 				}
-				
+
 				$(window).trigger('resize');
 				
 				isMapShown = !isMapShown;
@@ -59,7 +61,7 @@ var EventListModule = (function() {
 				} else {
 					$('.events-container').css('margin-top', '200px');
 				}
-				//self.renderEvents(events);
+				self.renderEvents(filteredEvents);
 				$(window).trigger('resize');
 			});
 
@@ -130,10 +132,10 @@ var EventListModule = (function() {
 			});
 
 			$('#filter-date').pickadate({
-			    onSet: function(context) {
-			        filter.date = moment(context.select)
+				onSet: function(context) {
+					filter.date = moment(context.select)
 					$('#filter-date').text(filter.date.calendar());
-			    }
+				}
 			});
 			//TODO: use this one https://github.com/xdan/datetimepicker or this https://github.com/dbushell/Pikaday
 
@@ -155,14 +157,14 @@ var EventListModule = (function() {
 			});
 
 			moment.locale('en', {
-			    calendar : {
-			        lastDay : '[Yesterday ] dddd MMMM D',
-			        sameDay : '[Today ] dddd MMMM D',
-			        nextDay : '[Tomorrow ] dddd MMMM D',
-			        lastWeek : '[last] dddd MMMM D',
-			        nextWeek : 'dddd MMMM D',
-			        sameElse : 'dddd MMMM D'
-			    }
+				calendar : {
+					lastDay : '[Yesterday ] dddd MMMM D',
+					sameDay : '[Today ] dddd MMMM D',
+					nextDay : '[Tomorrow ] dddd MMMM D',
+					lastWeek : '[last] dddd MMMM D',
+					nextWeek : 'dddd MMMM D',
+					sameElse : 'dddd MMMM D'
+				}
 			});
 
 			self.loadScript();
@@ -172,15 +174,18 @@ var EventListModule = (function() {
 				if($lastEvent) {
 					$('#free-space').height($(this).height() - ($lastEvent.height() + 215));
 				}
+				$('#map-canvas').width($('#list-container').width());
 			}).trigger('resize');
 
 			$(window).scroll(function() {
-				$('.event-item').each(function (i) {
-					var isTop = self.isTopVisibleEvent($(this))
-					if(isTop == true){
-						self.highlightMarker($(this).attr('id'));
-					}
-				});
+				if(highlightMarkerOnScroll == true) {
+					$('.event-item').each(function (i) {
+						var isTop = self.isTopVisibleEvent($(this))
+						if(isTop == true){
+							self.highlightMarker($(this).attr('id'));
+						}
+					});
+				}
 			});
 		},
 
@@ -189,6 +194,8 @@ var EventListModule = (function() {
 		},
 
 		filterEvents: function() {
+			//TODO: load by date
+			
 			filteredEvents = $.grep(events, function(event, i) {
 				var fits = true;
 				if(filter.category && filter.category != event.category) {
@@ -197,6 +204,7 @@ var EventListModule = (function() {
 				return fits;
 			});
 			this.renderEvents(filteredEvents);
+			this.initMarkers(filteredEvents);
 		},
 
 		filterEventsByText: function(text) {
@@ -250,75 +258,88 @@ var EventListModule = (function() {
 			$('#map-canvas').width($('#list-container').width());
 
 			var mapOptions = {
-					zoom: 10,
-					center: new google.maps.LatLng(51.227741, 6.773456),
-					disableDefaultUI: true,
-					panControl: false,
-					zoomControl: true,
-					zoomControlOptions: {
-						position: google.maps.ControlPosition.LEFT_CENTER
-					},
-					scaleControl: false,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
-				  }
-			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-			for(var i=0; i<events.length; i++) {
-				var marker = self.addMarker(events[i], i);
-				markers.push(marker);
-				events[i]['__gm_id'] = marker['__gm_id'];
+				zoom: 10,
+				center: new google.maps.LatLng(51.227741, 6.773456),
+				disableDefaultUI: true,
+				panControl: false,
+				zoomControl: true,
+				zoomControlOptions: {
+					position: google.maps.ControlPosition.LEFT_CENTER
+				},
+				scaleControl: false,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 			google.maps.event.addListener(map, 'idle', function() {
 				//http://stackoverflow.com/questions/4338490/google-map-event-bounds-changed-triggered-multiple-times-when-dragging
 				if(isMapShown == true) {
 					var bounds = map.getBounds();
-	
-					filteredEvents = [];
+
+					filteredByMapEvents = [];
 					for(var i = 0; i < markers.length; i++){
 						var marker = markers[i];
 						if(bounds.contains(marker.position)) {	
 							for(var j = 0; j < events.length; j++) {
 								if(marker['__gm_id'] == events[j]['__gm_id']) {
-									filteredEvents.push(events[j]);
+									filteredByMapEvents.push(events[j]);
 								}
 							}
 						}
 					}
-				   	self.renderEvents(filteredEvents);
+				   	self.renderEvents(filteredByMapEvents);
 				}
 			});
 
+			google.maps.event.addDomListener(window, "resize", function() {
+				 google.maps.event.trigger(map, "resize");
+			});
+
+			self.initMarkers(events);
+		},
+
+		initMarkers: function (events) {
+			//remove old markers from map
+			for(var i=0; i < markers.length; i++){
+				markers[i].setMap(null);
+			}
+
+			for(var i=0; i < events.length; i++) {
+				var marker = this.addMarker(events[i], i);
+				markers.push(marker);
+				events[i]['__gm_id'] = marker['__gm_id'];
+			}
 		},
 
 		addMarker: function (event, index) {
 			var self = this;
 			var marker= new google.maps.Marker({
 				position:  new google.maps.LatLng(event.gpsLat, event.gpsLong),
-				icon: 'http://labs.google.com/ridefinder/images/mm_20_green.png',
+				icon: self.getBlueIcon(),
 				map: map,
 				title: event.title});
 
 			google.maps.event.addListener(marker, "click", function() {
-				//self.map.panTo(marker.getPosition());
 				$.each(markers, function(index, marker) {
-					marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_green.png');
+					marker.setIcon(self.getBlueIcon());
 				});
-				marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_red.png');
+				marker.setIcon(RED_MARKER);
 				marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
-				self.scroll(event.eventId);
+				self.scrollToEvent(event.eventId);
 			});
 			
 			google.maps.event.addListener(marker, "mouseover", function() {
 				this.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
-	        });
+			});
 
 			return marker;
 		},
-		
+
 		highlightMarker: function(eventId) {
+			var self = this;
+
 			$.each(markers, function(index, marker) {
-				marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_green.png');
+				marker.setIcon(self.getBlueIcon());
 			});
 
 			if(isMapShown == true) {
@@ -326,7 +347,7 @@ var EventListModule = (function() {
 					if(eventId == event.eventId){	
 						$.each(markers, function(index, marker) {
 							if(marker['__gm_id'] == event['__gm_id']) {
-								marker.setIcon('http://labs.google.com/ridefinder/images/mm_20_red.png');
+								marker.setIcon(RED_MARKER);
 								marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 							}
 						});
@@ -335,9 +356,13 @@ var EventListModule = (function() {
 			}
 		},
 
-		scroll: function(id) {
+		scrollToEvent: function(id) {
+			highlightMarkerOnScroll = false;
 			$('body,html').stop().animate({
-				scrollTop: $("#"+id).position().top
+					scrollTop: $("#"+id).position().top
+				}, 400, 'swing',
+				function(){
+					highlightMarkerOnScroll = true;
 			});
 		},
 
@@ -346,6 +371,26 @@ var EventListModule = (function() {
 			var elemTop = $(elem).offset().top;
 			var elemBottom = elemTop + $(elem).height();
 			return (elemTop+5 >= docViewTop+200 && elemTop <= docViewTop + 200 + $(elem).height());
+		},
+		
+		getBlueIcon: function() {
+			return {
+				path: google.maps.SymbolPath.CIRCLE,
+				fillOpacity: 0.5,
+				fillColor: '#0066FF',
+				strokeOpacity: 1.0,
+				strokeColor: 'black',
+				strokeWeight: 1.0, 
+				scale: 4 //pixels
+			};
+		},
+
+		showSpinner: function() {
+			$('body').append('<div class="overlay"><div class="spinner"><i class="fa fa-spinner fa-spin"></i></div></div>');
+		},
+
+		hideSpinner: function() {
+			$('.overlay').remove();
 		}
 	}
 }());

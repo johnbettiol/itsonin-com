@@ -12,6 +12,10 @@ var EventInfoModule = (function() {
 				self.shareByEmail();
 			});
 
+			$('#send-by-email-btn').on('click', function() {
+				window.location.href = "mailto:" + $('#share-by-email-field').val() + '?subject=Invitation&body=' + window.location.href;
+			});
+
 			$('#share-on-facebook-btn').on('click', function() {
 				self.shareOnFacebook();
 			});
@@ -48,41 +52,32 @@ var EventInfoModule = (function() {
 				});
 			});
 
+			$.views.helpers({
+				formatTime: function (val) {
+					if(val) {
+						var str = '';
+						var duration = moment.duration(moment().diff(moment(val)));
+
+						if(duration.days() > 0) {
+							str = str + Math.floor(duration.days()) + " days ago";
+						} else if(duration.hours() > 0) {
+							str = str + Math.floor(duration.hours()) + " hours ago";
+						} else if(duration.minutes() > 0) {
+							str = str + Math.floor(duration.minutes()) + " min ago";
+						} else if(duration.seconds() > 0) {
+							str = str + Math.floor(duration.seconds()) + " s ago";
+						} else {
+							str = 'moment ago';
+						}
+						return str;
+						//moment.duration(-moment().diff(moment(val), 'seconds'), 'seconds').humanize(true);
+					} else {
+						return '';
+					}
+				}
+			});
+
 			self.loadScript();
-		},
-
-		attendEvent: function(eventId) {
-			var guestName = $('#guest-name-field').val();
-			if (guestName.length == 0) {
-				alert('Guest name is required');
-			} else {
-				$.ajax({
-					type: 'POST',
-					url: '/api/event/' + eventId + '/attend/' + guestName,
-					contentType: "application/json",
-					dataType: 'json'
-				}).done(function() {
-					//TODO
-				}).fail(function(jqXHR, textStatus, errorThrown) {
-					//TODO
-				});
-			}
-		},
-
-		declineEvent: function() {
-			if ($('#guest-name-field').val().length == 0) {
-				alert('Guest name is required');
-			} else {
-				//
-			}
-		},
-
-		maybeAttendEvent: function() {
-			if ($('#guest-name-field').val().length == 0) {
-				alert('Guest name is required');
-			} else {
-				//
-			}
 		},
 
 		shareLink: function() {
@@ -125,7 +120,7 @@ var EventInfoModule = (function() {
 					},
 					scaleControl: false,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
-				  }
+			};
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 			var marker = new google.maps.Marker({
@@ -134,10 +129,58 @@ var EventInfoModule = (function() {
 			});
 		},
 
+		renderComments: function() {
+			$('.comments .list-group').html($('#commentTemplate').render(commentsJson));
+		},
+
+		//ajax requests
+		attendEvent: function(eventId) {
+			var guestName = $('#guest-name-field').val();
+			if (guestName.length == 0) {
+				alert('Guest name is required');
+			} else {
+				var self = this;
+				self.showSpinner();
+
+				$.ajax({
+					type: 'POST',
+					url: '/api/event/' + eventId + '/attend/' + guestName,
+					contentType: "application/json",
+					dataType: 'json'
+				}).done(function() {
+					self.hideSpinner();
+					//TODO
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					self.hideSpinner();
+					//TODO
+				});
+			}
+		},
+
+		declineEvent: function() {
+			if ($('#guest-name-field').val().length == 0) {
+				alert('Guest name is required');
+			} else {
+				//
+				self.showSpinner();
+			}
+		},
+
+		maybeAttendEvent: function() {
+			if ($('#guest-name-field').val().length == 0) {
+				alert('Guest name is required');
+			} else {
+				//
+				self.showSpinner();
+			}
+		},
+
 		addComment: function(eventId, guestId, comment) {
 			if(comment == '') {//TODO: validation
 				return;
 			}
+			var self = this;
+			self.showSpinner();
 
 			$.ajax({
 				type: 'POST',
@@ -145,7 +188,11 @@ var EventInfoModule = (function() {
 				data: JSON.stringify({eventId: eventId, guestId: guestId, comment: comment}),
 				contentType: "application/json",
 				dataType: 'json'
-			}).done(function() {
+			}).done(function(comment) {
+				comment.guestName = guestJson.name;
+				commentsJson.unshift(comment);
+				self.renderComments();
+				self.hideSpinner();
 				//TODO
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				var json = $.parseJSON(jqXHR.responseText);
@@ -154,8 +201,17 @@ var EventInfoModule = (function() {
 				} else {
 					$('#error-text').text('Unknown server error. Please try again.');
 				}
+				self.hideSpinner();
 				$('#error-alert').show();
 			});
+		},
+
+		showSpinner: function() {
+			$('body').append('<div class="overlay"><div class="spinner"><i class="fa fa-spinner fa-spin"></i></div></div>');
+		},
+
+		hideSpinner: function() {
+			$('.overlay').remove();
 		}
 	}
 

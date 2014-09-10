@@ -272,7 +272,7 @@ public class IoiRouterContext {
 			uri = "/dynamic/" + locale + "/city/event/info.jsp";
 			break;
 		case EVENT_INVITATION:
-			uri = "/dynamic/" + locale + "/city/event/invitation.jsp";
+			uri = "/dynamic/" + locale + "/city/event/info.jsp";
 			break;
 		case EVENT_LIST:
 			uri = "/dynamic/" + locale + "/city/event/list.jsp";

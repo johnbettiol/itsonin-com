@@ -1,5 +1,7 @@
 package com.itsonin.service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -85,7 +87,9 @@ public class CommentService {
 	}
 
 	public List<Comment> list(Long eventId) {
-		return list(eventId, null);
+		List<Comment> comments = list(eventId, null);
+		Collections.sort(comments, COMMENT_COMPARATOR);
+		return comments;
 	}
 
 	public List<Comment> list(Long eventId, Long guestId) {
@@ -124,4 +128,10 @@ public class CommentService {
 		return false;
 	}
 
+	public static final Comparator<Comment> COMMENT_COMPARATOR = new Comparator<Comment>() {
+		@Override
+		public int compare(Comment comment1, Comment comment2) {
+			return comment2.getCreated().compareTo(comment1.getCreated());
+		}
+	};
 }

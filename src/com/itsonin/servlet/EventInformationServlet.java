@@ -28,9 +28,12 @@ public class EventInformationServlet extends DefaultServlet {
 	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 		EventInfo eventInfo = eventService.info(Long.parseLong(irc.getEventId()), false);
 		req.setAttribute("event", eventInfo.getEvent());
-		Gson gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
-		req.setAttribute("eventJson", gson.toJson(eventInfo.getEvent()));
+		req.setAttribute("guest", eventInfo.getGuest());
 		req.setAttribute("comments", eventInfo.getComments());
 		req.setAttribute("guests", eventInfo.getGuests());
+		Gson gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
+		req.setAttribute("eventJson", gson.toJson(eventInfo.getEvent()));
+		req.setAttribute("guestJson", gson.toJson(eventInfo.getGuest()));
+		req.setAttribute("commentsJson", gson.toJson(eventInfo.getComments()));
 	}
 }
