@@ -198,15 +198,15 @@
 							<div class="col-xs-6 sharing">
 								<i style="font-size: 12px">Sharing</i><br>
 								<ul>
-									<li id="visibility-NOSHARE">
+									<li id="sharability-NOSHARE">
 										<i class="fa fa-ban fa-fw"></i> 
 										<span>No share</span>
 									</li>
-									<li id="visibility-NORMAL">
+									<li id="sharability-NORMAL">
 										<i class="fa fa-share-alt fa-fw"></i> 
 										<span>Normal</span>
 									</li>
-									<li id="visibility-PYRAMID">
+									<li id="sharability-PYRAMID">
 										<i class="fa fa-wifi fa-flip-vertical fa-fw"></i> 
 										<span>Pyramid</span>
 									</li>

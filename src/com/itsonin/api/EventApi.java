@@ -90,19 +90,17 @@ public class EventApi {
 	@Path("/event/list")
 	@Produces("application/json")
 	public List<Event> list(
-			@QueryParam("allEvents") Boolean allEvents,
+			@QueryParam("favourites") Boolean favourites,
 			@QueryParam("types") List<EventCategory> types,
 			@QueryParam("name") String name,
-			@QueryParam("startTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date startTime,
-			@QueryParam("endTime") @CustomDateFormat("yyyy-MM-dd HH:mm") Date endTime,
-			@QueryParam("comment") String comment,
+			@QueryParam("date") @CustomDateFormat("yyyy-MM-dd") Date date,
 			@QueryParam("sortField") String sortField,
 			@QueryParam("sortOrder") SortOrder sortOrder,
 			@QueryParam("numberOfLevels") Integer numberOfLevels,
 			@QueryParam("offset") Integer offset,
 			@QueryParam("limit") Integer limit) {
-		return eventService.list(allEvents, types, name, startTime, endTime, comment,
-				sortField, sortOrder, numberOfLevels, offset, limit);
+		return eventService.list(favourites, types, name, date,
+				sortField, sortOrder, offset, limit);
 	}
 
 	@POST

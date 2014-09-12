@@ -135,9 +135,9 @@ var EventListModule = (function() {
 				onSet: function(context) {
 					filter.date = moment(context.select)
 					$('#filter-date').text(filter.date.calendar());
+					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
 				}
 			});
-			//TODO: use this one https://github.com/xdan/datetimepicker or this https://github.com/dbushell/Pikaday
 
 			$.views.helpers({
 				formatTime: function (val) {
@@ -194,8 +194,6 @@ var EventListModule = (function() {
 		},
 
 		filterEvents: function() {
-			//TODO: load by date
-			
 			filteredEvents = $.grep(events, function(event, i) {
 				var fits = true;
 				if(filter.category && filter.category != event.category) {
@@ -215,6 +213,9 @@ var EventListModule = (function() {
 		},
 
 		loadEvents: function(params) {
+			var self = this;
+			self.showSpinner();
+
 			$.ajax({
 				type: 'GET',
 				url: '/api/event/list',
@@ -222,21 +223,16 @@ var EventListModule = (function() {
 				contentType: "application/json",
 				dataType: 'json'
 			}).done(function(data, textStatus, jqXHR) {
-				console.log(data);
+				events = data;
+				self.filterEvents();
+				self.hideSpinner();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
-				//TODO
+				self.hideSpinner();
 			});
 		},
 
 		renderEvents: function(events) {
 			var self = this;
-			var prev;
-			$.each(events, function(index, event) {
-				if(prev && event.startTime == prev.startTime && event.endTime == prev.endTime){
-					event['hideTime'] = true;
-				}
-				prev = event;
-			});
 			$('#list-container').html($('#eventTemplate').render(events));
 
 			$('.event-item').on('click', function() {

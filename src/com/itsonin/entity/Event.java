@@ -1,7 +1,10 @@
 package com.itsonin.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -42,6 +45,7 @@ public class Event implements Serializable {
 	private String offer;
 	private Date startTime;
 	private Date endTime;
+	private List<Date> days;
 	private Double gpsLat;
 	private Double gpsLong;
 	private String locationUrl;
@@ -68,6 +72,7 @@ public class Event implements Serializable {
 		this.description = description;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.setDays(new ArrayList<Date>(Arrays.asList(startTime, endTime)));
 		this.gpsLat = gpsLat;
 		this.gpsLong = gpsLong;
 		this.locationUrl = locationUrl;
@@ -243,6 +248,14 @@ public class Event implements Serializable {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public List<Date> getDays() {
+		return days;
+	}
+
+	public void setDays(List<Date> days) {
+		this.days = days;
 	}
 
 }

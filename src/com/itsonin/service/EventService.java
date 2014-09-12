@@ -1,6 +1,7 @@
 package com.itsonin.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,8 +23,8 @@ import com.itsonin.entity.Device;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
-import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventCategory;
+import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
@@ -57,8 +58,6 @@ public class EventService {
 	}
 
 	public Map<String, Object> create(Event event, Guest guest) {
-		event.setCreated(new Date());
-		event.setSource("guest"); // later this will be:  guest/admin/sales etc depending on device role
 		String error = validate(event, guest);
 		if(error != null){
 			throw new BadRequestException(String.format("Error saving event: %s", error));
@@ -68,6 +67,9 @@ public class EventService {
 
 		event.setEventId(counterDao.nextEventId());
 		event.setCreated(new Date());
+		event.setDays(getDaysBetweenDates(event.getStartTime(), event.getEndTime()));
+		event.setSource("guest"); // later this will be:  guest/admin/sales etc depending on device role
+
 		Key<Event> eventKey = eventDao.save(event);
 		event = eventDao.get(eventKey);
 		guest.setGuestId(counterDao.nextGuestId(event.getEventId()));
@@ -219,20 +221,19 @@ public class EventService {
 		return guest;
 	}
 
-	public List<Event> list(Boolean allEvents, List<EventCategory> categories,
-			String name, Date startTime, Date endTime, String comment, String sortField,
-			SortOrder sortOrder, Integer numberOfLevels, Integer offset,
+	public List<Event> list(Boolean favourites, List<EventCategory> categories,
+			String name, Date date, String sortField,
+			SortOrder sortOrder, Integer offset,
 			Integer limit) {
 		Device device = authContextService.getDevice();
-		List<Event> eventList = eventDao.list(categories, name, startTime, endTime, comment,
-				sortField, sortOrder, numberOfLevels, offset, limit);
+		List<Event> eventList = eventDao.list(date);
 		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
 		List<Event> filteredList = new ArrayList<Event>();
 
 		if (DeviceLevel.NORMAL.equals(device.getLevel())) {
 			for (Event event : eventList) {
 				if (event.getVisibility() == EventVisibility.PUBLIC) {
-					if (allEvents == null || allEvents == true) {
+					if (favourites == null || favourites == false) {
 						filteredList.add(event);
 					} else {
 						int guestCounter = -1;
@@ -288,23 +289,23 @@ public class EventService {
 		return false;
 	}
 	
-    public String validate(Event event, Guest guest) {
-    	List<String> errors = new ArrayList<String>();
-    	if(event.getTitle() == null || StringUtils.isBlank(event.getTitle())){
-    		errors.add("Event name is required");
-    	}
-    	if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
-    		errors.add("Host name is required");
-    	}
-    	if(event.getSubCategory() == null){
-    		errors.add("Event subcategory is required");
-    	}
-    	if (!errors.isEmpty()) {
-    		return StringUtils.join(errors, ", ");
-    	}else{
-    		return null;
-    	}
-    }
+	public String validate(Event event, Guest guest) {
+		List<String> errors = new ArrayList<String>();
+		if(event.getTitle() == null || StringUtils.isBlank(event.getTitle())){
+			errors.add("Event name is required");
+		}
+		if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
+			errors.add("Host name is required");
+		}
+		if(event.getSubCategory() == null){
+			errors.add("Event subcategory is required");
+		}
+		if (!errors.isEmpty()) {
+			return StringUtils.join(errors, ", ");
+		}else{
+			return null;
+		}
+	}
 	
 	public void deleteCompletedEvents(Date date){
 		List<Event> events = eventDao.listByProperty("endTime <", date);
@@ -332,4 +333,22 @@ public class EventService {
 		}
 	}
 
+	private List<Date> getDaysBetweenDates(Date start, Date end) {
+		List<Date> days = new ArrayList<Date>();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(start);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		days.add(cal.getTime());
+		while (cal.getTime().before(end)) {
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			if(cal.getTime().before(end)){
+				days.add(cal.getTime());
+			}
+		}
+		return days;
+	}
 }

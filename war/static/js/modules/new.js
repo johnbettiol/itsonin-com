@@ -22,8 +22,6 @@ var EventNewModule = (function() {
 				event['title'] = $('#title-field').val();
 				event['description'] = $('#description-field').val();
 				event['offer'] = $('#offer-field').val();
-				event['visibility'] = $('#visibility-field').val();
-				event['sharability'] = $('#sharability-field').val();
 				event['startTime'] = $('#date-from-field').val() + 'T' + $('#time-from-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
 				event['endTime'] = $('#date-to-field').val() + 'T' + $('#time-to-field').val() + ':00';
 				
@@ -100,7 +98,7 @@ var EventNewModule = (function() {
 			self.loadScript();
 		},
 
-		saveEvent: function() {
+		saveEvent: function() {console.log(event)
 			var self = this;
 			if(self.isEventValid() == false) {
 				return;

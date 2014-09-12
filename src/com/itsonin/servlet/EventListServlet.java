@@ -1,5 +1,6 @@
 package com.itsonin.servlet;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +36,9 @@ public class EventListServlet extends DefaultServlet {
 		 * @TODO - We need to move towards having all of the parameters passed
 		 * by the IoiRouterContext
 		 */
-		List<Event> events = eventService.list(true, null, null, null, null,
-				null, null, null, null, null, null);
-		// temp hack to add an event just for show
+		List<Event> events = eventService.list(true, null, null,
+				new Date(), null, null, null, null);
 
-		//events = eventService.list(true, null, null, null, null, null, null,
-		//		null, null, null, null);
 		req.setAttribute("events", events);
 		
 		Gson gson = new GsonBuilder().setDateFormat(CustomDateTimeSerializer.ITSONIN_DATES).create();
