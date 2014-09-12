@@ -186,6 +186,13 @@ public class EventService {
 		return storeGuestEntry(eventId, guestName, GuestStatus.YES);
 	}
 
+	public Guest maybeAttend(Long eventId, String guestName) {
+		if(StringUtils.isEmpty(guestName)){
+			throw new BadRequestException("Guest name is required");
+		}
+		return storeGuestEntry(eventId, guestName, GuestStatus.MAYBE);
+	}
+
 	public Guest decline(Long eventId) {
 		return storeGuestEntry(eventId, null, GuestStatus.NO);
 	}

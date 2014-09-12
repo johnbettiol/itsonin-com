@@ -1,9 +1,5 @@
 var EventNewModule = (function() {
-		
-	var dateTypeState = 0;
-	var dateTypes = ["date-type-sometime", "date-type-now", "date-type-custom"];
-	var locationTypeState = 0;
-	var locationTypes = ["location-type-sometime", "date-type-now", "date-type-custom"];
+
 	var locationMarker = null;
 	var event = {//default values
 		status: 'ACTIVE',
@@ -28,11 +24,10 @@ var EventNewModule = (function() {
 				event['offer'] = $('#offer-field').val();
 				event['visibility'] = $('#visibility-field').val();
 				event['sharability'] = $('#sharability-field').val();
-				event['startTime'] = $('#dateFrom-field').val() + 'T' + $('#timeFrom-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
-				event['endTime'] = $('#dateTo-field').val() + 'T' + $('#timeTo-field').val() + ':00';
+				event['startTime'] = $('#date-from-field').val() + 'T' + $('#time-from-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
+				event['endTime'] = $('#date-to-field').val() + 'T' + $('#time-to-field').val() + ':00';
 				
 				self.saveEvent();
-				console.log(event);
 			});
 
 			var datepickerOptions = {
@@ -43,10 +38,10 @@ var EventNewModule = (function() {
 				format: 'HH:i',
 				formatSubmit: 'HH:i'
 			}
-			$('#dateFrom-field').pickadate(datepickerOptions);
-			$('#dateTo-field').pickadate(datepickerOptions);
-			$('#timeFrom-field').pickatime(timepickerOptions);
-			$('#timeTo-field').pickatime(timepickerOptions);
+			$('#date-from-field').pickadate(datepickerOptions);
+			$('#date-to-field').pickadate(datepickerOptions);
+			$('#time-from-field').pickatime(timepickerOptions);
+			$('#time-to-field').pickatime(timepickerOptions);
 
 			$('#categories a').on('click', function() {
 				var isActive = $(this).hasClass('active');
@@ -75,16 +70,43 @@ var EventNewModule = (function() {
 
 				event['subCategory'] = $(this).attr('id');
 			});
+			
+			$('.visibility li').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('.visibility li').each(function (i) {
+					$(this).removeClass('active');
+				});
+
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
+
+				event.visibility = $(this).attr('id').split('-')[1];
+			});
+
+			$('.sharing li').on('click', function() {
+				var isActive = $(this).hasClass('active');
+				$('.sharing li').each(function (i) {
+					$(this).removeClass('active');
+				});
+
+				if(isActive == false) {
+					$(this).addClass('active');
+				}
+
+				event.sharability = $(this).attr('id').split('-')[1];
+			});
 
 			self.loadScript();
 		},
 
 		saveEvent: function() {
-			//event.preventDefault();
-
-			if(this.isEventValid() == false) {
+			var self = this;
+			if(self.isEventValid() == false) {
 				return;
 			}
+
+			self.showSpinner();
 
 			$.ajax({
 				type: 'POST',
@@ -96,6 +118,7 @@ var EventNewModule = (function() {
 				$('#error-alert').hide();
 				$('#success-text').text('New event created successfully');
 				$('#success-alert').show();
+				self.hideSpinner();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				var json = $.parseJSON(jqXHR.responseText);
 				if(json.message){
@@ -104,6 +127,7 @@ var EventNewModule = (function() {
 					$('#error-text').text('Unknown server error. Please try again.');
 				}
 				$('#error-alert').show();
+				self.hideSpinner();
 			});
 		},
 
@@ -111,8 +135,9 @@ var EventNewModule = (function() {
 			if(!event.locationAddress) {
 				$('#error-text').text('Location is required');
 				$('#error-alert').show();
-			} else if ($('#dateFrom-field').val() == '' ||	$('#dateTo-field').val() == '' ||
-					$('#timeFrom-field').val() == '' ||	$('#timeTo-field').val() == '') {
+				return false;
+			} else if ($('#date-from-field').val().length == 0 || $('#date-to-field').val().length == 0 ||
+					$('#time-from-field').val().length == 0 ||	$('#time-to-field').val().length == 0) {
 				$('#error-text').text('Start date&time and end date&time are required');
 				$('#error-alert').show();
 				return false;
@@ -184,13 +209,21 @@ var EventNewModule = (function() {
 					},
 					scaleControl: false,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
-				  }
+			}
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 		},
 
 		initMapAndAutocomplete: function(){
 			this.initLocationAutocomplete();
 			this.initMap();
+		},
+
+		showSpinner: function() {
+			$('body').append('<div class="overlay"><div class="spinner"><i class="fa fa-spinner fa-spin"></i></div></div>');
+		},
+
+		hideSpinner: function() {
+			$('.overlay').remove();
 		}
 	}
 }());

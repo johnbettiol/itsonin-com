@@ -88,7 +88,10 @@
 						<div id="map-canvas" style="height: 100%; width: 100%"></div>
 					</div>
 				</div>
-				<p><c:out value="${event.locationAddress}"/></p>
+				<div>
+					<c:out value="${event.locationAddress}"/>
+					<i class="fa fa-2x fa-location-arrow pull-right pointer" id="open-navigation-btn"></i>
+				</div>
 				<hr/>
 				<p><c:out value="${event.description}"/></p>
 				<c:if test="${not empty event.description}"><hr/></c:if>

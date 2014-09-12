@@ -79,6 +79,13 @@ public class EventApi {
 		return eventService.attend(eventId, guestName);
 	}
 
+	@POST
+	@Path("/event/{eventId}/maybeattend/{guestName}")
+	@Produces("application/json")
+	public Guest maybeAttend(@PathParam("eventId") Long eventId, @PathParam("guestName") String guestName) {
+		return eventService.maybeAttend(eventId, guestName);
+	}
+
 	@GET
 	@Path("/event/list")
 	@Produces("application/json")

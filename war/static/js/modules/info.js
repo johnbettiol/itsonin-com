@@ -33,11 +33,11 @@ var EventInfoModule = (function() {
 			});
 
 			$('#decline-btn').on('click', function() {
-				self.declineEvent();
+				self.declineEvent(eventJson.eventId);
 			});
 
 			$('#maybe-attend-btn').on('click', function() {
-				self.maybeAttendEvent();
+				self.maybeAttendEvent(eventJson.eventId);
 			});
 
 			$('#scrollto-comments-btn').on('click', function() {
@@ -50,6 +50,10 @@ var EventInfoModule = (function() {
 				$('body,html').stop().animate({
 					scrollTop: $('.guests').position().top
 				});
+			});
+
+			$('#open-navigation-btn').on('click', function() {
+				alert('navigtion');
 			});
 
 			$.views.helpers({
@@ -157,21 +161,49 @@ var EventInfoModule = (function() {
 			}
 		},
 
-		declineEvent: function() {
-			if ($('#guest-name-field').val().length == 0) {
+		declineEvent: function(eventId) {
+			var guestName = $('#guest-name-field').val();
+			if (guestName.length == 0) {
 				alert('Guest name is required');
 			} else {
-				//
+				var self = this;
 				self.showSpinner();
+
+				$.ajax({
+					type: 'POST',
+					url: '/api/event/' + eventId + '/decline',
+					contentType: "application/json",
+					dataType: 'json'
+				}).done(function() {
+					self.hideSpinner();
+					//TODO
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					self.hideSpinner();
+					//TODO
+				});
 			}
 		},
 
-		maybeAttendEvent: function() {
-			if ($('#guest-name-field').val().length == 0) {
+		maybeAttendEvent: function(eventId) {
+			var guestName = $('#guest-name-field').val();
+			if (guestName.length == 0) {
 				alert('Guest name is required');
 			} else {
-				//
+				var self = this;
 				self.showSpinner();
+
+				$.ajax({
+					type: 'POST',
+					url: '/api/event/' + eventId + '/maybeattend/' + guestName,
+					contentType: "application/json",
+					dataType: 'json'
+				}).done(function() {
+					self.hideSpinner();
+					//TODO
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					self.hideSpinner();
+					//TODO
+				});
 			}
 		},
 

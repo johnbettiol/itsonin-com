@@ -130,7 +130,7 @@
 							<div class="row">
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="dateFrom-field"/> 
+										<input type="text" class="form-control" id="date-from-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-calendar"></span>
@@ -140,7 +140,7 @@
 								</div>
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="timeFrom-field"/> 
+										<input type="text" class="form-control" id="time-from-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-time"></span>
@@ -155,7 +155,7 @@
 							<div class="row">
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="dateTo-field"/> 
+										<input type="text" class="form-control" id="date-to-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-calendar"></span>
@@ -165,7 +165,7 @@
 								</div>
 								<div class="col-xs-6">
 									<div class="input-group">
-										<input type="text" class="form-control" id="timeTo-field"/> 
+										<input type="text" class="form-control" id="time-to-field"/> 
 										<span class="input-group-btn">
 											<button class="btn btn-default" type="button">
 												<span class="glyphicon glyphicon-time"></span>
@@ -182,29 +182,35 @@
 					<div class="col-xs-12">
 						<label>Event details</label>
 						<div class="row">
-							<div class="col-xs-6">
-								<i style="font-size: 12px">Visibility</i>
-								<div class="radio">
-									<label> <input type="radio" id="visibility-field" name="visibility-field" value="PUBLIC"> Public </label>
-								</div>
-								<div class="radio">
-									<label> <input type="radio" id="visibility-field" name="visibility-field" value="PRIVATE" checked> Private </label>
-								</div>
-								<div class="radio">
-									<label> <input type="radio" id="visibility-field" name="visibility-field" value="FRIENDS" disabled> <strike>Friends only</strike> </label>
-								</div>
+							<div class="col-xs-6 visibility">
+								<i style="font-size: 12px">Visibility</i><br>
+								<ul>
+									<li id="visibility-PUBLIC">
+										<i class="fa fa-unlock fa-fw"></i> 
+										<span>Public</span>
+									</li>
+									<li id="visibility-PRIVATE">
+										<i class="fa fa-lock fa-fw"></i> 
+										<span>Private</span>
+									</li>
+								</ul>
 							</div>
-							<div class="col-xs-6">
-								<i style="font-size: 12px">Sharing</i>
-								<div class="radio">
-									<label> <input type="radio" id="sharability-field" name="sharability-field" value="NOSHARE"> No share </label>
-								</div>
-								<div class="radio">
-									<label> <input type="radio" id="sharability-field" name="sharability-field" value="NORMAL" checked> Normal </label>
-								</div>
-								<div class="radio">
-									<label> <input type="radio" id="sharability-field" name="sharability-field" value="PYRAMID"> Pyramid </label>
-								</div>
+							<div class="col-xs-6 sharing">
+								<i style="font-size: 12px">Sharing</i><br>
+								<ul>
+									<li id="visibility-NOSHARE">
+										<i class="fa fa-ban fa-fw"></i> 
+										<span>No share</span>
+									</li>
+									<li id="visibility-NORMAL">
+										<i class="fa fa-share-alt fa-fw"></i> 
+										<span>Normal</span>
+									</li>
+									<li id="visibility-PYRAMID">
+										<i class="fa fa-wifi fa-flip-vertical fa-fw"></i> 
+										<span>Pyramid</span>
+									</li>
+								</ul>
 							</div>
 						</div>
 					</div>
