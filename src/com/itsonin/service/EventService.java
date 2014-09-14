@@ -343,10 +343,14 @@ public class EventService {
 		cal.set(Calendar.MILLISECOND, 0);
 
 		days.add(cal.getTime());
-		while (cal.getTime().before(end)) {
-			cal.add(Calendar.DAY_OF_MONTH, 1);
-			if(cal.getTime().before(end)){
-				days.add(cal.getTime());
+		
+		// End Date can be NULL!
+		if (end != null) {
+			while (cal.getTime().before(end)) {
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				if(cal.getTime().before(end)){
+					days.add(cal.getTime());
+				}
 			}
 		}
 		return days;

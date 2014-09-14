@@ -1,5 +1,11 @@
 package com.itsonin.crawl;
 
-interface EventSeeder {
+import java.util.ArrayList;
 
+import com.itsonin.entity.Event;
+
+interface EventSeeder {
+	
+	public  ArrayList<Event> getNewEvents();
+	
 }

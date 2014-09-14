@@ -77,7 +77,7 @@ public class AdminToolsServlet extends DefaultServlet {
 		case "SuperSeed":
 			Guest guest = new Guest("Joey McCloud");
 			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsList = EventimSeeder.getNewEvents();
+			ArrayList<Event> eventsList = new EventimSeeder().getNewEvents();
 			for (Event event : eventsList) {
 				Map<String, Object> created = eventService.create(event, guest);
 				Long eventId = ((Event)created.get("event")).getEventId();

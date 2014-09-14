@@ -24,22 +24,20 @@ public class PrinzDeSeeder extends EventSeederBase {
 	//@NOTE not working yet!
 
 	private static final String STR_ORDER_TICKETS = " - Order tickets";
-	private static final String BASE_WEBSITE = "http://www.eventim.de";
+	private static final String BASE_WEBSITE = "http://prinz.de/";
 	private static final String START_URL = BASE_WEBSITE
 			+ "/duesseldorf/events/"; // http://www.eventim.de/duesseldorf?language=en
 	private static final String SAFARI_USERAGENT = "Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25";
 
-	
 	// 2014/09/02/
 	private static final SimpleDateFormat parserSDF = new SimpleDateFormat(
 			"yyyy/MM/dd");
 
 	public static void main(String[] args) {
-		getNewEvents();
-
+		new PrinzDeSeeder().getNewEvents();
 	}
 
-	public static ArrayList<Event> getNewEvents() {
+	public  ArrayList<Event> getNewEvents() {
 		
 		String startPage = START_URL + parserSDF.format(now);
 		Document doc;
@@ -48,23 +46,23 @@ public class PrinzDeSeeder extends EventSeederBase {
 			try {
 				doc = Jsoup.connect(startPage).userAgent(SAFARI_USERAGENT)
 						.get();
+				
 				String title = doc.title();
 				System.out.println(title);
 
-				Element content = doc.getElementsByTag("ul").first();
+				Element content = doc.getElementsByTag("ul").get(4);
 				Elements events = content.getElementsByTag("li");
 				for (Element event : events) {
 					Event newEvent = getEventData(event);
-					if (newEvent != null) {
-						addGeoCodeData(newEvent, "en");
-						eventsList.add(newEvent);
-					}
+//					if (newEvent != null) {
+//						addGeoCodeData(newEvent, "en");
+//						eventsList.add(newEvent);
+//					}
 				}
 
-				Element nextUrlElem = doc.getElementsByAttributeValue("name",
-						"Pager_Next_Button").first();
-				startPage = nextUrlElem != null ? BASE_WEBSITE + "/"
-						+ nextUrlElem.attr("href") + "&language=en" : null;
+				
+				startPage = START_URL + parserSDF.format(now);
+				
 				// temporary hack to only run once!
 				startPage = null;
 				System.out.println("next: " + startPage);
@@ -92,6 +90,17 @@ public class PrinzDeSeeder extends EventSeederBase {
 		String eventLocationTitle = null;
 		String eventLocationUrl = null;
 		String eventLocationAddress = null;
+		
+		
+		Element titleElement = event.getElementsByTag("h4").first();
+		System.out.println(titleElement);
+		eventTitle = titleElement.getElementsByTag("a").first().text();
+		System.out.println(eventTitle);
+		
+		// GETTING THERE
+		System.exit(0);
+		
+		
 		Elements columns = event.getElementsByTag("td");
 		for (Element column : columns) {
 			if (column.hasClass("taImage")) {
