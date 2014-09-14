@@ -80,6 +80,7 @@ public class EventimSeeder extends EventSeederBase {
 		String eventIconImage = null;
 		String eventHref = null;
 		String eventTitle = null;
+		String eventSummary = null;
 		String eventDescription = null;
 		String eventNotes = null;
 		String eventDateStr = null;
@@ -151,7 +152,7 @@ public class EventimSeeder extends EventSeederBase {
 					Event result = new Event(EventSubCategory.CONCERT,
 							EventSharability.NORMAL, EventVisibility.PUBLIC,
 							EventStatus.ACTIVE, EventFlexibility.FIXED,
-							eventTitle, eventDescription, eventNotes,
+							eventTitle, eventSummary, eventDescription, eventNotes,
 							eventDateStart, eventDateEnd, eventGpsLat,
 							eventGpsLong, eventLocationUrl, eventLocationTitle,
 							eventLocationAddress, now, SOURCE);

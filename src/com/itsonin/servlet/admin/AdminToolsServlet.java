@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.crawl.EventimSeeder;
+import com.itsonin.crawl.PrinzDeSeeder;
 import com.itsonin.entity.Comment;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
@@ -53,6 +54,7 @@ public class AdminToolsServlet extends DefaultServlet {
 		if (irc.getCommand() == null) {
 			return;
 		}
+		Guest guest = new Guest("Joey McCloud");
 		switch (irc.getCommand()) {
 		case "UpdateAccount":
 			irc.getDevice().setLevel(DeviceLevel.valueOf(req.getParameter("level")));
@@ -63,10 +65,9 @@ public class AdminToolsServlet extends DefaultServlet {
 			List<Double> lats = Arrays.asList(51.2384547, 51.218514, 51.2272899, 51.2201704, 51.2528229);
 			List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422, 6.772928, 6.7782096);
 			for(int i=1;i<=5;i++) {
-				Guest guest = new Guest("Guest name");
 				Event event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL,
 						EventVisibility.PUBLIC, EventStatus.ACTIVE,
-						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i,
+						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i, "event summary", 
 						"event description", "event notes", new Date(), new Date(),
 						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
 						"location address", new Date(), "qseed");
@@ -74,11 +75,21 @@ public class AdminToolsServlet extends DefaultServlet {
 				eventService.create(event, guest);
 			}
 			break;
-		case "SuperSeed":
-			Guest guest = new Guest("Joey McCloud");
+		case "EventimSeed":
 			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsList = new EventimSeeder().getNewEvents();
-			for (Event event : eventsList) {
+			ArrayList<Event> eventsListE = new EventimSeeder().getNewEvents();
+			for (Event event : eventsListE) {
+				Map<String, Object> created = eventService.create(event, guest);
+				Long eventId = ((Event)created.get("event")).getEventId();
+				Long guestId = ((Guest)created.get("guest")).getGuestId();
+				commentService.create(new Comment(eventId, guestId, null, "Question"));
+				commentService.create(new Comment(eventId, guestId, null, "Answer"));
+			}
+			break;
+		case "PrinzSeed":
+			guest.setStatus(GuestStatus.YES);
+			ArrayList<Event> eventsListP = new PrinzDeSeeder().getNewEvents();
+			for (Event event : eventsListP) {
 				Map<String, Object> created = eventService.create(event, guest);
 				Long eventId = ((Event)created.get("event")).getEventId();
 				Long guestId = ((Guest)created.get("guest")).getGuestId();

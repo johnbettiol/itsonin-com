@@ -190,7 +190,7 @@ public class FullApiTest {
 		//   Event information and their new Guest information (and that they are a host)
 		EventWithGuest d2Event = createEvent(device2, new Event(EventSubCategory.PARTY,
 				EventSharability.NORMAL, EventVisibility.PRIVATE, EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, 
-				"event title", "event description", "event notes", 
+				"event title", "event summary", "event description", "event notes", 
         		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
         		"location address", new Date(), "test"));
 		

@@ -12,6 +12,7 @@ import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.Unindex;
 import com.itsonin.enums.EventCategory;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
@@ -40,6 +41,8 @@ public class Event implements Serializable {
 	private EventStatus status;
 	private EventFlexibility flexibility;
 	private String title;
+	private String summary;
+	@Unindex
 	private String description;
 	private String notes;
 	private String offer;
@@ -58,7 +61,7 @@ public class Event implements Serializable {
 	private Event(){}
 
 	public Event(EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
-			EventStatus status,	EventFlexibility flexibility, String title, String description,
+			EventStatus status,	EventFlexibility flexibility, String title, String summary, String description,
 			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
 			String locationUrl, String locationTitle, String locationAddress, Date created, String source) {
 		
@@ -69,6 +72,7 @@ public class Event implements Serializable {
 		this.status = status;
 		this.flexibility = flexibility;
 		this.title = title;
+		this.summary = summary;
 		this.description = description;
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -129,7 +133,15 @@ public class Event implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
+	public String getSummary() {
+		return summary;
+	}
 
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
 	public String getDescription() {
 		return description;
 	}
