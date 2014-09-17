@@ -71,7 +71,7 @@ var EventListModule = (function() {
 					$('#filter-date').text('favourites');
 					$('#prev-day-button').hide();
 					$('#next-day-button').hide();
-					self.filterFavourites();
+					self.filterEvents();
 				} else {
 					$('#filter-date').text(filter.date.calendar());
 					$('#prev-day-button').show();
@@ -98,14 +98,14 @@ var EventListModule = (function() {
 				self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
 			});
 
-			$('#filter-categories a').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('#filter-categories a').each(function (i) {
-					$(this).removeClass('active');
+			$('#filter-categories button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('#filter-categories button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 					filter.category = $(this).attr('id');
 				} else {
 					filter.category = undefined;
@@ -114,13 +114,13 @@ var EventListModule = (function() {
 				self.filterEvents();
 			});
 
-			$('#filter-buttons a').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('#filter-buttons a').each(function (i) {
-					$(this).removeClass('active');
+			$('#filter-buttons button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('#filter-buttons button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 				}
 
 				self.filterEvents();

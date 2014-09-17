@@ -20,22 +20,22 @@
 		<div class="container" id="events_header">
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
-				  <div class="row">
-					<div class="col-sm-12">
-						<div class="row">
-							<div class="col-sm-12 header">
+					<div class="row header">
+						<div class="header-logo pull-left">
+							<a href="#">
 								<img src="/static/img/itsonin-white.png" height="20" width="20">
-								<i class="fa fa-angle-right v-a-m fs-18"></i>
-								<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
-									<span class="header-title v-a-m">${ioiContext.city}</span>
-								</a>
-								<i class="fa fa-angle-right v-a-m fs-18"></i>
-								<span class="header-title v-a-m">Add Event</span>
-							</div>
+							</a>
+						</div>
+						<div class="header-title pull-left">
+							<i class="fa fa-angle-right"></i>
+							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+								<span>${ioiContext.city}</span>
+							</a>
+							<i class="fa fa-angle-right"></i>
+							<span>Add Event</span>
 						</div>
 					</div>
-				  </div>
-			   </div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -59,40 +59,52 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<label>Event category</label>
-						<div id="categories" class="hbox text-center b-b b-light text-sm">
-							<a href="javascript:void(0)" class="col padder-v text-muted" id="NIGHTLIFE">
-								<span class="fa fa-glass fa-2x m-b-xs"></span>
-								<span class="block">NIGHTLIFE</span>
-							</a>
-							<a href="javascript:void(0)" class="col padder-v text-muted" id="SOCIAL">
-								<span class="fa fa-users fa-2x m-b-xs"></span>
-								<span class="block">SOCIAL</span>
-							</a>
-							<a href="javascript:void(0)" class="col padder-v text-muted" id="CULTURAL">
-								<span class="fa fa-university fa-2x m-b-xs"></span>
-								<span class="block">CULTURAL</span>
-							</a>
-							<a href="javascript:void(0)" class="col padder-v text-muted" id="FESTIVAL">
-								<span class="fa fa-ticket fa-2x m-b-xs"></span>
-								<span class="block">FESTIVAL</span>
-							</a>
-							<a href="javascript:void(0)" class="col padder-v text-muted" id="SPORT">
-								<span class="fa fa-futbol-o fa-2x m-b-xs"></span>
-								<span class="block">SPORT</span>
-							</a>
+						<div class="btn-group btn-group-justified" id="categories">
+							<div class="btn-group">
+								<button class="btn mob-btn" id="NIGHTLIFE">
+									<span class="fa fa-glass fa-2x"></span>
+									<span class="block">NIGHTLIFE</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="SOCIAL">
+									<span class="fa fa-users fa-2x"></span>
+									<span class="block">SOCIAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="CULTURAL">
+									<span class="fa fa-university fa-2x"></span>
+									<span class="block">CULTURAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="FESTIVAL">
+									<span class="fa fa-ticket fa-2x"></span>
+									<span class="block">FESTIVAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="SPORT">
+									<span class="fa fa-futbol-o fa-2x"></span>
+									<span class="block">SPORT</span>
+								</button>
+							</div>
 						</div>
 						<c:forEach var="eventCategory" items="${eventCategories}" varStatus="loop">
 							<div class="subcategories" id="category-${eventCategory}" style="display: none;">
 								<div style="margin-bottom: 5px; font-size:12px;">
 									<i>Please select one of the following</i>
 								</div>
-								<div class="hbox text-center b-b b-light text-sm">
+								<div class="btn-group btn-group-justified">
 									<c:forEach var="eventSubCategory" items="${eventSubCategories}" varStatus="loop">
 										<c:if test="${eventSubCategory.parent == eventCategory}">
-											<a href="javascript:void(0)" class="col padder-v text-muted" id="${eventSubCategory}">
-												<span class="fa fa-glass fa-2x m-b-xs"></span>
-												<span class="block">${eventSubCategory}</span>
-											</a>
+											<div class="btn-group">
+												<button class="btn mob-btn" id="${eventSubCategory}">
+													<span class="fa fa-glass fa-2x"></span>
+													<span class="block">${eventSubCategory}</span>
+												</button>
+											</div>
 										</c:if>
 									</c:forEach>
 								</div>
@@ -183,34 +195,44 @@
 						<label>Event details</label>
 						<div class="row">
 							<div class="col-xs-6 visibility">
-								<i style="font-size: 12px">Visibility</i><br>
-								<ul>
-									<li id="visibility-PUBLIC">
-										<i class="fa fa-unlock fa-fw"></i> 
-										<span>Public</span>
-									</li>
-									<li id="visibility-PRIVATE">
-										<i class="fa fa-lock fa-fw"></i> 
-										<span>Private</span>
-									</li>
-								</ul>
+								<i style="font-size: 12px">Visibility</i>
+								<div class="btn-group btn-group-vertical" style="width: 100%">
+									<div class="btn-group">
+										<button class="btn mob-btn" id="visibility-PUBLIC">
+											<span class="fa fa-unlock fa-fw"></span> 
+											<span>Public</span>
+										</button>
+									</div>
+									<div class="btn-group">
+									    <button class="btn mob-btn" id="visibility-PRIVATE">
+											<span class="fa fa-lock fa-fw"></span> 
+											<span>Private</span>
+										</button>
+									</div>
+								</div>
 							</div>
 							<div class="col-xs-6 sharing">
-								<i style="font-size: 12px">Sharing</i><br>
-								<ul>
-									<li id="sharability-NOSHARE">
-										<i class="fa fa-ban fa-fw"></i> 
-										<span>No share</span>
-									</li>
-									<li id="sharability-NORMAL">
-										<i class="fa fa-share-alt fa-fw"></i> 
-										<span>Normal</span>
-									</li>
-									<li id="sharability-PYRAMID">
-										<i class="fa fa-wifi fa-flip-vertical fa-fw"></i> 
-										<span>Pyramid</span>
-									</li>
-								</ul>
+								<i style="font-size: 12px">Sharing</i>
+								<div class="btn-group btn-group-vertical" style="width: 100%">
+									<div class="btn-group">
+										<button class="btn mob-btn" id="sharability-NOSHARE">
+											<span class="fa fa-ban fa-fw"></span> 
+											<span>No share</span>
+										</button>
+									</div>
+									<div class="btn-group">
+									    <button class="btn mob-btn" id="sharability-NORMAL">
+											<span class="fa fa-share-alt fa-fw"></span> 
+											<span>Normal</span>
+										</button>
+									</div>
+									<div class="btn-group">
+									    <button class="btn mob-btn" id="sharability-PYRAMID">
+											<span class="fa fa-wifi fa-flip-vertical fa-fw"></span> 
+											<span>Pyramid</span>
+										</button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

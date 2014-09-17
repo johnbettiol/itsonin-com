@@ -1,3 +1,5 @@
+@import "variables.less";
+
 // common styles between all pages
 body {
 	color: #999;
@@ -11,8 +13,7 @@ body {
 }
 
 .header {
-	padding: 10px;
-	background-color: #00a6b5;
+	background-color: @ioi-color;
 	color: white;
 	height: 50px;
 	
@@ -27,10 +28,12 @@ body {
 }
 
 .header-container {
+	border-width: 0;
 	position:fixed;
 	top:0;
 	left:0;
 	right:0;
+	width: 100%;
 	z-index:1001;
 }
 
@@ -39,31 +42,12 @@ body {
 	cursor: hand;
 }
 
-.hbox {
-	display: table;
-	table-layout: fixed;
-	border-spacing: 0;
-	width: 100%;
-	height: 100%;
-}
-
-.hbox .col {
-	display: table-cell;
-	vertical-align: top;
-	height: 100%;
-	float: none;
-}
-
 .block {
 	display: block;
 }
 
 .b-light {
 	border-color: #edf1f2;
-}
-
-.b-b {
-	border-bottom: 1px solid #dee5e7;
 }
 
 .text-muted {
@@ -75,41 +59,12 @@ body {
 	padding: 10px 0px;
 }
 
-.text-sm {
-	font-size: 11px;
-}
-
 .b-light {
 	border-color: #edf1f2;
 }
 
-.b-r {
-	border-right: 1px solid #dee5e7;
-}
-
-.padder-v {
-	padding-top: 4px;
-	padding-bottom: 4px;
-}
-
-.m-b-xs {
-	margin-bottom: 5px;
-}
-
-.v-a-m {
-	vertical-align: middle;
-}
-
 .fs-11 {
 	font-size: 11px;
-}
-
-.fs-18 {
-	font-size: 18px;
-}
-
-.mt-8{
-	margin-top: 8px;
 }
 
 .overlay {
@@ -133,4 +88,111 @@ body {
 	z-index: 100000;
 	color: #fff;
 	font-size: 42px;
+}
+
+.header-title {
+
+	i, span {
+		font-size: 18px;
+		vertical-align: middle;
+		line-height: 50px;
+	}
+}
+
+.header-logo, .header-actions {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+
+	a, button {
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		display: inline-block;
+		color: white;
+		height: 50px;
+		width: 40px;
+		padding: 0;
+		float: left;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-transition: background-color 0.4s ease-out;
+		transition: background-color 0.4s ease-out;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	a {
+		line-height: 50px;
+	}
+
+	a>i {
+		vertical-align: middle;
+		line-height: 50px;
+	}
+
+	button.active {
+		color: #141719;
+	}
+
+	a:hover, button:hover {
+		background-color: #009ab5;
+		color: white !important;
+	}
+
+	a:focus, button:focus {
+		background-color: #009ab5;
+		outline: 0;
+	}
+
+	a:active, button:active {
+		background-color: #009ab5;
+		color: #141719;
+		outline: 0;
+	}
+
+	button:last-child {
+		margin-right: 16px;
+	}
+}
+
+.mob-btn {
+	padding: 8px 0;
+	border: none;
+	border-radius: 0;
+	background-color: transparent;
+	color: #99a6ad;
+	-webkit-transition: background-color 0.4s ease-out;
+	transition: background-color 0.4s ease-out;
+	-webkit-tap-highlight-color: transparent;
+
+	&.selected {
+		color: #141719;
+	}
+
+	&:hover, &:focus {
+		color: #99a6ad;
+		background-color: @ioi-color;
+		outline: 0;
+	}
+
+	&:active {
+		background-color: @ioi-color;
+		color: #141719;
+		outline: 0;
+		-webkit-box-shadow: none;
+	    box-shadow: none;
+	}
+
+	&:last-child {
+		border-right-style: none;
+	}
+
+	span:first-child  {
+		margin-bottom: 5px;
+		font-size: 24px;
+	}
+
+	span:last-child  {
+		font-size: 11px;
+	}
 }

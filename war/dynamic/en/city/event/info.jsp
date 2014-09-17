@@ -44,14 +44,24 @@
 		<div class="container" id="info-header">
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
-					<div class="row">
-						<div class="col-sm-12 header">
-							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+					<div class="row header">
+						<div class="header-logo pull-left">
+							<a href="#">
 								<img src="/static/img/itsonin-white.png" height="20" width="20">
-								<span class="header-title v-a-m">${ioiContext.city}</span>
 							</a>
-							<i class="fa fa-2x fa-users pull-right pointer" id="scrollto-guests-btn"></i>
-							<i class="fa fa-2x fa-comment-o pull-right pointer" id="scrollto-comments-btn"></i>
+						</div>
+						<div class="header-title pull-left">
+							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+								<span>${ioiContext.city}</span>
+							</a>
+						</div>
+						<div class="header-actions pull-right">
+							<button id="scrollto-guests-btn">
+								<i class="fa fa-2x fa-users"></i>
+							</button>
+							<button id="scrollto-comments-btn">
+								<i class="fa fa-2x fa-comment-o"></i>
+							</button>
 						</div>
 					</div>
 					<div class="row">
@@ -90,7 +100,7 @@
 				</div>
 				<div>
 					<c:out value="${event.locationAddress}"/>
-					<i class="fa fa-2x fa-location-arrow pull-right pointer" id="open-navigation-btn"></i>
+					<a href="#" id="open-navigation-link"><i class="fa fa-2x fa-location-arrow pull-right pointer"></i></a>
 				</div>
 				<hr/>
 				<p><c:out value="${event.description}"/></p>
@@ -106,13 +116,31 @@
 				</div>
 				<hr/>
 				<c:if test="${(guest.status == 'YES' || guest.status == 'NO') && event.sharability != 'NOSHARE'}">
-					<div class="share">
-						<ul>
-							<li><a href="javascript:void(0)" id="share-link-btn"><i class="fa fa-2x fa-share-alt"></i><span>Share link</span></a></li>
-							<li><a href="javascript:void(0)" id="share-by-email-btn"><i class="fa fa-2x fa-envelope-o"></i><span>Email</span></a></li>
-							<li><a href="javascript:void(0)" id="share-on-facebook-btn"><i class="fa fa-2x fa-facebook"></i><span>Facebook</span></a></li>
-							<li><a href="javascript:void(0)" id="share-on-google-btn"><i class="fa fa-2x fa-google-plus"></i><span>Google+</span></a></li>
-						</ul>
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-link-btn">
+								<span class="fa fa-2x fa-share-alt"></span>
+								<span class="block">Share link</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-by-email-btn">
+								<span class="fa fa-2x fa-envelope-o"></span>
+								<span class="block">Email</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-on-facebook-btn">
+								<span class="fa fa-2x fa-facebook"></span>
+								<span class="block">Facebook</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-on-facebook-btn">
+								<span class="fa fa-2x fa-google-plus"></span>
+								<span class="block">Google+</span>
+							</button>
+						</div>
 					</div>
 					<hr/>
 				</c:if>
@@ -194,8 +222,10 @@
 					<h4 class="modal-title">Share by email</h4>
 				</div>
 				<div class="modal-body">
-					<label>Email</label>
-					<input type="text" class="form-control" id="share-by-email-field">
+					<form>
+						<label>Email</label>
+						<input type="email" class="form-control" id="share-by-email-field" autocomplete="on">
+					</form>
 				</div>
 				<div class="modal-footer"><!-- TODO -->
 					<button class="btn btn-primary" id="send-by-email-btn">Send</button>

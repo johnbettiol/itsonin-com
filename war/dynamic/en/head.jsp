@@ -27,9 +27,6 @@
 <%--<script src="/static/lib/map/markerclusterer_compiled.js" type="text/javascript"></script> --%>
 
 <%-- LESS --%>
-<link rel="stylesheet/less" type="text/css" href="/static/less/variables.less" />
-<link rel="stylesheet/less" type="text/css" href="/static/less/icons.less" />
-<link rel="stylesheet/less" type="text/css" href="/static/less/common.less" />
 <link rel="stylesheet/less" type="text/css" href="/static/less/style.less" />
 <link rel="stylesheet/less" type="text/css" href="/static/less/bootstrap-custom.less" />
 <script src="/static/lib/less/less-1.7.3.min.js" type="text/javascript"></script>

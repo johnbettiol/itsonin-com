@@ -23,7 +23,7 @@
 	<div class="list-group-item event-item" id="{{:eventId}}">
 		<div class="media">
 			<div class="event-icon">
-				<span class="fa fa-university fa-2x m-b-xs"></span>
+				<span class="fa fa-university fa-2x"></span>
 			</div>
 			<div class="media-body clearfix event-body">
 				<div class="media-heading event-title">{{:title}}</div>
@@ -35,8 +35,11 @@
 					{{if !favourite}}{{:~formatTime(startTime)}}{{if endTime}} - {{/if}}{{:~formatTime(endTime)}}{{/if}}
 					{{if favourite}}{{:~formatDate(startTime)}}{{if endTime}} - {{/if}}{{:~formatDate(endTime)}}{{/if}}
 				</div>
-				<i class="fa fa-angle-right event-arrow pointer"
-					onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}'"></i>
+			</div>
+			<div class="event-arrow">
+				<a href="/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}">
+					<i class="fa fa-2x fa-angle-right"></i>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -47,66 +50,94 @@
 		<div class="container" id="events-header">
 			<div class="row">
 				<div class="col-sm-offset-3 col-sm-6">
-					<div class="row">
-						<div class="col-sm-12 header">
-							<img src="/static/img/itsonin-white.png" height="20" width="20">
-							<i class="fa fa-angle-right v-a-m fs-18"></i>
-							<span class="header-title v-a-m">${ioiContext.city}</span>
-							<i class="fa fa-2x fa-map-marker pull-right pointer" id="map-btn"></i>
-							<i class="fa fa-2x fa-filter pull-right pointer" id="filter-btn"></i>
-							<a href="/${ioiContext.locale}/${ioiContext.city}/e/add" class="pull-right" id="plus-link">
+					<div class="row header">
+						<div class="header-logo pull-left">
+							<a href="#">
+								<img src="/static/img/itsonin-white.png" height="20" width="20">
+							</a>
+						</div>
+						<div class="header-title pull-left">
+							<i class="fa fa-angle-right"></i>
+							<span>${ioiContext.city}</span>
+						</div>
+						<div class="header-actions pull-right">
+							<a href="/${ioiContext.locale}/${ioiContext.city}/e/add" id="plus-link">
 								<i class="fa fa-2x fa-plus"></i>
 							</a>
+							<button id="map-btn">
+								<i class="fa fa-2x fa-map-marker"></i>
+							</button>
+							<button id="filter-btn">
+								<i class="fa fa-2x fa-filter"></i>
+							</button>
 						</div>
 					</div>
 					<div class="row map">
 						<div id="map-canvas"></div>
 					</div>
 					<div class="row filters">
-						<div class="col-sm-12">
-							<div id="filter-categories" class="hbox text-center b-b b-light text-sm">
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="NIGHTLIFE">
-									<span class="fa fa-glass fa-2x m-b-xs"></span>
+						<div class="btn-group btn-group-justified" id="filter-categories">
+							<div class="btn-group">
+								<button class="btn mob-btn" id="NIGHTLIFE">
+									<span class="fa fa-glass"></span>
 									<span class="block">NIGHTLIFE</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="SOCIAL">
-									<span class="fa fa-users fa-2x m-b-xs"></span>
-									<span class="block">SOCIAL</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="CULTURAL">
-									<span class="fa fa-university fa-2x m-b-xs"></span>
-									<span class="block">CULTURAL</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="FESTIVAL">
-									<span class="fa fa-ticket fa-2x m-b-xs"></span>
-									<span class="block">FESTIVAL</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="SPORT">
-									<span class="fa fa-futbol-o fa-2x m-b-xs"></span>
-									<span class="block">SPORT</span>
-								</a>
+								</button>
 							</div>
-							<div id="filter-buttons" class="hbox text-center text-sm mt-8">
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="favourites-button"> 
-									<i class="fa fa-star fa-2x m-b-xs"></i>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="SOCIAL">
+									<span class="fa fa-users"></span>
+									<span class="block">SOCIAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="CULTURAL">
+									<span class="fa fa-university"></span>
+									<span class="block">CULTURAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="FESTIVAL">
+									<span class="fa fa-ticket"></span>
+									<span class="block">FESTIVAL</span>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="SPORT">
+									<span class="fa fa-futbol-o"></span>
+									<span class="block">SPORT</span>
+								</button>
+							</div>
+						</div>
+						<div class="btn-group btn-group-justified" id="filter-categories">
+							<div class="btn-group">
+								<button class="btn mob-btn" id="favourites-button">
+									<span class="fa fa-star"></span>
 									<span class="block">FAVOURITES</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="promo-button"> 
-									<i class="fa fa-dollar fa-2x m-b-xs"></i>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="promo-button">
+									<span class="fa fa-dollar"></span>
 									<span class="block">PROMO</span>
-								</a>
-								<a href="javascript:void(0)" class="col padder-v text-muted" id="calendar-button"> 
-									<i class="fa fa-fire fa-2x m-b-xs"></i>
+								</button>
+							</div>
+							<div class="btn-group">
+								<button class="btn mob-btn" id="calendar-button">
+									<span class="fa fa-fire"></span>
 									<span class="block">HOT!</span>
-								</a>
+								</button>
 							</div>
 						</div>
 					</div>
 					<div class="row date">
-						<div class="col-sm-12">
-							<i class="fa fa-angle-left pointer pull-left" id="prev-day-button"></i>
+						<div class="col-xs-12">
 							<span class="pointer" id="filter-date">TODAY <joda:format value="${now}" pattern="EEEE MMMM d" locale="en"/></span>
-							<i class="fa fa-angle-right pointer pull-right" id="next-day-button"></i>
+							<button id="prev-day-button" class="pull-left">
+								<i class="fa fa-angle-left"></i>
+							</button>
+							<button id="next-day-button" class="pull-right">
+								<i class="fa fa-angle-right"></i>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -122,7 +153,7 @@
 							<div class="list-group-item event-item" id="${event.eventId}">
 								<div class="media">
 									<div class="event-icon">
-										<span class="fa fa-university fa-2x m-b-xs"></span>
+										<span class="fa fa-university fa-2x"></span>
 									</div>
 									<div class="media-body clearfix event-body">
 										<div class="media-heading event-title"><c:out value="${event.title}"/></div>
@@ -135,8 +166,11 @@
 											<c:if test="${not empty event.endTime}"> - </c:if>
 											<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
 										</div>
-										<i class="fa fa-angle-right event-arrow pointer" 
-											onclick="location.pathname='/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}'"></i>
+									</div>
+									<div class="event-arrow">
+										<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}" class="arrow-link">
+											<i class="fa fa-2x fa-angle-right"></i>
+										</a>
 									</div>
 								</div>
 							</div>

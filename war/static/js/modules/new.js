@@ -41,14 +41,14 @@ var EventNewModule = (function() {
 			$('#time-from-field').pickatime(timepickerOptions);
 			$('#time-to-field').pickatime(timepickerOptions);
 
-			$('#categories a').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('#categories a').each(function (i) {
-					$(this).removeClass('active');
+			$('#categories button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('#categories button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 				}
 
 				$(".subcategories").hide();
@@ -56,40 +56,40 @@ var EventNewModule = (function() {
 				event['category'] = $(this).attr('id');
 			});
 
-			$('.subcategories a').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('.subcategories a').each(function (i) {
-					$(this).removeClass('active');
+			$('.subcategories button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('.subcategories button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 				}
 
 				event['subCategory'] = $(this).attr('id');
 			});
 			
-			$('.visibility li').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('.visibility li').each(function (i) {
-					$(this).removeClass('active');
+			$('.visibility button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('.visibility button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 				}
 
 				event.visibility = $(this).attr('id').split('-')[1];
 			});
 
-			$('.sharing li').on('click', function() {
-				var isActive = $(this).hasClass('active');
-				$('.sharing li').each(function (i) {
-					$(this).removeClass('active');
+			$('.sharing button').on('click', function() {
+				var isActive = $(this).hasClass('selected');
+				$('.sharing button').each(function (i) {
+					$(this).removeClass('selected');
 				});
 
 				if(isActive == false) {
-					$(this).addClass('active');
+					$(this).addClass('selected');
 				}
 
 				event.sharability = $(this).attr('id').split('-')[1];

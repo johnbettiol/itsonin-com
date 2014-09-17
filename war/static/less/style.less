@@ -3,90 +3,18 @@
 @import "common.less";
 
 #event {
+
 	.event-container {
 		background-color: @default-bgcolor;
 		margin-top: 50px;
 	}
-	
-	a:hover, a:focus {
-		color: #99a6ad;
-		text-decoration: none;
-	}
-
-	a.active {
-		color: #141719;
-		text-decoration: none;
-	}
-
-	.visibility, .sharing {
-		ul {
-			display: inline-block;
-			margin: 0px;
-			padding: 0px;
-		}
-
-		li {
-			list-style: none;
-			cursor: hand;
-			cursor: pointer;
-			padding: 8px 0;
-		}
-
-		li.active {
-			color: #141719;
-		}
-
-		li > i {
-			font-size:24px;
-			line-height:24px;
-			vertical-align: middle;
-		}
-
-		li > span {
-			line-height:24px;
-			vertical-align: middle;
-		}
-	}
 }
 
 #info {
-	.guests, .comments {
-
-	}
 
 	.event-container {
 		background-color: @default-bgcolor;
 		margin-top: 150px;
-	}
-
-	.share ul {
-		padding: 0;
-		margin: 0;
-		list-style-type: none;
-		width: 100% !important;
-	}
-
-	.share li {
-		display: inline-block; 
-		list-style-type: none;
-		text-align: center;
-		width: 24%; //TODO: fix, 25%
-	}
-
-	.share a, .share a:hover {
-		text-decoration: none;
-		color: #999;
-	}
-
-	.share ul li a span {
-		display: block;
-		margin-top: 5px;
-		font-size: 12px;
-	}
-
-	.share .glyphicon {
-		font-size: 30px;
-		cursor: pointer;
 	}
 
 	.comments {
@@ -94,6 +22,7 @@
 			padding: 4px 8px;
 		}
 	}
+
 }
 
 #info-header {
@@ -103,10 +32,6 @@
 
 	.list-group-item {
 		border-radius: 0;
-	}
-	
-	#scrollto-guests-btn, #scrollto-comments-btn {
-		margin-right: 12px;
 	}
 
 	.event-title {
@@ -123,26 +48,11 @@
 }
 
 #events-header {
-	#prev-day-button, #filter-date, #next-day-button {
-		line-height: 22px;
-	}
-
-	#map-btn, #filter-btn, #plus-link {
-		margin-right: 12px;
-		color: white;
-	}
-
-	#map-btn.active, #filter-btn.active {
-		margin-right: 12px;
-		color: yellow;
-	}
 
 	.filters {
 		height: 120px;
 		z-index: 1;
 		background-color: @default-bgcolor;
-		padding-bottom: 4px;
-		padding-top: 4px;
 		border-bottom: 1px solid #ddd;
 		display:none;
 	}
@@ -166,19 +76,50 @@
 		background-color: @default-bgcolor;
 		text-transform: uppercase;
 		height:30px;
-		font-size: 16px;
+		font-size: 14px;
 		text-align: center;
-		padding: 5px 0;
-	}
+		vertical-align: middle;
 
-	a:hover, a:focus {
-		color: #99a6ad;
-		text-decoration: none;
-	}
+		#filter-date {
+			line-height: 30px;
+		}
+		
+		.col-xs-12 {
+			padding-left: 0px;
+			padding-right:0px;
+		}
 
-	a.active {
-		color: #141719;
-		text-decoration: none;
+		button {
+			border: none;
+			border-radius: 0;
+			background-color: transparent;
+			color: #99a6ad;
+			font-size: 16px;
+			padding: 0;
+			height: 30px;
+			width: 30px;
+			text-align: center;
+			vertical-align: middle;
+			-webkit-transition: background-color 0.4s ease-out;
+			transition: background-color 0.4s ease-out;
+			-webkit-tap-highlight-color: transparent;
+			
+			&:hover {
+				background-color: #009ab5;
+				color: white !important;
+			}
+		
+			&:focus {
+				background-color: #009ab5;
+				outline: 0;
+			}
+		
+			&:active {
+				background-color: #009ab5;
+				color: #141719;
+				outline: 0;
+			}
+		}
 	}
 }
 
@@ -234,11 +175,42 @@
 	}
 
 	.event-arrow {
-		font-size: 40px;
 		position: absolute;
-		right: 14px;
-		top: 50%;
-		margin-top: -20px;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		width: 20px;
+		text-align: center;
+
+		a {
+			color: #99a6ad;
+			display: table;
+			height: 100%;
+			width: 100%;
+			vertical-align: middle;
+			text-decoration: none;
+			
+			i {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			&:hover {
+				background-color: #009ab5;
+				color: white !important;
+			}
+		
+			&:focus {
+				background-color: #009ab5;
+				outline: 0;
+			}
+		
+			&:active {
+				background-color: #009ab5;
+				color: #141719;
+				outline: 0;
+			}
+		}
 	}
 
 	.event-time {
@@ -247,7 +219,7 @@
 	}
 
 	.event-body {
-		margin-left: 50px;
+		margin: 4px 0px 4px 50px;
 	}
 
 	p {
@@ -255,8 +227,7 @@
 	}
 
 	.list-group-item {
-		padding: 4px 6px;
-		/*border: 1px solid #f1f2f3;*/
+		padding: 0px;
 	}
 
 	.media-body {
