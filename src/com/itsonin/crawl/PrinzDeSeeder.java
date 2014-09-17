@@ -17,6 +17,7 @@ import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.utils.DateTimeUtil;
 
 public class PrinzDeSeeder extends EventSeederBase {
 
@@ -200,8 +201,9 @@ public class PrinzDeSeeder extends EventSeederBase {
 					return new Event(eventSubCategory, EventSharability.NORMAL,
 							EventVisibility.PUBLIC, EventStatus.ACTIVE,
 							EventFlexibility.FIXED, eventTitle, eventSummary,
-							eventDescription, eventNotes, eventDateStart,
-							eventDateEnd, eventGpsLat, eventGpsLong,
+							eventDescription, eventNotes, eventDateStart, eventDateEnd,
+							DateTimeUtil.getDaysBetweenDates(eventDateStart, eventDateEnd),
+							eventGpsLat, eventGpsLong,
 							eventLocationUrl, eventLocationTitle,
 							eventLocationAddress, now, "prinzde");
 				}

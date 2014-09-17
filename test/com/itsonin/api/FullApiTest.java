@@ -64,6 +64,7 @@ import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.service.GuestService;
+import com.itsonin.utils.DateTimeUtil;
 
 /**
  * @author nkislitsin
@@ -191,7 +192,7 @@ public class FullApiTest {
 		EventWithGuest d2Event = createEvent(device2, new Event(EventSubCategory.PARTY,
 				EventSharability.NORMAL, EventVisibility.PRIVATE, EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE, 
 				"event title", "event summary", "event description", "event notes", 
-        		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
+				new Date(), new Date(), DateTimeUtil.getDaysBetweenDates(new Date(), new Date()), 1.0d, 2.0d, "location.url", "location title", 
         		"location address", new Date(), "test"));
 		
 		List <Event> allEvents = new ArrayList<Event>();

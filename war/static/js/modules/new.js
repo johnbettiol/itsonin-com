@@ -206,6 +206,7 @@ var EventNewModule = (function() {
 						position: google.maps.ControlPosition.LEFT_CENTER
 					},
 					scaleControl: false,
+					draggable: false,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);

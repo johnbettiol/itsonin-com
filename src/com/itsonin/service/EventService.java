@@ -1,7 +1,6 @@
 package com.itsonin.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.BadRequestException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.security.AuthContextService;
+import com.itsonin.utils.DateTimeUtil;
 
 /**
  * @author nkislitsin
@@ -67,7 +67,7 @@ public class EventService {
 
 		event.setEventId(counterDao.nextEventId());
 		event.setCreated(new Date());
-		event.setDays(getDaysBetweenDates(event.getStartTime(), event.getEndTime()));
+		event.setDays(DateTimeUtil.getDaysBetweenDates(event.getStartTime(), event.getEndTime()));
 		event.setSource("guest"); // later this will be:  guest/admin/sales etc depending on device role
 
 		Key<Event> eventKey = eventDao.save(event);
@@ -333,26 +333,4 @@ public class EventService {
 		}
 	}
 
-	private List<Date> getDaysBetweenDates(Date start, Date end) {
-		List<Date> days = new ArrayList<Date>();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(start);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-
-		days.add(cal.getTime());
-		
-		// End Date can be NULL!
-		if (end != null) {
-			while (cal.getTime().before(end)) {
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-				if(cal.getTime().before(end)){
-					days.add(cal.getTime());
-				}
-			}
-		}
-		return days;
-	}
 }

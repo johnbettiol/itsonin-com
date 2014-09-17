@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.itsonin.utils.TimeUtil"%>
+<%@ page import="com.itsonin.utils.DateTimeUtil"%>
 <%@ page import="com.itsonin.entity.*"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -7,7 +7,7 @@
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page session="false" %>
 
-<jsp:useBean id="timeUtil" class="com.itsonin.utils.TimeUtil"/>
+<jsp:useBean id="timeUtil" class="com.itsonin.utils.DateTimeUtil"/>
 <%
 	String shareUrl = request.getScheme() + "://" + request.getServerName() + request.getAttribute("javax.servlet.forward.servlet_path");
 %>
@@ -174,7 +174,7 @@
 									<div class="media">
 										<div class="media-body ">
 											<small class="pull-right">
-											<%= TimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated()) %>
+											<%=DateTimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated())%>
 											</small>
 											<strong><small><c:out value="${comment.guestName}"/></small></strong><br>
 											<small class="text-muted"><c:out value="${comment.comment}"/></small>

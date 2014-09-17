@@ -1,6 +1,9 @@
 package com.itsonin.utils;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -10,7 +13,7 @@ import org.joda.time.format.PeriodFormatterBuilder;
  * @author nkislitsin
  *
  */
-public class TimeUtil {
+public class DateTimeUtil {
 
 	public static String prettyFormat(Date date) {
 
@@ -38,5 +41,28 @@ public class TimeUtil {
 		}
 		
 		return fmt.appendSuffix(" ago").toFormatter().print(period);
+	}
+
+	public static List<Date> getDaysBetweenDates(Date start, Date end) {
+		List<Date> days = new ArrayList<Date>();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(start);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		days.add(cal.getTime());
+
+		// End Date can be NULL!
+		if (end != null) {
+			while (cal.getTime().before(end)) {
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				if(cal.getTime().before(end)){
+					days.add(cal.getTime());
+				}
+			}
+		}
+		return days;
 	}
 }

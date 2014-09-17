@@ -29,6 +29,7 @@ import com.itsonin.service.DataImportService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
 import com.itsonin.servlet.DefaultServlet;
+import com.itsonin.utils.DateTimeUtil;
 
 @SuppressWarnings("serial")
 @Singleton
@@ -68,7 +69,7 @@ public class AdminToolsServlet extends DefaultServlet {
 				Event event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL,
 						EventVisibility.PUBLIC, EventStatus.ACTIVE,
 						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i, "event summary", 
-						"event description", "event notes", new Date(), new Date(),
+						"event description", "event notes", new Date(), new Date(), DateTimeUtil.getDaysBetweenDates(new Date(), new Date()),
 						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
 						"location address", new Date(), "qseed");
 				event.setEventId(Long.valueOf(i));

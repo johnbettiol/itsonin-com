@@ -32,6 +32,7 @@ import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.exception.mappers.NotFoundExceptionMapper;
+import com.itsonin.utils.DateTimeUtil;
 
 /**
  * @author nkislitsin
@@ -45,20 +46,20 @@ public class EventApiTest {
 	private static ObjectMapper mapper = new ObjectMapper();
 	
 	private Injector i = Guice.createInjector(new AppTestModule());
-    private Dispatcher dispatcher;
-    private Event event;
+	private Dispatcher dispatcher;
+	private Event event;
 
 	@Before
 	public void setUp() {
 		helper.setUp();
-        dispatcher = MockDispatcherFactory.createDispatcher();
-        dispatcher.getProviderFactory().getExceptionMappers().put(NotFoundException.class, new NotFoundExceptionMapper());
-        dispatcher.getRegistry().addSingletonResource(i.getInstance(EventApi.class));
-        
-        event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL, EventVisibility.PUBLIC, EventStatus.ACTIVE, 
-        		EventFlexibility.NEGOTIABLE, "event title", "event summary", "event description", "event notes", 
-        		new Date(), new Date(), 1.0d, 2.0d, "location.url", "location title", 
-        		"location address", new Date(), "test");
+		dispatcher = MockDispatcherFactory.createDispatcher();
+		dispatcher.getProviderFactory().getExceptionMappers().put(NotFoundException.class, new NotFoundExceptionMapper());
+		dispatcher.getRegistry().addSingletonResource(i.getInstance(EventApi.class));
+		
+		event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL, EventVisibility.PUBLIC, EventStatus.ACTIVE, 
+				EventFlexibility.NEGOTIABLE, "event title", "event summary", "event description", "event notes", 
+				new Date(), new Date(), DateTimeUtil.getDaysBetweenDates(new Date(), new Date()), 1.0d, 2.0d, "location.url", "location title", 
+				"location address", new Date(), "test");
 	}
 
 	@After

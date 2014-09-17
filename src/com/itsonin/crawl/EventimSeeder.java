@@ -18,6 +18,7 @@ import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.utils.DateTimeUtil;
 
 public class EventimSeeder extends EventSeederBase {
 
@@ -153,7 +154,9 @@ public class EventimSeeder extends EventSeederBase {
 							EventSharability.NORMAL, EventVisibility.PUBLIC,
 							EventStatus.ACTIVE, EventFlexibility.FIXED,
 							eventTitle, eventSummary, eventDescription, eventNotes,
-							eventDateStart, eventDateEnd, eventGpsLat,
+							eventDateStart, eventDateEnd,
+							DateTimeUtil.getDaysBetweenDates(eventDateStart, eventDateEnd),
+							eventGpsLat,
 							eventGpsLong, eventLocationUrl, eventLocationTitle,
 							eventLocationAddress, now, SOURCE);
 					return result;

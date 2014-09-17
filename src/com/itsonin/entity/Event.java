@@ -62,7 +62,7 @@ public class Event implements Serializable {
 
 	public Event(EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
 			EventStatus status,	EventFlexibility flexibility, String title, String summary, String description,
-			String notes, Date startTime, Date endTime, Double gpsLat,Double gpsLong, 
+			String notes, Date startTime, Date endTime, List<Date> days, Double gpsLat,Double gpsLong, 
 			String locationUrl, String locationTitle, String locationAddress, Date created, String source) {
 		
 		this.category = subCategory.getParent();
@@ -76,7 +76,7 @@ public class Event implements Serializable {
 		this.description = description;
 		this.startTime = startTime;
 		this.endTime = endTime;
-		this.setDays(new ArrayList<Date>(Arrays.asList(startTime, endTime)));
+		this.setDays(days);
 		this.gpsLat = gpsLat;
 		this.gpsLong = gpsLong;
 		this.locationUrl = locationUrl;
