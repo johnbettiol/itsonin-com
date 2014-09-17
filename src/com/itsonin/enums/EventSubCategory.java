@@ -11,21 +11,26 @@ public enum EventSubCategory {
 	PARTY(EventCategory.NIGHTLIFE),
 	DJNIGHT(EventCategory.NIGHTLIFE),
 	OTHERNGT(EventCategory.NIGHTLIFE),
+	
 	MEETUP(EventCategory.SOCIAL),
 	SINGLES(EventCategory.SOCIAL),
 	OTHERSOC(EventCategory.SOCIAL),
+	FAMILY_KIDS(EventCategory.SOCIAL),
+	
 	FOOTBALL(EventCategory.SPORT),
 	ICEHOCKEY(EventCategory.SPORT),
 	MOTORSPORT(EventCategory.SPORT),
 	OTHERSPR(EventCategory.SPORT),
+	
 	CONCERT(EventCategory.FESTIVAL),
-	TOWN(EventCategory.FESTIVAL),
-	OTHERFST(EventCategory.FESTIVAL),
+	ART(EventCategory.FESTIVAL),
+	ACADEMIC(EventCategory.FESTIVAL),
+	
 	CONVENTION(EventCategory.CULTURAL),
-	ACADEMIC(EventCategory.CULTURAL),
 	MUSEUM(EventCategory.CULTURAL),
-	ART(EventCategory.CULTURAL),
-	OTHERCLT(EventCategory.CULTURAL);
+	TOWN(EventCategory.CULTURAL),
+	FREE_TIME(EventCategory.CULTURAL),
+	OTHERCUL(EventCategory.CULTURAL);
 	
 	private EventCategory parent;
 	

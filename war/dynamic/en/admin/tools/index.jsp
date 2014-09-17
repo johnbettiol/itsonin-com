@@ -45,8 +45,12 @@
 				<td><a href="QuickSeed">Do it</a></td>
 			</tr>
 			<tr>
-				<td>Super Seed</td>
-				<td><a href="SuperSeed">Do it</a></td>
+				<td>Eventim Seed</td>
+				<td><a href="EventimSeed">Do it</a></td>
+			</tr>
+			<tr>
+				<td>Prinz Seed</td>
+				<td><a href="PrinzSeed">Do it</a></td>
 			</tr>
 		</tbody>
 	</table>

@@ -25,7 +25,7 @@ public class EventimSeeder extends EventSeederBase {
 	private static final String SOURCE = "eventim";
 	private static final String BASE_URL = "http://www.eventim.de/";
 	private static final String START_URL = BASE_URL
-			+ "/duesseldorf?language=en"; // http://www.eventim.de/duesseldorf?language=en
+			+ "/duesseldorf?language=en&sort_by_event=event_datum"; // http://www.eventim.de/duesseldorf?language=en
 	private static final String SAFARI_USERAGENT = "Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25";
 
 	private static final SimpleDateFormat parserSDF = new SimpleDateFormat(
@@ -33,11 +33,11 @@ public class EventimSeeder extends EventSeederBase {
 	private static final Date now = new Date();
 
 	public static void main(String[] args) {
-		getNewEvents();
+		new EventimSeeder().getNewEvents();
 
 	}
 
-	public static ArrayList<Event> getNewEvents() {
+	public ArrayList<Event> getNewEvents() {
 		String startPage = START_URL;
 		Document doc;
 		Geocoder geocoder = new Geocoder();
@@ -80,6 +80,7 @@ public class EventimSeeder extends EventSeederBase {
 		String eventIconImage = null;
 		String eventHref = null;
 		String eventTitle = null;
+		String eventSummary = null;
 		String eventDescription = null;
 		String eventNotes = null;
 		String eventDateStr = null;
@@ -151,7 +152,7 @@ public class EventimSeeder extends EventSeederBase {
 					Event result = new Event(EventSubCategory.CONCERT,
 							EventSharability.NORMAL, EventVisibility.PUBLIC,
 							EventStatus.ACTIVE, EventFlexibility.FIXED,
-							eventTitle, eventDescription, eventNotes,
+							eventTitle, eventSummary, eventDescription, eventNotes,
 							eventDateStart, eventDateEnd, eventGpsLat,
 							eventGpsLong, eventLocationUrl, eventLocationTitle,
 							eventLocationAddress, now, SOURCE);
