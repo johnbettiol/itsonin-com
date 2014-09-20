@@ -56,7 +56,7 @@ public class PrinzDeSeeder extends EventSeederBase {
 			count++;
 			try {
 				doc = Jsoup.connect(startPage).userAgent(SAFARI_USERAGENT)
-						.get();
+						.timeout(10*1000).get();
 
 				String title = doc.title();
 				System.out.println(title);
@@ -134,12 +134,13 @@ public class PrinzDeSeeder extends EventSeederBase {
 		eventSummary = infoDiv.getElementsByClass("intro").get(0).text().trim();
 		Element locationElement = infoDiv.getElementsByClass("location")
 				.first();
-		eventLocationUrl = BASE_WEBSITE + locationElement.attr("href");
-		eventLocationTitle = locationElement.text().trim();
-		int lastIndex = eventLocationTitle.lastIndexOf('(');
-		eventLocationTitle = lastIndex > 0 ? eventLocationTitle.substring(0,
-				lastIndex) : eventLocationTitle;
-
+		if (locationElement != null) {
+			eventLocationUrl = BASE_WEBSITE + locationElement.attr("href");
+			eventLocationTitle = locationElement.text().trim();
+			int lastIndex = eventLocationTitle.lastIndexOf('(');
+			eventLocationTitle = lastIndex > 0 ? eventLocationTitle.substring(0,
+					lastIndex) : eventLocationTitle;
+		}
 		System.out.println(eventHref);
 		System.out.println(eventTitle);
 		System.out.println(eventIconImage);
@@ -161,14 +162,27 @@ public class PrinzDeSeeder extends EventSeederBase {
 			try {
 				System.out.println("loading desc. url: " + eventHref);
 				Document eventDetailsDoc = Jsoup.connect(eventHref)
-						.userAgent(SAFARI_USERAGENT).get();
+						.userAgent(SAFARI_USERAGENT).timeout(10*1000).get();
 				eventDescription = eventDetailsDoc
 						.getElementsByClass("description").first().text()
 						.trim();
+				
+				
+				if (locationElement == null) {
+					Element poiInfo = eventDetailsDoc.getElementsByClass("poi-infos").first();
+					locationElement = poiInfo.getElementsByTag("div").get(1).getElementsByTag("a").first();
+					eventLocationUrl = BASE_WEBSITE + locationElement.attr("href");
+					eventLocationTitle = locationElement.text().trim();
+					int lastIndex = eventLocationTitle.lastIndexOf('(');
+					eventLocationTitle = lastIndex > 0 ? eventLocationTitle.substring(0,
+							lastIndex) : eventLocationTitle;
+				}
+				
+				
 
 				if (eventLocationUrl != null) {
 					Document eventLocationDoc = Jsoup.connect(eventLocationUrl)
-							.userAgent(SAFARI_USERAGENT).get();
+							.userAgent(SAFARI_USERAGENT).timeout(10*1000).get();
 
 					Element locationInfoElem = eventLocationDoc
 							.getElementsByClass("basicInfo").first();
