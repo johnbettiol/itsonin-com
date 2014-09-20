@@ -28,7 +28,7 @@
 						</div>
 						<div class="header-title pull-left">
 							<i class="fa fa-angle-right"></i>
-							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+							<a href="javascript:history.back()">
 								<span>${ioiContext.city}</span>
 							</a>
 							<i class="fa fa-angle-right"></i>
@@ -46,7 +46,7 @@
 					<div class="col-xs-12">
 						<h4>ADD AN EVENT</h4>
 						<label>Your name</label>
-						<input type="text" class="form-control" id="guest-name-field">
+						<input type="text" class="form-control" id="guest-name-field" value="${cookie['name'].value}">
 						<label>Event title</label>
 						<input type="text" class="form-control" id="title-field" name="title-field">
 						<label>Event description</label>
@@ -144,7 +144,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="date-from-field"/> 
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button">
+											<button class="btn btn-default" type="button" id="date-from-button">
 												<span class="glyphicon glyphicon-calendar"></span>
 											</button>
 										</span>
@@ -154,7 +154,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="time-from-field"/> 
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button">
+											<button class="btn btn-default" type="button" id="time-from-button">
 												<span class="glyphicon glyphicon-time"></span>
 											</button>
 										</span>
@@ -169,7 +169,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="date-to-field"/> 
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button">
+											<button class="btn btn-default" type="button" id="date-to-button">
 												<span class="glyphicon glyphicon-calendar"></span>
 											</button>
 										</span>
@@ -179,7 +179,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" id="time-to-field"/> 
 										<span class="input-group-btn">
-											<button class="btn btn-default" type="button">
+											<button class="btn btn-default" type="button" id="time-to-button">
 												<span class="glyphicon glyphicon-time"></span>
 											</button>
 										</span>

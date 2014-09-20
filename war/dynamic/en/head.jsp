@@ -23,6 +23,9 @@
 <%-- JSRENDER --%>
 <script src="/static/lib/jsrender/jsrender.min.js" type="text/javascript"></script>
 
+<%-- JQUERY COOKIE --%>
+<script src="/static/lib/cookie/jquery.cookie.js" type="text/javascript"></script>
+
 <%-- MAP CLUSTERER --%>
 <%--<script src="/static/lib/map/markerclusterer_compiled.js" type="text/javascript"></script> --%>
 

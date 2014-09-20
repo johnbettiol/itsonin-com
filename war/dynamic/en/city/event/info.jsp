@@ -8,9 +8,7 @@
 <%@ page session="false" %>
 
 <jsp:useBean id="timeUtil" class="com.itsonin.utils.DateTimeUtil"/>
-<%
-	String shareUrl = request.getScheme() + "://" + request.getServerName() + request.getAttribute("javax.servlet.forward.servlet_path");
-%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +18,7 @@
 		var eventJson = ${eventJson};
 		var guestJson = ${guestJson};
 		var commentsJson = ${commentsJson};
+		var shareUrl = '${shareUrl}';
 	</script>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
 	<script type="text/javascript">
@@ -51,6 +50,7 @@
 							</a>
 						</div>
 						<div class="header-title pull-left">
+							<i class="fa fa-angle-right"></i>
 							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
 								<span>${ioiContext.city}</span>
 							</a>
@@ -80,7 +80,13 @@
 										<i class="fa fa-clock-o fs-11"></i>
 										<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.startTime}"/>
 										<c:if test="${not empty event.endTime}"> - </c:if>
-										<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
+										<!-- TODO: change, it can be <1  e.g. 18.09 23:00 - 19.09 02:00-->
+										<c:if test="${(event.endTime.time - event.startTime.time) / (1000*60*60*24) < 1 }">
+											<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
+										</c:if>
+										<c:if test="${(event.endTime.time - event.startTime.time) / (1000*60*60*24) >= 1 }">
+											<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.endTime}"/>
+										</c:if>
 									</div>
 								</div>
 							</div>
@@ -103,19 +109,23 @@
 					<a href="#" id="open-navigation-link"><i class="fa fa-2x fa-location-arrow pull-right pointer"></i></a>
 				</div>
 				<hr/>
-				<p><c:out value="${event.description}"/></p>
-				<c:if test="${not empty event.description}"><hr/></c:if>
-				<div class="attend">
-					<label>Are you attending this events?</label>
-					<input type="text" class="form-control" id="guest-name-field" placeholder="Your name" value="${guest.name}">
-					<div class="btn-container text-center clearfix">
-						<button class="btn btn-default pull-left" id="decline-btn">No</button>
-						<button class="btn btn-default" id="maybe-attend-btn">Maybe</button>
-						<button class="btn btn-default pull-right" id="attend-btn">Yes</button>
+				<c:if test="${not empty event.description}">
+					<p><c:out value="${event.description}"/></p>
+					<hr/>
+				</c:if>
+				<c:if test="${guest.type != 'HOST'}">
+					<div class="attend">
+						<label>Would you like to attend this event?</label>
+						<input type="text" class="form-control" id="guest-name-field" placeholder="Your name" value="${guest.name!=null ? guest.name: cookie['name'].value}">
+						<div class="btn-container text-center clearfix">
+							<button class="btn pull-left ${guest.status == 'NO' ? 'btn-primary' : 'btn-default'}" id="decline-btn">No</button>
+							<button class="btn ${guest.status == 'MAYBE' ? 'btn-primary' : 'btn-default'}" id="maybe-attend-btn">Maybe</button>
+							<button class="btn pull-right ${guest.status == 'YES' ? 'btn-primary' : 'btn-default'}" id="attend-btn">Yes</button>
+						</div>
 					</div>
-				</div>
-				<hr/>
-				<c:if test="${(guest.status == 'YES' || guest.status == 'NO') && event.sharability != 'NOSHARE'}">
+					<hr/>
+				</c:if>
+				<c:if test="${(guest.status == 'YES' || guest.status == 'NO' || guest.status == 'MAYBE') && event.sharability != 'NOSHARE'}">
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button class="btn mob-btn" id="share-link-btn">
@@ -136,7 +146,7 @@
 							</button>
 						</div>
 						<div class="btn-group">
-							<button class="btn mob-btn" id="share-on-facebook-btn">
+							<button class="btn mob-btn" id="share-on-google-btn">
 								<span class="fa fa-2x fa-google-plus"></span>
 								<span class="block">Google+</span>
 							</button>
@@ -205,7 +215,7 @@
 					<h4 class="modal-title">Share link</h4>
 				</div>
 				<div class="modal-body">
-					<input type="text" class="form-control" id="share-link-field" value="<%=shareUrl%>">
+					<input type="text" class="form-control" id="share-link-field" value="${shareUrl}">
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -217,20 +227,20 @@
 	<div class="modal" id="share-by-email-modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Share by email</h4>
-				</div>
-				<div class="modal-body">
-					<form>
-						<label>Email</label>
-						<input type="email" class="form-control" id="share-by-email-field" autocomplete="on">
-					</form>
-				</div>
-				<div class="modal-footer"><!-- TODO -->
-					<button class="btn btn-primary" id="send-by-email-btn">Send</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
+				<form autocomplete="on" id="share-by-email-form">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Share by email</h4>
+					</div>
+					<div class="modal-body">
+							<label>Email</label>
+							<input type="email" class="form-control" id="share-by-email-field" autocomplete="on">
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary" id="send-by-email-btn">Send</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

@@ -12,8 +12,10 @@ var EventInfoModule = (function() {
 				self.shareByEmail();
 			});
 
-			$('#send-by-email-btn').on('click', function() {
-				window.location.href = "mailto:" + $('#share-by-email-field').val() + '?subject=Invitation&body=' + window.location.href;
+			$('#share-by-email-form').on('submit', function(e){
+				window.location.href = "mailto:" + $('#share-by-email-field').val() + '?subject=Invitation&body=' + shareUrl;
+				e.preventDefault();
+				return false;
 			});
 
 			$('#share-on-facebook-btn').on('click', function() {
@@ -25,7 +27,7 @@ var EventInfoModule = (function() {
 			});
 
 			$('#add-comment-btn').on('click', function() {
-				self.addComment(1, 1, $('#comment-field').val());
+				self.addComment(eventJson.eventId, guestJson.guestId, $('#comment-field').val());
 			});
 
 			$('#attend-btn').on('click', function() {console.log(eventJson)
@@ -102,12 +104,12 @@ var EventInfoModule = (function() {
 		},
 
 		shareOnGoogle: function() {
-			var url = 'https://plus.google.com/share?url=' + window.location.href;
+			var url = 'https://plus.google.com/share?url=' + shareUrl;
 			window.open(url, 'Share', ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 		},
 
 		shareOnFacebook: function() {
-			var url = 'https://www.facebook.com/sharer/sharer.php?u=' + window.location.href;
+			var url = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl;
 			window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 		},
 
@@ -156,6 +158,7 @@ var EventInfoModule = (function() {
 			} else {
 				var self = this;
 				self.showSpinner();
+				$.cookie('name', guestName, {path: '/'});
 
 				$.ajax({
 					type: 'POST',
@@ -163,6 +166,9 @@ var EventInfoModule = (function() {
 					contentType: "application/json",
 					dataType: 'json'
 				}).done(function() {
+					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#attend-btn').removeClass('btn-default').addClass('btn-primary');
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -179,6 +185,7 @@ var EventInfoModule = (function() {
 			} else {
 				var self = this;
 				self.showSpinner();
+				$.cookie('name', guestName, {path: '/'});
 
 				$.ajax({
 					type: 'POST',
@@ -186,6 +193,9 @@ var EventInfoModule = (function() {
 					contentType: "application/json",
 					dataType: 'json'
 				}).done(function() {
+					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#decline-btn').removeClass('btn-default').addClass('btn-primary');
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -202,6 +212,7 @@ var EventInfoModule = (function() {
 			} else {
 				var self = this;
 				self.showSpinner();
+				$.cookie('name', guestName, {path: '/'});
 
 				$.ajax({
 					type: 'POST',
@@ -209,6 +220,9 @@ var EventInfoModule = (function() {
 					contentType: "application/json",
 					dataType: 'json'
 				}).done(function() {
+					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
+					$('#maybe-attend-btn').removeClass('btn-default').addClass('btn-primary');
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {

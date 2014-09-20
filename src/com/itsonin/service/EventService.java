@@ -153,7 +153,9 @@ public class EventService {
 
 		List<Guest> guests = guestDao.listByEvent(eventId, GuestStatus.YES);	
 		List<Guest> declinedGuests = guestDao.listByEvent(eventId, GuestStatus.NO);
+		List<Guest> maybeGuests = guestDao.listByEvent(eventId, GuestStatus.MAYBE);
 		guests.addAll(declinedGuests);
+		guests.addAll(maybeGuests);
 
 		Map<Long, String> guestsMap = new HashMap<Long, String>();
 		if(guests != null) {
@@ -211,7 +213,7 @@ public class EventService {
 			Key<Guest> guestKey = guestDao.save(guest);
 			guest = guestDao.get(guestKey);
 		} else if (guestStatus != guest.getStatus() && guest.getType() != GuestType.HOST &&
-				guestStatus != GuestStatus.VIEWED && guestStatus != GuestStatus.MAYBE) {
+				guestStatus != GuestStatus.VIEWED) {
 			guest.setStatus(guestStatus);
 			if(guestName != null){
 				guest.setName(guestName);

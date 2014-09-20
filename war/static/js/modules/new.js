@@ -30,16 +30,43 @@ var EventNewModule = (function() {
 
 			var datepickerOptions = {
 				format: 'yyyy-mm-dd',
-				formatSubmit: 'yyyy-mm-dd'
+				formatSubmit: 'yyyy-mm-dd',
+				onClose: function() {
+					$('#date-from-field, #date-to-field').blur();
+				}
 			}
 			var timepickerOptions = {
 				format: 'HH:i',
-				formatSubmit: 'HH:i'
+				formatSubmit: 'HH:i',
+				onClose: function() {
+					$('#time-from-field, #time-to-field').blur();
+				}
 			}
-			$('#date-from-field').pickadate(datepickerOptions);
-			$('#date-to-field').pickadate(datepickerOptions);
-			$('#time-from-field').pickatime(timepickerOptions);
-			$('#time-to-field').pickatime(timepickerOptions);
+
+			var $dateFromPicker = $('#date-from-field').pickadate(datepickerOptions);
+			var $dateToPicker = $('#date-to-field').pickadate(datepickerOptions);
+			var $timeFromPicker = $('#time-from-field').pickatime(timepickerOptions);
+			var $timeToPicker = $('#time-to-field').pickatime(timepickerOptions);
+
+			$('#date-from-button').on('click', function(e) {
+				$dateFromPicker.pickadate('picker').open();
+				e.stopPropagation();
+			});
+
+			$('#date-to-button').on('click', function(e) {
+				$dateToPicker.pickadate('picker').open();
+				e.stopPropagation();
+			});
+
+			$('#time-from-button').on('click', function(e) {
+				$timeFromPicker.pickatime('picker').open();
+				e.stopPropagation();
+			});
+
+			$('#time-to-button').on('click', function(e) {
+				$timeToPicker.pickatime('picker').open();
+				e.stopPropagation();
+			});
 
 			$('#categories button').on('click', function() {
 				var isActive = $(this).hasClass('selected');
@@ -104,6 +131,7 @@ var EventNewModule = (function() {
 				return;
 			}
 
+			$.cookie('name', guest['name'], {path: '/'});
 			self.showSpinner();
 
 			$.ajax({
