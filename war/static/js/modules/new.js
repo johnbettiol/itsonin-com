@@ -23,8 +23,10 @@ var EventNewModule = (function() {
 				event['description'] = $('#description-field').val();
 				event['offer'] = $('#offer-field').val();
 				event['startTime'] = $('#date-from-field').val() + 'T' + $('#time-from-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
-				event['endTime'] = $('#date-to-field').val() + 'T' + $('#time-to-field').val() + ':00';
 				
+				if($('#date-to-field').val().length != 0 && $('#time-to-field').val().length != 0) {
+					event['endTime'] = $('#date-to-field').val() + 'T' + $('#time-to-field').val() + ':00';
+				}
 				self.saveEvent();
 			});
 
@@ -125,7 +127,7 @@ var EventNewModule = (function() {
 			self.loadScript();
 		},
 
-		saveEvent: function() {console.log(event)
+		saveEvent: function() {
 			var self = this;
 			if(self.isEventValid() == false) {
 				return;
@@ -158,13 +160,15 @@ var EventNewModule = (function() {
 		},
 
 		isEventValid: function() {
+			var error = '';
 			if(!event.locationAddress) {
-				$('#error-text').text('Location is required');
-				$('#error-alert').show();
-				return false;
-			} else if ($('#date-from-field').val().length == 0 || $('#date-to-field').val().length == 0 ||
-					$('#time-from-field').val().length == 0 ||	$('#time-to-field').val().length == 0) {
-				$('#error-text').text('Start date&time and end date&time are required');
+				error = 'Location is required';
+			} else if (!event.startTime) {
+				error = 'Start date&time are required';
+			}
+
+			if(error != '') {
+				$('#error-text').text(error);
 				$('#error-alert').show();
 				return false;
 			} else {
@@ -228,6 +232,7 @@ var EventNewModule = (function() {
 					zoom: 10,
 					center: new google.maps.LatLng(51.227741, 6.773456),
 					disableDefaultUI: true,
+					disableDoubleClickZoom: true,
 					panControl: false,
 					zoomControl: true,
 					zoomControlOptions: {

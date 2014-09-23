@@ -5,17 +5,12 @@ var EventInfoModule = (function() {
 			var self = this;
 
 			$('#share-link-btn').on('click', function() {
-				self.shareLink();
+				//self.shareLink();
+				window.prompt("Copy to clipboard: Ctrl+C", shareUrl);
 			});
 
 			$('#share-by-email-btn').on('click', function() {
 				self.shareByEmail();
-			});
-
-			$('#share-by-email-form').on('submit', function(e){
-				window.location.href = "mailto:" + $('#share-by-email-field').val() + '?subject=Invitation&body=' + shareUrl;
-				e.preventDefault();
-				return false;
 			});
 
 			$('#share-on-facebook-btn').on('click', function() {
@@ -100,7 +95,7 @@ var EventInfoModule = (function() {
 		},
 
 		shareByEmail: function() {
-			$('#share-by-email-modal').modal('show');
+			window.location.href = 'mailto:?subject=Invitation&body=' + shareUrl;
 		},
 
 		shareOnGoogle: function() {
@@ -128,6 +123,7 @@ var EventInfoModule = (function() {
 					zoom: 17,
 					center: latlng,
 					disableDefaultUI: true,
+					disableDoubleClickZoom: true,
 					panControl: false,
 					zoomControl: true,
 					zoomControlOptions: {
@@ -169,6 +165,7 @@ var EventInfoModule = (function() {
 					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#attend-btn').removeClass('btn-default').addClass('btn-primary');
+					$('.share').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -196,6 +193,7 @@ var EventInfoModule = (function() {
 					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-default').addClass('btn-primary');
+					$('.share').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -223,6 +221,7 @@ var EventInfoModule = (function() {
 					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#maybe-attend-btn').removeClass('btn-default').addClass('btn-primary');
+					$('.share').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {

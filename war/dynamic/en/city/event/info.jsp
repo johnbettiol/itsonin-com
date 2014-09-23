@@ -51,9 +51,16 @@
 						</div>
 						<div class="header-title pull-left">
 							<i class="fa fa-angle-right"></i>
-							<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
-								<span>${ioiContext.city}</span>
-							</a>
+							<c:if test="${isInvitation == true}">
+								<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
+									<span>${ioiContext.city}</span>
+								</a>
+							</c:if>
+							<c:if test="${isInvitation == false}">
+								<a href="javascript:history.back()">
+									<span>${ioiContext.city}</span>
+								</a>
+							</c:if>
 						</div>
 						<div class="header-actions pull-right">
 							<button id="scrollto-guests-btn">
@@ -125,7 +132,8 @@
 					</div>
 					<hr/>
 				</c:if>
-				<c:if test="${(guest.status == 'YES' || guest.status == 'NO' || guest.status == 'MAYBE') && event.sharability != 'NOSHARE'}">
+				<div class="share"
+				<c:if test="${guest.status == 'VIEWED' || guest.status == null || event.sharability == 'NOSHARE'}">style="display:none"</c:if>>
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button class="btn mob-btn" id="share-link-btn">
@@ -153,7 +161,7 @@
 						</div>
 					</div>
 					<hr/>
-				</c:if>
+				</div>
 				<div class="row guests">
 					<label style="margin-left: 15px">Guests</label> <span class="badge ng-binding" style="font-size:10px"><c:out value="${fn:length(guests)}"/></span>
 					<div class="panel panel-default">
@@ -220,27 +228,6 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
-			</div>
-		</div>
-	</div>
-	<%-- SHARE BY EMAIL MODAL --%>
-	<div class="modal" id="share-by-email-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form autocomplete="on" id="share-by-email-form">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Share by email</h4>
-					</div>
-					<div class="modal-body">
-							<label>Email</label>
-							<input type="email" class="form-control" id="share-by-email-field" autocomplete="on">
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary" id="send-by-email-btn">Send</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
-				</form>
 			</div>
 		</div>
 	</div>
