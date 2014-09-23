@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
@@ -36,8 +38,10 @@ public class EventListServlet extends DefaultServlet {
 		 * @TODO - We need to move towards having all of the parameters passed
 		 * by the IoiRouterContext
 		 */
-		List<Event> events = eventService.list(true, null, null,
-				new Date(), null, null, null, null);
+		
+		Date clearDate = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
+		List<Event> events = eventService.list(null, null, null,
+				clearDate, null, null, null, null);
 
 		req.setAttribute("events", events);
 		
