@@ -7,6 +7,7 @@ var EventNewModule = (function() {
 		sharability: 'NORMAL'
 	};
 	var guest = {};
+	var shareUrl = '';
 
 	return {
 		init: function() {
@@ -22,8 +23,14 @@ var EventNewModule = (function() {
 				event['title'] = $('#title-field').val();
 				event['description'] = $('#description-field').val();
 				event['offer'] = $('#offer-field').val();
-				event['startTime'] = $('#date-from-field').val() + 'T' + $('#time-from-field').val() + ':00'; //"yyyy-MM-dd'T'HH:mm:ss"
-				
+
+				//"yyyy-MM-dd'T'HH:mm:ss"
+				if($('#date-from-field').val().length != 0) {
+					var startTime = $('#time-to-field').val();
+					event['startTime'] = $('#date-from-field').val() + 'T' + (startTime!=''?(startTime + ':00'):'00:00:00');
+					console.log(event['startTime']);
+				}
+
 				if($('#date-to-field').val().length != 0 && $('#time-to-field').val().length != 0) {
 					event['endTime'] = $('#date-to-field').val() + 'T' + $('#time-to-field').val() + ':00';
 				}
@@ -124,6 +131,22 @@ var EventNewModule = (function() {
 				event.sharability = $(this).attr('id').split('-')[1];
 			});
 
+			$('#share-link-btn').on('click', function() {
+				window.prompt("Copy to clipboard: Ctrl+C", shareUrl);
+			});
+
+			$('#share-by-email-btn').on('click', function() {
+				self.shareByEmail();
+			});
+
+			$('#share-on-facebook-btn').on('click', function() {
+				self.shareOnFacebook();
+			});
+
+			$('#share-on-google-btn').on('click', function() {
+				self.shareOnGoogle();
+			});
+
 			self.loadScript();
 		},
 
@@ -142,10 +165,19 @@ var EventNewModule = (function() {
 				data: JSON.stringify({event:event, guest:guest}),
 				contentType: "application/json",
 				dataType: 'json'
-			}).done(function() {
+			}).done(function(data) {
+				shareUrl = baseUrl + '/i/' + data.event.eventId + "." + data.guest.guestId; 
 				$('#error-alert').hide();
 				$('#success-text').text('New event created successfully');
 				$('#success-alert').show();
+				if(data.event.sharability != 'NOSHARE' && data.event.visibility == 'PUBLIC') {
+					$('.share').show();
+					var $target = $('html,body'); 
+					$target.animate({scrollTop: $target.height()});
+				}
+				
+				$('#save-btn').hide();
+				$('#cancel-btn').html('Go back');
 				self.hideSpinner();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				var json = $.parseJSON(jqXHR.responseText);
@@ -159,12 +191,26 @@ var EventNewModule = (function() {
 			});
 		},
 
+		shareByEmail: function() {
+			window.location.href = 'mailto:?subject=Invitation&body=' + encodeURIComponent(shareUrl);
+		},
+
+		shareOnGoogle: function() {
+			var url = 'https://plus.google.com/share?url=' + encodeURIComponent(shareUrl);
+			window.open(url, 'Share', ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+		},
+
+		shareOnFacebook: function() {
+			var url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
+			window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
+		},
+
 		isEventValid: function() {
 			var error = '';
 			if(!event.locationAddress) {
 				error = 'Location is required';
 			} else if (!event.startTime) {
-				error = 'Start date&time are required';
+				error = 'Start date is required';
 			}
 
 			if(error != '') {
@@ -229,18 +275,18 @@ var EventNewModule = (function() {
 		initMap: function(){
 			var self = this;
 			var mapOptions = {
-					zoom: 10,
-					center: new google.maps.LatLng(51.227741, 6.773456),
-					disableDefaultUI: true,
-					disableDoubleClickZoom: true,
-					panControl: false,
-					zoomControl: true,
-					zoomControlOptions: {
-						position: google.maps.ControlPosition.LEFT_CENTER
-					},
-					scaleControl: false,
-					draggable: false,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
+				zoom: 10,
+				center: new google.maps.LatLng(51.227741, 6.773456),
+				disableDefaultUI: true,
+				disableDoubleClickZoom: true,
+				panControl: false,
+				zoomControl: true,
+				zoomControlOptions: {
+					position: google.maps.ControlPosition.LEFT_CENTER
+				},
+				scaleControl: false,
+				draggable: false,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 		},

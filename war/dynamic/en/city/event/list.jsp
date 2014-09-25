@@ -108,7 +108,7 @@
 								</button>
 							</div>
 						</div>
-						<div class="btn-group btn-group-justified" id="filter-categories">
+						<div class="btn-group btn-group-justified" id="filter-buttons">
 							<div class="btn-group">
 								<button class="btn mob-btn" id="favourites-button">
 									<span class="fa fa-star"></span>

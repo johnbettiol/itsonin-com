@@ -14,7 +14,7 @@
 
 	.event-container {
 		background-color: @default-bgcolor;
-		margin-top: 150px;
+		margin-top: 120px;
 	}
 
 	.comments {
@@ -23,27 +23,14 @@
 		}
 	}
 
+	#comments-counter, #guests-counter {
+		font-size: 10px;
+	}
 }
 
 #info-header {
 	.main-info {
 		min-height: 100px;
-	}
-
-	.list-group-item {
-		border-radius: 0;
-	}
-
-	.event-title {
-		color: #00a6b5;
-		font-size: 15px;
-	}
-
-	.event-offer {
-		text-transform: uppercase;
-		color: #c51f4b;
-		font-weight: 400;
-		font-size: 15px;
 	}
 
 	#scrollto-guests-btn, #scrollto-comments-btn {
@@ -137,31 +124,24 @@
 		padding-left: 0;
 		padding-right: 0;
 	}
+}
 
-	.list-group-item {
-		border-radius: 0;
+.event-item {
+	.event-time {
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+
+	.event-body {
+		margin: 4px 0px 4px 50px;
 	}
 
 	.media-heading {
 		margin: 0;
 	}
 
-	.filter-bar-section {
-		padding-top: 3px;
-		padding-bottom: 3px;
-		width: 100%;
-	}
-
-	.date-bar {
-		padding-top: 10px;
-		padding-bottom: 10px;
-		text-transform: uppercase;
-		font-size: 18px;
-	}
-
-	.event-title {
-		color: #00a6b5;
-		font-size: 15px;
+	.media-body {
+		margin-right: 40px;
 	}
 
 	.event-offer {
@@ -177,14 +157,24 @@
 	    margin-top: -14px;
 	    padding: 0 9px;
 	}
+	
+	&.list-group-item {
+		border-radius: 0;
+		padding: 0px;
+	}
+
+	.event-title {
+		color: #00a6b5;
+		font-size: 15px;
+	}
 
 	.event-arrow {
 		position: absolute;
 		right: 0;
 		top: 0;
 		bottom: 0;
-		width: 20px;
-		text-align: center;
+		width: 40px;
+		text-align: right;
 
 		a {
 			color: #99a6ad;
@@ -197,6 +187,7 @@
 			i {
 				display: table-cell;
 				vertical-align: middle;
+				padding-right: 4px;
 			}
 			
 			&:hover {
@@ -217,24 +208,8 @@
 		}
 	}
 
-	.event-time {
-		font-size: 11px;
-		text-transform: uppercase;
-	}
-
-	.event-body {
-		margin: 4px 0px 4px 50px;
-	}
-
 	p {
 		margin: 0;
 	}
 
-	.list-group-item {
-		padding: 0px;
-	}
-
-	.media-body {
-		margin-right: 20px;
-	}
 }

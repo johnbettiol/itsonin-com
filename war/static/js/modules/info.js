@@ -95,16 +95,16 @@ var EventInfoModule = (function() {
 		},
 
 		shareByEmail: function() {
-			window.location.href = 'mailto:?subject=Invitation&body=' + shareUrl;
+			window.location.href = 'mailto:?subject=Invitation&body=' + encodeURIComponent(shareUrl);
 		},
 
 		shareOnGoogle: function() {
-			var url = 'https://plus.google.com/share?url=' + shareUrl;
+			var url = 'https://plus.google.com/share?url=' + encodeURIComponent(shareUrl);
 			window.open(url, 'Share', ',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 		},
 
 		shareOnFacebook: function() {
-			var url = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl;
+			var url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
 			window.open(url, 'Share', 'personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 		},
 
@@ -146,6 +146,19 @@ var EventInfoModule = (function() {
 			$('.comments .list-group').html($('#commentTemplate').render(commentsJson));
 		},
 
+		renderGuests: function() {
+			$('.guests .list-group').html($('#guestTemplate').render(guestsJson));
+		},
+
+		updateGuests: function(guest) {
+			$.each(guestsJson, function(index, g) {
+				if(g.guestId == guest.guestId){
+					guestsJson[index] = guest;
+				}
+			});
+			this.renderGuests();
+		},
+
 		//ajax requests
 		attendEvent: function(eventId) {
 			var guestName = $('#guest-name-field').val();
@@ -161,10 +174,15 @@ var EventInfoModule = (function() {
 					url: '/api/event/' + eventId + '/attend/' + guestName,
 					contentType: "application/json",
 					dataType: 'json'
-				}).done(function() {
+				}).done(function(guest) {
 					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#attend-btn').removeClass('btn-default').addClass('btn-primary');
+					$('#guests-counter').text(guestsJson.length);
+					self.updateGuests(guest);
+					if(eventJson.sharability == 'PYRAMID') {
+						$('#pyramid-alert').show();
+					}
 					$('.share').show();
 					self.hideSpinner();
 					//TODO
@@ -189,10 +207,12 @@ var EventInfoModule = (function() {
 					url: '/api/event/' + eventId + '/decline',
 					contentType: "application/json",
 					dataType: 'json'
-				}).done(function() {
+				}).done(function(guest) {
 					$('#maybe-attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-default').addClass('btn-primary');
+					$('#guests-counter').text(guestsJson.length);
+					self.updateGuests(guest);
 					$('.share').show();
 					self.hideSpinner();
 					//TODO
@@ -217,10 +237,12 @@ var EventInfoModule = (function() {
 					url: '/api/event/' + eventId + '/maybeattend/' + guestName,
 					contentType: "application/json",
 					dataType: 'json'
-				}).done(function() {
+				}).done(function(guest) {
 					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#maybe-attend-btn').removeClass('btn-default').addClass('btn-primary');
+					$('#guests-counter').text(guestsJson.length);
+					self.updateGuests(guest);
 					$('.share').show();
 					self.hideSpinner();
 					//TODO
@@ -247,6 +269,7 @@ var EventInfoModule = (function() {
 			}).done(function(comment) {
 				comment.guestName = guestJson.name;
 				commentsJson.unshift(comment);
+				$('#comments-counter').text(commentsJson.length);
 				self.renderComments();
 				self.hideSpinner();
 				//TODO

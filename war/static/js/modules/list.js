@@ -20,6 +20,12 @@ var EventListModule = (function() {
 		init: function() {
 			var self = this;
 
+			$('button').on('click', function() {
+							///alert(/*$("*:focus").attr("id")*/document.activeElement);
+				//document.activeElement = $('body');
+				document.activeElement.blur();
+			});
+
 			$('#map-btn').on('click', function() {
 				filteredByMapEvents = filteredEvents;
 				$(".filters").hide();
@@ -71,12 +77,12 @@ var EventListModule = (function() {
 					$('#filter-date').text('favourites');
 					$('#prev-day-button').hide();
 					$('#next-day-button').hide();
-					self.filterEvents();
+					self.loadEvents({favourites: true});
 				} else {
 					$('#filter-date').text(filter.date.calendar());
 					$('#prev-day-button').show();
 					$('#next-day-button').show();
-					//TODO: render events
+					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
 				}
 			});
 
@@ -122,8 +128,6 @@ var EventListModule = (function() {
 				if(isActive == false) {
 					$(this).addClass('selected');
 				}
-
-				self.filterEvents();
 			});
 
 			$('.event-item').on('click', function() {
@@ -257,6 +261,7 @@ var EventListModule = (function() {
 				zoom: 10,
 				center: new google.maps.LatLng(51.227741, 6.773456),
 				disableDefaultUI: true,
+				disableDoubleClickZoom: true,
 				panControl: false,
 				zoomControl: true,
 				zoomControlOptions: {

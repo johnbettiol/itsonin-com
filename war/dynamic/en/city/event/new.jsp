@@ -8,6 +8,9 @@
 <head>
 <title>itsonin - Events in ${ioiContext.city}</title>
 <%@ include file="/dynamic/en/head.jsp"%>
+<script type="text/javascript">
+	var baseUrl = '${baseUrl}';
+</script>
 <script type="text/javascript" src="/static/js/modules/new.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -242,7 +245,6 @@
 				        <div class="alert alert-success alert-dismissable">
 			            	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 							<span id="success-text"></span>
-			            	<a href="/${ioiContext.locale}/${ioiContext.city}/Events" class="btn btn-default btn-sm">go back</a>
 	            		</div>
 	            	</div>
 	            </div>
@@ -254,10 +256,40 @@
 			            </div>
 	            	</div>
 	            </div>
+	            <div class="share" style="display: none">
+					<label>Click here to share this event:</label>
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-link-btn">
+								<span class="fa fa-2x fa-share-alt"></span>
+								<span class="block">Share link</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-by-email-btn">
+								<span class="fa fa-2x fa-envelope-o"></span>
+								<span class="block">Email</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-on-facebook-btn">
+								<span class="fa fa-2x fa-facebook"></span>
+								<span class="block">Facebook</span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button class="btn mob-btn" id="share-on-google-btn">
+								<span class="fa fa-2x fa-google-plus"></span>
+								<span class="block">Google+</span>
+							</button>
+						</div>
+					</div>
+					<hr/>
+				</div>
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="btn-container pull-right">
-							<a href="/${ioiContext.locale}/${ioiContext.city}/Events" class="btn btn-default">Cancel</a>
+							<a href="javascript:history.back()" class="btn btn-default" id="cancel-btn">Cancel</a>
 							<button class="btn btn-default" id="save-btn">Save</button>
 						</div>
 					</div>

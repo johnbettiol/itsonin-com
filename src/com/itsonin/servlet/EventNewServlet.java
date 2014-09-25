@@ -23,6 +23,8 @@ public class EventNewServlet extends DefaultServlet {
 	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
 		req.setAttribute("eventCategories", EventCategory.values());
 		req.setAttribute("eventSubCategories", EventSubCategory.values());
+		req.setAttribute("baseUrl", req.getScheme() + "://" + req.getServerName() + "/" +
+		irc.getLocale() + "/" + irc.getCity());
 	}
 
 }

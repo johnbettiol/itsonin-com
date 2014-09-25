@@ -18,6 +18,7 @@
 		var eventJson = ${eventJson};
 		var guestJson = ${guestJson};
 		var commentsJson = ${commentsJson};
+		var guestsJson = ${guestsJson};
 		var shareUrl = '${shareUrl}';
 	</script>
 	<script type="text/javascript" src="/static/js/modules/info.js"></script>
@@ -33,6 +34,28 @@
 					<small class="pull-right">{{:~formatTime(created)}}</small>
 					<strong><small>{{:guestName}}</small></strong><br>
 					<small class="text-muted">{{:comment}}</small>
+				</div>
+			</div>
+		</div>
+	</script>
+	<script id="guestTemplate" type="text/x-jsrender">
+		<div class="list-group-item guest-item" id="{{:guestId}}">
+			<div class="media">
+				<div class="pull-left">
+					<i class="fa fa-user"></i>									
+				</div>
+				<div class="media-body clearfix">
+					<span class="pull-left">{{:name}}
+						{{if host}}(you){{/if}}
+					</span>
+					<span class="pull-right">
+						{{if type=='HOST'}}
+							{{:type}}
+						{{/if}}
+						{{if type!='HOST'}}
+							{{:status}}
+						{{/if}}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -72,18 +95,17 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="list-group-item main-info">
+						<div class="list-group-item event-item" style="height: 70px">
 							<div class="media">
-								<div class="pull-left">
-									<span style="display: inline-block;height: 100%;vertical-align: middle;"></span>
-									<img src="/static/img/party.png" height="40" width="40" style="vertical-align: middle;display:inline;">
+								<div class="event-icon">
+									<span class="fa fa-university fa-2x"></span>
 								</div>
-								<div class="media-body clearfix">
+								<div class="media-body clearfix event-body">
 									<div class="media-heading event-title"><c:out value="${event.title}"/></div>
 									<p class="event-offer">
 										<c:out value="${event.offer}"/>
 									</p>
-									<div class="text-muted">
+									<div class="event-time text-muted">
 										<i class="fa fa-clock-o fs-11"></i>
 										<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.startTime}"/>
 										<c:if test="${not empty event.endTime}"> - </c:if>
@@ -130,10 +152,12 @@
 							<button class="btn pull-right ${guest.status == 'YES' ? 'btn-primary' : 'btn-default'}" id="attend-btn">Yes</button>
 						</div>
 					</div>
+					<div id="pyramid-alert" class="alert alert-warning" role="alert" style="display:none">Pyramid Event - You must share to others!</div>
 					<hr/>
 				</c:if>
 				<div class="share"
 				<c:if test="${guest.status == 'VIEWED' || guest.status == null || event.sharability == 'NOSHARE'}">style="display:none"</c:if>>
+					<label>Click here to share this event:</label>
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button class="btn mob-btn" id="share-link-btn">
@@ -163,18 +187,27 @@
 					<hr/>
 				</div>
 				<div class="row guests">
-					<label style="margin-left: 15px">Guests</label> <span class="badge ng-binding" style="font-size:10px"><c:out value="${fn:length(guests)}"/></span>
+					<label style="margin-left: 15px">Guests</label> <span class="badge ng-binding" id="guests-counter"><c:out value="${fn:length(guests)}"/></span>
 					<div class="panel panel-default">
 						<div class="list-group">
-							<c:forEach var="guest" items="${guests}">
-								<div class="list-group-item guest-item" id="${guest.guestId}">
+							<c:forEach var="g" items="${guests}">
+								<div class="list-group-item guest-item" id="${g.guestId}">
 									<div class="media">
 										<div class="pull-left">
 											<i class="fa fa-user"></i>									
 										</div>
 										<div class="media-body clearfix">
-											<span class="pull-left"><c:out value="${guest.name}"/></span>
-											<span class="pull-right"><c:out value="${guest.status}"/></span>
+											<span class="pull-left"><c:out value="${g.name}"/>
+											<c:if test="${g.guestId==guest.guestId}">(you)</c:if>
+											</span>
+											<span class="pull-right">
+												<c:if test="${g.type=='HOST'}">
+													<c:out value="${g.type}"/>
+												</c:if>
+												<c:if test="${g.type!='HOST'}">
+													<c:out value="${g.status}"/>
+												</c:if>
+											</span>
 										</div>
 									</div>
 								</div>
@@ -184,7 +217,7 @@
 				</div>
 				<hr/>
 				<div class="row comments">
-					<label style="margin-left: 15px">Comments</label> <span class="badge ng-binding" style="font-size:10px"><c:out value="${fn:length(comments)}"/></span>
+					<label style="margin-left: 15px">Comments</label> <span class="badge ng-binding" id="comments-counter"><c:out value="${fn:length(comments)}"/></span>
 					<div class="panel panel-default">
 						<div class="list-group">
 							<c:forEach var="comment" items="${comments}">

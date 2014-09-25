@@ -86,8 +86,6 @@ public class EventService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("event", event);
 		result.put("guest", guest);
-		result.put("shareUrl", HOST + "/i/" + event.getEventId() + '.'
-				+ guest.getGuestId());
 		return result;
 	}
 
