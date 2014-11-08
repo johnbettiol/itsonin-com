@@ -37,6 +37,12 @@ body {
 	z-index:1001;
 }
 
+.share {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
 .pointer {
 	cursor: pointer;
 	cursor: hand;
@@ -97,6 +103,19 @@ body {
 		vertical-align: middle;
 		line-height: 50px;
 	}
+
+	a {
+		height: 50px;
+		display: inline-block;
+
+		&.hover {
+			background-color: #009ab5;
+			color: #141719;
+			outline: 0;
+			-webkit-box-shadow: none;
+		    box-shadow: none;
+		}
+	}
 }
 
 .header-logo, .header-actions {
@@ -119,6 +138,9 @@ body {
 		-webkit-transition: background-color 0.4s ease-out;
 		transition: background-color 0.4s ease-out;
 		-webkit-tap-highlight-color: transparent;
+		outline-style:none;
+		box-shadow:none;
+		border-color:transparent;
 	}
 
 	a {
@@ -134,20 +156,12 @@ body {
 		color: #141719;
 	}
 
-	a:hover, button:hover {
-		background-color: #009ab5;
-		color: white !important;
-	}
-
-	a:focus, button:focus {
-		background-color: #009ab5;
-		outline: 0;
-	}
-
-	a:active, button:active {
+	a.hover, button.hover {
 		background-color: #009ab5;
 		color: #141719;
 		outline: 0;
+		-webkit-box-shadow: none;
+	    box-shadow: none;
 	}
 
 	button:last-child {
@@ -155,7 +169,7 @@ body {
 	}
 }
 
-.mob-btn {
+.mob-btn, .mob-btn:active, .mob-btn:focus {
 	padding: 8px 0;
 	border: none;
 	border-radius: 0;
@@ -164,18 +178,15 @@ body {
 	-webkit-transition: background-color 0.4s ease-out;
 	transition: background-color 0.4s ease-out;
 	-webkit-tap-highlight-color: transparent;
+	outline-style:none;
+	box-shadow:none;
+	border-color:transparent;
 
 	&.selected {
 		color: #141719;
 	}
 
-	&:hover, &:focus {
-		color: #99a6ad;
-		background-color: @ioi-color;
-		outline: 0;
-	}
-
-	&:active {
+	&.hover {
 		background-color: @ioi-color;
 		color: #141719;
 		outline: 0;

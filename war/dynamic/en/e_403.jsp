@@ -10,7 +10,7 @@
     <div class="container">
       <div class="row row-main">
         <div class="col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
-          	Not alowed
+          	Not allowed
         </div>
       </div>
     </div>

@@ -4,6 +4,22 @@ var EventInfoModule = (function() {
 		init: function() {
 			var self = this;
 
+			$('.location a, header-logo a, .header-title a').on('touchstart', function(e) {
+				$(this).addClass('hover');
+			}).on('touchmove', function(e) {
+				$(this).removeClass('hover');
+			}).mouseenter( function(e) {
+				$(this).addClass('hover');
+			}).mouseleave( function(e) {
+				$(this).removeClass('hover');
+			}).click( function(e) {
+				$(this).removeClass('hover');
+			});
+
+			$(window).on('resize', function(){
+				$('.event-container').css('margin-top', $('.header-container').height());
+			}).trigger('resize');
+
 			$('#share-link-btn').on('click', function() {
 				//self.shareLink();
 				window.prompt("Copy to clipboard: Ctrl+C", shareUrl);
@@ -23,13 +39,14 @@ var EventInfoModule = (function() {
 
 			$('#add-comment-btn').on('click', function() {
 				self.addComment(eventJson.eventId, guestJson.guestId, $('#comment-field').val());
+				$('#comment-field').val('');
 			});
 
 			$('#attend-btn').on('click', function() {console.log(eventJson)
 				self.attendEvent(eventJson.eventId);
 			});
 
-			$('#decline-btn').on('click', function() {
+			$('#decline-btn').on('click', function() {console.log(eventJson)
 				self.declineEvent(eventJson.eventId);
 			});
 
@@ -71,6 +88,9 @@ var EventInfoModule = (function() {
 					} else {
 						return '';
 					}
+				},
+				isYou: function(guestId) {
+					return guestId == guestJson.guestId;
 				}
 			});
 
@@ -83,7 +103,8 @@ var EventInfoModule = (function() {
 			if(navigator.userAgent.match(/iPhone|iPod/)){
                 url = 'comgooglemaps://?center=' + eventJson.gpsLat + ',' + eventJson.gpsLong + '&zoom=14';
 			} else if (navigator.userAgent.match(/Android/)) {
-				url = 'geo:' + eventJson.gpsLat + ',' + eventJson.gpsLong;
+				url = 'geo://0,0?q=' + eventJson.locationAddress; 
+				/*'geo://' + eventJson.gpsLat + ',' + eventJson.gpsLong + '?z=8';*/
 			} else {
 				url = 'http://maps.google.com/maps?q=' + eventJson.gpsLat + ',' + eventJson.gpsLong;
 			}
@@ -120,7 +141,7 @@ var EventInfoModule = (function() {
 			var self = this;
 			var latlng = new google.maps.LatLng(eventJson.gpsLat, eventJson.gpsLong);
 			var mapOptions = {
-					zoom: 17,
+					zoom: 20,
 					center: latlng,
 					disableDefaultUI: true,
 					disableDoubleClickZoom: true,
@@ -151,11 +172,16 @@ var EventInfoModule = (function() {
 		},
 
 		updateGuests: function(guest) {
+			var exist = false;
 			$.each(guestsJson, function(index, g) {
 				if(g.guestId == guest.guestId){
 					guestsJson[index] = guest;
+					exist = true;
 				}
 			});
+			if(exist == false) {
+				guestsJson.push(guest);
+			}
 			this.renderGuests();
 		},
 
@@ -179,11 +205,14 @@ var EventInfoModule = (function() {
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#attend-btn').removeClass('btn-default').addClass('btn-primary');
 					$('#guests-counter').text(guestsJson.length);
+					//guest['name'] = guestName;
+					guestJson = guest;
 					self.updateGuests(guest);
 					if(eventJson.sharability == 'PYRAMID') {
 						$('#pyramid-alert').show();
 					}
 					$('.share').show();
+					$('.comments .panel-footer').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -212,8 +241,11 @@ var EventInfoModule = (function() {
 					$('#attend-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#decline-btn').removeClass('btn-default').addClass('btn-primary');
 					$('#guests-counter').text(guestsJson.length);
+					//guest['name'] = guestName;
+					guestJson = guest;
 					self.updateGuests(guest);
 					$('.share').show();
+					$('.comments .panel-footer').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -242,8 +274,11 @@ var EventInfoModule = (function() {
 					$('#decline-btn').removeClass('btn-primary').addClass('btn-default');
 					$('#maybe-attend-btn').removeClass('btn-default').addClass('btn-primary');
 					$('#guests-counter').text(guestsJson.length);
+					//guest['name'] = guestName;
+					guestJson = guest;
 					self.updateGuests(guest);
 					$('.share').show();
+					$('.comments .panel-footer').show();
 					self.hideSpinner();
 					//TODO
 				}).fail(function(jqXHR, textStatus, errorThrown) {

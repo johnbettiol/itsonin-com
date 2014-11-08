@@ -30,10 +30,18 @@
 	<script id="commentTemplate" type="text/x-jsrender">
 		<div class="list-group-item comment-item" id="{{:commentId}}">
 			<div class="media">
-				<div class="media-body">
-					<small class="pull-right">{{:~formatTime(created)}}</small>
-					<strong><small>{{:guestName}}</small></strong><br>
-					<small class="text-muted">{{:comment}}</small>
+				<div class="media-body">					
+					<strong><small>{{:comment}}</small></strong>
+					<br>
+					<div class="text-muted">
+						<small>
+							{{:guestName}}
+							{{if ~isYou(guestId)==true}}(you){{/if}}
+						</small>
+						<small class="pull-right">
+							{{:~formatTime(created)}}
+						</small>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -46,7 +54,7 @@
 				</div>
 				<div class="media-body clearfix">
 					<span class="pull-left">{{:name}}
-						{{if host}}(you){{/if}}
+						{{if ~isYou(guestId)==true}}(you){{/if}}
 					</span>
 					<span class="pull-right">
 						{{if type=='HOST'}}
@@ -95,7 +103,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="list-group-item event-item" style="height: 70px">
+						<div class="list-group-item event-item" id="${event.eventId}">
 							<div class="media">
 								<div class="event-icon">
 									<span class="fa fa-university fa-2x"></span>
@@ -107,14 +115,14 @@
 									</p>
 									<div class="event-time text-muted">
 										<i class="fa fa-clock-o fs-11"></i>
-										<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.startTime}"/>
+										<fmt:formatDate type="time" pattern="HH:mm yyyy/MM/dd" value="${event.startTime}"/>
 										<c:if test="${not empty event.endTime}"> - </c:if>
 										<!-- TODO: change, it can be <1  e.g. 18.09 23:00 - 19.09 02:00-->
 										<c:if test="${(event.endTime.time - event.startTime.time) / (1000*60*60*24) < 1 }">
-											<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
+											<fmt:formatDate type="time" pattern="HH:mm" value="${event.endTime}"/>
 										</c:if>
 										<c:if test="${(event.endTime.time - event.startTime.time) / (1000*60*60*24) >= 1 }">
-											<fmt:formatDate type="time" pattern="hh:mm a yyyy/MM/dd" value="${event.endTime}"/>
+											<fmt:formatDate type="time" pattern="HH:mm yyyy/MM/dd" value="${event.endTime}"/>
 										</c:if>
 									</div>
 								</div>
@@ -129,18 +137,24 @@
 		<div class="row">
 			<div class="col-sm-offset-3 col-sm-6 event-container">
 				<div class="row">
-					<div style="height: 200px; width: 100%; padding-bottom: 10px">
+					<div style="height: 200px; width: 100%;">
 						<div id="map-canvas" style="height: 100%; width: 100%"></div>
 					</div>
 				</div>
-				<div>
-					<c:out value="${event.locationAddress}"/>
-					<a href="#" id="open-navigation-link"><i class="fa fa-2x fa-location-arrow pull-right pointer"></i></a>
+				<div class="location">
+					<div class="address">
+						<c:out value="${event.locationAddress}"/>
+					</div>
+					<div class="navigation">
+						<a href="#" id="open-navigation-link">
+							<i class="fa fa-2x fa-location-arrow"></i>
+						</a>
+					</div>
 				</div>
-				<hr/>
 				<c:if test="${not empty event.description}">
-					<p><c:out value="${event.description}"/></p>
-					<hr/>
+					<div class="description">
+						<p><c:out value="${event.description}"/></p>
+					</div>
 				</c:if>
 				<c:if test="${guest.type != 'HOST'}">
 					<div class="attend">
@@ -156,35 +170,8 @@
 					<hr/>
 				</c:if>
 				<div class="share"
-				<c:if test="${guest.status == 'VIEWED' || guest.status == null || event.sharability == 'NOSHARE'}">style="display:none"</c:if>>
-					<label>Click here to share this event:</label>
-					<div class="btn-group btn-group-justified">
-						<div class="btn-group">
-							<button class="btn mob-btn" id="share-link-btn">
-								<span class="fa fa-2x fa-share-alt"></span>
-								<span class="block">Share link</span>
-							</button>
-						</div>
-						<div class="btn-group">
-							<button class="btn mob-btn" id="share-by-email-btn">
-								<span class="fa fa-2x fa-envelope-o"></span>
-								<span class="block">Email</span>
-							</button>
-						</div>
-						<div class="btn-group">
-							<button class="btn mob-btn" id="share-on-facebook-btn">
-								<span class="fa fa-2x fa-facebook"></span>
-								<span class="block">Facebook</span>
-							</button>
-						</div>
-						<div class="btn-group">
-							<button class="btn mob-btn" id="share-on-google-btn">
-								<span class="fa fa-2x fa-google-plus"></span>
-								<span class="block">Google+</span>
-							</button>
-						</div>
-					</div>
-					<hr/>
+					<c:if test="${guest.status == 'VIEWED' || guest.status == null || event.sharability == 'NOSHARE'}">style="display:none"</c:if>>
+					<%@ include file="parts/share-bar.jsp" %>
 				</div>
 				<div class="row guests">
 					<label style="margin-left: 15px">Guests</label> <span class="badge ng-binding" id="guests-counter"><c:out value="${fn:length(guests)}"/></span>
@@ -215,7 +202,6 @@
 						</div>
 					</div>
 				</div>
-				<hr/>
 				<div class="row comments">
 					<label style="margin-left: 15px">Comments</label> <span class="badge ng-binding" id="comments-counter"><c:out value="${fn:length(comments)}"/></span>
 					<div class="panel panel-default">
@@ -224,22 +210,26 @@
 								<div class="list-group-item comment-item" id="${comment.commentId}">
 									<div class="media">
 										<div class="media-body ">
-											<small class="pull-right">
-											<%=DateTimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated())%>
-											</small>
-											<strong><small><c:out value="${comment.guestName}"/></small></strong><br>
-											<small class="text-muted"><c:out value="${comment.comment}"/></small>
+											<strong><small><c:out value="${comment.comment}"/></small></strong>
+											<br>
+											<div class="text-muted">
+												<small>
+													<c:out value="${comment.guestName}"/>
+													<c:if test="${comment.guestId==guest.guestId}">(you)</c:if>
+												</small>
+												<small class="pull-right">
+												<%=DateTimeUtil.prettyFormat(((Comment)(pageContext.findAttribute("comment"))).getCreated())%>
+												</small>
+											</div>
 										</div>
 									</div>
 								</div>
 							</c:forEach>
 						</div>
-						<div class="panel-footer">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Type your message here ..." id="comment-field">
-								<span class="input-group-btn">
-									<button class="btn btn-default" id="add-comment-btn">Add</button>
-								</span>
+						<div class="panel-footer" <c:if test="${guest.status == 'VIEWED' || guest.status == null}">style="display:none"</c:if>>
+							<textarea class="form-control" id="comment-field" style="display:inline-block;" placeholder="Type your message here ..." rows="2"></textarea>
+							<div class="text-right">
+							<button class="btn btn-default" id="add-comment-btn">Send</button>
 							</div>
 						</div>
 					</div>

@@ -2,6 +2,7 @@ package com.itsonin.di;
 
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
+import com.itsonin.api.AdminApi;
 import com.itsonin.api.CommentApi;
 import com.itsonin.api.DeviceApi;
 import com.itsonin.api.EventApi;
@@ -17,6 +18,7 @@ import com.itsonin.resteasy.JacksonContextResolver;
 import com.itsonin.security.AuthAndRouteFilter;
 import com.itsonin.security.AuthContextService;
 import com.itsonin.security.impl.AuthContextServiceImpl;
+import com.itsonin.service.AdminService;
 import com.itsonin.service.CommentService;
 import com.itsonin.service.DeviceService;
 import com.itsonin.service.EventService;
@@ -46,11 +48,13 @@ public class WebModule extends ServletModule {
 		bind(EventDao.class).in(Singleton.class);
 		bind(GuestDao.class).in(Singleton.class);
 
+		bind(AdminService.class).in(Singleton.class);
 		bind(CommentService.class).in(Singleton.class);
 		bind(DeviceService.class).in(Singleton.class);
 		bind(EventService.class).in(Singleton.class);
 		bind(GuestService.class).in(Singleton.class);
 
+		bind(AdminApi.class);
 		bind(CommentApi.class);
 		bind(DeviceApi.class);
 		bind(EventApi.class);

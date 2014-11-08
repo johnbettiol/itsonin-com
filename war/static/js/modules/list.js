@@ -20,11 +20,21 @@ var EventListModule = (function() {
 		init: function() {
 			var self = this;
 
-			$('button').on('click', function() {
-							///alert(/*$("*:focus").attr("id")*/document.activeElement);
-				//document.activeElement = $('body');
-				document.activeElement.blur();
+			$('.mob-btn, .header-actions button, .header-actions a, header-logo a, .event-arrow a, #prev-day-button, #next-day-button').on('touchstart', function(e) {
+				$(this).addClass('hover');
+			}).on('touchmove', function(e) {
+				$(this).removeClass('hover');
+			}).on('mouseenter', function(e) {
+				$(this).addClass('hover');
+			}).on('mouseleave', function(e) {
+				$(this).removeClass('hover');
+			}).on('click', function(e) {
+				$(this).removeClass('hover');
 			});
+
+			/*$('button').on('click', function() {
+				document.activeElement.blur();
+			});*/
 
 			$('#map-btn').on('click', function() {
 				filteredByMapEvents = filteredEvents;
@@ -130,10 +140,10 @@ var EventListModule = (function() {
 				}
 			});
 
-			$('.event-item').on('click', function() {
+			/*$('.event-item').on('click', function() {
 				var eventId = $(this).attr('id');
 				self.highlightMarker(eventId);
-			});
+			});*/
 
 			$('#filter-date').pickadate({
 				onSet: function(context) {
@@ -146,14 +156,14 @@ var EventListModule = (function() {
 			$.views.helpers({
 				formatTime: function (val) {
 					if(val) {
-						return moment(val).format('hh:mm A')
+						return moment(val).format('HH:mm')
 					} else {
 						return '';
 					}
 				},
 				formatDate: function (val) {
 					if(val) {
-						return moment(val).format('MMM D, hh:mm A')
+						return moment(val).format('MMM D, HH:mm')
 					} else {
 						return '';
 					}

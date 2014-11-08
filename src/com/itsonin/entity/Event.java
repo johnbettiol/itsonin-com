@@ -1,8 +1,6 @@
 package com.itsonin.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,12 +38,16 @@ public class Event implements Serializable {
 	private EventVisibility visibility;
 	private EventStatus status;
 	private EventFlexibility flexibility;
-	private String title;
 	private String summary;
+	private String title;
+	private String offer;
 	@Unindex
 	private String description;
+	private String localTitle;
+	private String localOffer;
+	@Unindex
+	private String localDescription;
 	private String notes;
-	private String offer;
 	private Date startTime;
 	private Date endTime;
 	private List<Date> days;
@@ -268,6 +270,30 @@ public class Event implements Serializable {
 
 	public void setDays(List<Date> days) {
 		this.days = days;
+	}
+
+	public String getLocalTitle() {
+		return localTitle;
+	}
+
+	public void setLocalTitle(String localTitle) {
+		this.localTitle = localTitle;
+	}
+
+	public String getLocalOffer() {
+		return localOffer;
+	}
+
+	public void setLocalOffer(String localOffer) {
+		this.localOffer = localOffer;
+	}
+
+	public String getLocalDescription() {
+		return localDescription;
+	}
+
+	public void setLocalDescription(String localDescription) {
+		this.localDescription = localDescription;
 	}
 
 }

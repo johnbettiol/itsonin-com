@@ -1,0 +1,145 @@
+<div class="btn-toolbar" style="float:left">
+	<button class="btn btn-default btn-sm" ng-click="deleteEvents()" ng-disabled="getSelectedEventsCount()==0" disabled="disabled">Delete</button>
+	<button class="btn btn-default btn-sm" ng-click="mergeEvents()" ng-disabled="getSelectedEventsCount()<2" disabled="disabled">Merge</button>
+	<button class="btn btn-default btn-sm" ng-click="showFilters()">Filter</button>
+</div>
+<table class="table table-responsive table-condensed table-striped table-bordered table-hover">
+	<thead>
+		<tr style="font-size: 12px">
+			<th></th>
+			<th><span ng-click="changeSorting('eventId')">ID</span> <i class="{{getSortableClass('eventId')}}"></i></th>
+			<th colspan="3">Dates:<br>
+				<span ng-click="changeSorting('startDate')">Start date</span> <i class="{{getSortableClass('startDate')}}"></i>
+				, 
+				<span ng-click="changeSorting('endDate')">End date</span> <i class="{{getSortableClass('endDate')}}"></i>
+				, Days
+			</th>
+			<th>Settings:<br>
+				<span ng-click="changeSorting('subCategory')">type</span> <i class="{{getSortableClass('subCategory')}}"></i>
+				, 
+				<span ng-click="changeSorting('status')">status</span> <i class="{{getSortableClass('status')}}"></i>
+				, 
+				<span ng-click="changeSorting('visibility')">visibility</span> <i class="{{getSortableClass('visibility')}}"></i>
+			</th>
+			<th>EN texts:<br>
+				<span ng-click="changeSorting('title')">title</span> <i class="{{getSortableClass('title')}}"></i>
+				, 
+				<span ng-click="changeSorting('offer')">offer</span> <i class="{{getSortableClass('offer')}}"></i>
+				, 
+				<span ng-click="changeSorting('description')">description</span> <i class="{{getSortableClass('description')}}"></i>
+			</th>
+			<th>Local texts:<br>
+				<span ng-click="changeSorting('localTitle')">title</span> <i class="{{getSortableClass('localTitle')}}"></i>
+				, 
+				<span ng-click="changeSorting('localOffer')">offer</span> <i class="{{getSortableClass('localOffer')}}"></i>
+				, 
+				<span ng-click="changeSorting('localDescription')">description</span> <i class="{{getSortableClass('localDescription')}}"></i>
+			</th>
+			<th>
+				<span ng-click="changeSorting('hosts')">Hosts</span> <i class="{{getSortableClass('hosts')}}"></i>
+			</th>
+			<th>Guests:<br>
+				<span ng-click="changeSorting('guestsAttending')">Attending</span> <i class="{{getSortableClass('guestsAttending')}}"></i>
+				, 
+				<span ng-click="changeSorting('guestsMaybe')">Maybe</span> <i class="{{getSortableClass('guestsMaybe')}}"></i>
+				, 
+				<span ng-click="changeSorting('guestsTotal')">Total</span> <i class="{{getSortableClass('guestsTotal')}}"></i>
+			</th>
+			<th>Rankings:<br>
+				<span ng-click="changeSorting('rankingHot')">Hot</span> <i class="{{getSortableClass('rankingHot')}}"></i>
+				, 
+				<span ng-click="changeSorting('rankingViews')">Views</span> <i class="{{getSortableClass('rankingViews')}}"></i>
+			</th>
+			<th>Images:<br>Icon, Event</th>
+			<th>Links:<br>Event, Info, Pay</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="event in filteredEvents|orderBy:sort.column:sort.asc">
+			<td>
+				<input type="checkbox" ng-click="toggleCheckBox(event.eventId)">
+			</td>
+			<td>{{event.eventId}}</td>
+			<td>
+				<div>
+					<span ng-hide="event.editing">{{event.startTime | date:'yyyy/MM/dd'}}</span>
+	                <input ng-model="event.startTime" ng-show="event.editing" />
+                </div>
+                <div>
+					<span ng-hide="event.editing">{{event.endTime | date:'yyyy/MM/dd'}}</span>
+	                <input ng-model="event.startTime" ng-show="event.editing" />
+                </div>
+			</td>
+			<td>
+				<div>
+					<span ng-hide="event.editing">{{event.startTime | date:'HH:mm'}}</span>
+                </div>
+                <div>
+					<span ng-hide="event.editing">{{event.endTime | date:'HH:mm'}}</span>
+                </div>
+			</td>
+			<td>0</td>
+			<td>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.subCategory"></span>
+					<select ng-model="event.subCategory" ng-options="subCategory for subCategory in subcategories" ng-show="event.editing"></select>
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.status"></span>
+					<select ng-model="event.status" ng-options="status for status in statuses" ng-show="event.editing"></select>
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.visibility"></span>
+					<select ng-model="event.visibility" ng-options="visibility for visibility in visibilities" ng-show="event.editing"></select>
+				</div>
+			</td>
+			<td>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.title"></span>
+					<input ng-model="event.title" ng-show="event.editing" />
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.offer"></span>
+					<input ng-model="event.offer" ng-show="event.editing" />
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.description"></span>
+					<textarea ng-model="event.description" ng-show="event.editing"></textarea>
+				</div>
+			</td>
+			<td>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.localTitle"></span>
+					<input ng-model="event.localTitle" ng-show="event.editing" />
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.localOffer"></span>
+					<input ng-model="event.localOffer" ng-show="event.editing" />
+				</div>
+				<div>
+					<span ng-hide="event.editing" ng-bind="event.localDescription"></span>
+					<textarea ng-model="event.localDescription" ng-show="event.editing"></textarea>
+				</div>
+			</td>
+			<td>0</td>
+			<td>
+				<div>0</div>
+				<div>0</div>
+				<div>0</div>
+			</td>
+			<td>
+				<div>0</div>
+				<div>0</div>
+			</td>
+			<td></td>
+			<td></td>
+			<td>
+				<a ng-href="" ng-click="saveEvent(event)" ng-show="event.editing" style="color:green"><i class="fa fa-check"></i></a>
+				<a ng-href="" ng-click="cancelEdit(event)" ng-show="event.editing" style="color:red"><i class="fa fa-times"></i></a>
+				<a ng-href="" ng-click="editEvent(event)" ng-hide="event.editing"><i class="fa fa-pencil"></i></a>
+				<a ng-href="/en/{{config.city}}/e/{{event.eventId}}" ng-hide="event.editing"><i class="fa fa-search"></i></a>
+			</td>
+		</tr>
+	</tbody>
+</table>

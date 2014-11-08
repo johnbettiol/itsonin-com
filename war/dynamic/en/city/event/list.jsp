@@ -151,6 +151,7 @@
 					<div class="list-group" id="list-container">
 						<c:forEach var="event" items="${events}" varStatus="status">
 							<div class="list-group-item event-item" id="${event.eventId}">
+							<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}">
 								<div class="media">
 									<div class="event-icon">
 										<span class="fa fa-university fa-2x"></span>
@@ -162,17 +163,18 @@
 										</p>
 										<div class="event-time text-muted">
 											<i class="fa fa-clock-o fs-11"></i>
-											<fmt:formatDate type="time" pattern="hh:mm a" value="${event.startTime}"/>
+											<fmt:formatDate type="time" pattern="HH:mm" value="${event.startTime}"/>
 											<c:if test="${not empty event.endTime}"> - </c:if>
-											<fmt:formatDate type="time" pattern="hh:mm a" value="${event.endTime}"/>
+											<fmt:formatDate type="time" pattern="HH:mm" value="${event.endTime}"/>
 										</div>
-									</div>
+									</div><!-- 
 									<div class="event-arrow">
 										<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}" class="arrow-link">
 											<i class="fa fa-2x fa-angle-right"></i>
 										</a>
-									</div>
+									</div> -->
 								</div>
+								</a>
 							</div>
 						</c:forEach>
 					</div>

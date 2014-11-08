@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Filter</h4>
+</div>
+<div class="modal-body">
+	<div ng-repeat="filter in filters">
+		<b>{{filter.field}}</b> {{filter.condition}} <b>{{filter.value}}</b>
+		<a href="" ng-click="removeFilter($index)"><i class="fa fa-times"></i></a>
+	</div>
+	<select ng-model="filter.field" class="input-sm"
+		ng-options="field for field in fields">
+	</select>
+	<select ng-model="filter.condition" class="input-sm"
+		ng-options="condition for condition in conditions">
+	</select>
+	<input type="text" class="input-sm" ng-model="filter.value"/>
+	<a href="" ng-click="addFilter()"><i class="fa fa-plus"></i></a>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" ng-click="close()">Close</button>
+    <button type="button" class="btn btn-primary" ng-click="apply()">Apply</button>
+</div>

@@ -1,0 +1,33 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+			<form class="form-inline" role="form">
+				<div class="form-group">
+					<div class="col-md-3">
+						<p class="input-group">
+							<input type="text" class="form-control input-sm" datepicker-popup="MM/dd/yyyy" ng-model="from" is-open="openedFrom" 
+							datepicker-options="dateOptions" show-weeks="false" show-button-bar="false" close-text="Close" />
+							<span class="input-group-btn">
+							<button type="button" class="btn btn-default btn-sm" ng-click="openFromPicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+							</span>
+						</p>
+					</div>
+					<div class="col-md-3">
+						<p class="input-group">
+							<input type="text" class="form-control input-sm" datepicker-popup="MM/dd/yyyy" ng-model="to" is-open="openedTo" 
+							datepicker-options="dateOptions" show-weeks="false" show-button-bar="false" close-text="Close" />
+							<span class="input-group-btn">
+							<button type="button" class="btn btn-default btn-sm" ng-click="openToPicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+							</span>
+						</p>
+					</div>
+					<label>Seeding engine </label> 
+					<select ng-model="seedingEngine" class="input-sm form-control"
+						ng-options="engine for engine in seedingEngines">
+					</select>
+					<button type="submit" class="btn btn-default btn-sm" ng-click="startSeeding()" ng-disabled="!seedingEngine">Start</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -12,6 +12,18 @@ var EventNewModule = (function() {
 	return {
 		init: function() {
 			var self = this;
+			
+			$('.mob-btn, header-logo a, .header-title a').on('touchstart', function(e) {
+				$(this).addClass('hover');
+			}).on('touchmove', function(e) {
+				$(this).removeClass('hover');
+			}).mouseenter( function(e) {
+				$(this).addClass('hover');
+			}).mouseleave( function(e) {
+				$(this).removeClass('hover');
+			}).click( function(e) {
+				$(this).removeClass('hover');
+			});
 
 			$('#upload-photos-btn').on('click', function() {
 				alert('upload photos...');

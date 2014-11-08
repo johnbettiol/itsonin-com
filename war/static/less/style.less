@@ -12,9 +12,59 @@
 
 #info {
 
+	.location, .description, .guests, .comments {
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid #eee;
+		p {
+			margin: 0px;
+		}
+	}
+
+	.location {
+		position: relative;
+
+		.address {
+			margin-right: 50px;
+		}
+
+		.navigation {
+			position: absolute;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			width: 40px;
+			text-align: center;
+			
+			a {
+				color: #99a6ad;
+				display: table;
+				height: 100%;
+				width: 100%;
+				vertical-align: middle;
+				text-decoration: none;
+				outline-style:none;
+				box-shadow:none;
+				border-color:transparent;
+				
+				i {
+					display: table-cell;
+					vertical-align: middle;
+				}
+				
+				&.hover {
+					background-color: #009ab5;
+					color: white !important;
+					outline: 0;
+					-webkit-box-shadow: none;
+	    			box-shadow: none;
+				}
+			}
+		}
+	}
+
 	.event-container {
 		background-color: @default-bgcolor;
-		margin-top: 120px;
 	}
 
 	.comments {
@@ -29,10 +79,6 @@
 }
 
 #info-header {
-	.main-info {
-		min-height: 100px;
-	}
-
 	#scrollto-guests-btn, #scrollto-comments-btn {
 		width: 50px;
 	}
@@ -94,21 +140,16 @@
 			-webkit-transition: background-color 0.4s ease-out;
 			transition: background-color 0.4s ease-out;
 			-webkit-tap-highlight-color: transparent;
-			
-			&:hover {
-				background-color: #009ab5;
-				color: white !important;
-			}
+			outline-style:none;
+			box-shadow:none;
+			border-color:transparent;
 		
-			&:focus {
+			&.hover {
 				background-color: #009ab5;
+				color: white;
 				outline: 0;
-			}
-		
-			&:active {
-				background-color: #009ab5;
-				color: #141719;
-				outline: 0;
+				-webkit-box-shadow: none;
+			    box-shadow: none;
 			}
 		}
 	}
@@ -168,13 +209,17 @@
 		font-size: 15px;
 	}
 
+	a {
+		text-decoration: none;
+		color: #999;
+	}
 	.event-arrow {
 		position: absolute;
 		right: 0;
 		top: 0;
 		bottom: 0;
 		width: 40px;
-		text-align: right;
+		text-align: center;
 
 		a {
 			color: #99a6ad;
@@ -183,27 +228,21 @@
 			width: 100%;
 			vertical-align: middle;
 			text-decoration: none;
+			outline-style:none;
+			box-shadow:none;
+			border-color:transparent;
 			
 			i {
 				display: table-cell;
 				vertical-align: middle;
-				padding-right: 4px;
-			}
-			
-			&:hover {
-				background-color: #009ab5;
-				color: white !important;
 			}
 		
-			&:focus {
-				background-color: #009ab5;
-				outline: 0;
-			}
-		
-			&:active {
+			&.hover {
 				background-color: #009ab5;
 				color: #141719;
 				outline: 0;
+				-webkit-box-shadow: none;
+			    box-shadow: none;
 			}
 		}
 	}
