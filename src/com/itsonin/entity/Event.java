@@ -41,6 +41,8 @@ public class Event implements Serializable {
 	private String summary;
 	private String title;
 	private String offer;
+	private String offerEmail;
+	private String offerRef;
 	@Unindex
 	private String description;
 	private String localTitle;
@@ -57,6 +59,7 @@ public class Event implements Serializable {
 	private String locationTitle;
 	private String locationAddress;
 	private String source;
+	private Integer hotScore;
 	private Date created;
 	
 	@SuppressWarnings("unused")
@@ -294,6 +297,34 @@ public class Event implements Serializable {
 
 	public void setLocalDescription(String localDescription) {
 		this.localDescription = localDescription;
+	}
+
+	public String getOfferEmail() {
+		return offerEmail;
+	}
+
+	public void setOfferEmail(String offerEmail) {
+		this.offerEmail = offerEmail;
+	}
+
+	public String getOfferRef() {
+		return offerRef;
+	}
+
+	public void setOfferRef(String offerRef) {
+		this.offerRef = offerRef;
+	}
+
+	public void setCategory(EventCategory category) {
+		this.category = category;
+	}
+
+	public Integer getHotScore() {
+		return hotScore;
+	}
+
+	public void setHotScore(Integer hotScore) {
+		this.hotScore = hotScore;
 	}
 
 }

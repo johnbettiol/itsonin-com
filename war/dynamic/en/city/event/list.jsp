@@ -21,27 +21,26 @@
 	</script>
 	<script id="eventTemplate" type="text/x-jsrender">
 	<div class="list-group-item event-item" id="{{:eventId}}">
+		<a href="/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}">
 		<div class="media">
 			<div class="event-icon">
 				<span class="fa fa-university fa-2x"></span>
 			</div>
 			<div class="media-body clearfix event-body">
 				<div class="media-heading event-title">{{:title}}</div>
-				<p class="event-offer">
-					{{:offer}}
-				</p>
+				{{if offerRef}}
+					<p class="event-offer">
+						{{:offer}}
+					</p>
+				{{/if}}
 				<div class="event-time text-muted">
 					<i class="fa fa-clock-o"></i>
-					{{if !favourite}}{{:~formatTime(startTime)}}{{if endTime}} - {{/if}}{{:~formatTime(endTime)}}{{/if}}
-					{{if favourite}}{{:~formatDate(startTime)}}{{if endTime}} - {{/if}}{{:~formatDate(endTime)}}{{/if}}
+					{{if ~showDate()==false}}{{:~formatTime(startTime)}}{{if endTime}} - {{/if}}{{:~formatTime(endTime)}}{{/if}}
+					{{if ~showDate()==true}}{{:~formatDate(startTime)}}{{if endTime}} - {{/if}}{{:~formatDate(endTime)}}{{/if}}
 				</div>
 			</div>
-			<div class="event-arrow">
-				<a href="/${ioiContext.locale}/${ioiContext.city}/e/{{:eventId}}">
-					<i class="fa fa-2x fa-angle-right"></i>
-				</a>
-			</div>
 		</div>
+		</a>
 	</div>
 	</script>
 </head>
@@ -122,7 +121,7 @@
 								</button>
 							</div>
 							<div class="btn-group">
-								<button class="btn mob-btn" id="calendar-button">
+								<button class="btn mob-btn" id="hot-button">
 									<span class="fa fa-fire"></span>
 									<span class="block">HOT!</span>
 								</button>
@@ -151,29 +150,26 @@
 					<div class="list-group" id="list-container">
 						<c:forEach var="event" items="${events}" varStatus="status">
 							<div class="list-group-item event-item" id="${event.eventId}">
-							<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}">
-								<div class="media">
-									<div class="event-icon">
-										<span class="fa fa-university fa-2x"></span>
-									</div>
-									<div class="media-body clearfix event-body">
-										<div class="media-heading event-title"><c:out value="${event.title}"/></div>
-										<p class="event-offer">
-											<c:out value="${event.offer}"/>
-										</p>
-										<div class="event-time text-muted">
-											<i class="fa fa-clock-o fs-11"></i>
-											<fmt:formatDate type="time" pattern="HH:mm" value="${event.startTime}"/>
-											<c:if test="${not empty event.endTime}"> - </c:if>
-											<fmt:formatDate type="time" pattern="HH:mm" value="${event.endTime}"/>
+								<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}">
+									<div class="media">
+										<div class="event-icon">
+											<span class="fa fa-university fa-2x"></span>
 										</div>
-									</div><!-- 
-									<div class="event-arrow">
-										<a href="/${ioiContext.locale}/${ioiContext.city}/e/${event.eventId}" class="arrow-link">
-											<i class="fa fa-2x fa-angle-right"></i>
-										</a>
-									</div> -->
-								</div>
+										<div class="media-body clearfix event-body">
+											<div class="media-heading event-title"><c:out value="${event.title}"/></div>
+											<c:if test="${not empty event.offerRef}">
+												<p class="event-offer">
+													<c:out value="${event.offer}"/>
+												</p>
+											</c:if>
+											<div class="event-time text-muted">
+												<i class="fa fa-clock-o fs-11"></i>
+												<fmt:formatDate type="time" pattern="HH:mm" value="${event.startTime}"/>
+												<c:if test="${not empty event.endTime}"> - </c:if>
+												<fmt:formatDate type="time" pattern="HH:mm" value="${event.endTime}"/>
+											</div>
+										</div>
+									</div>
 								</a>
 							</div>
 						</c:forEach>

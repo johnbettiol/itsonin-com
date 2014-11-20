@@ -81,4 +81,8 @@ public class GuestDao extends ObjectifyGenericDao<Guest> {
 		return q.list();
 	}
 
+	public List<Guest> listByEvent(Long eventId) {
+		Query<Guest> q = ofy().load().type(clazz).filter("eventId", eventId);
+		return q.list();
+	}
 }

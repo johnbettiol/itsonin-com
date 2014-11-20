@@ -41,4 +41,15 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 
 		return q.list();
 	}
+
+	public List<Event> listFutureEvents() {
+	    Calendar from = Calendar.getInstance();
+	    from.setTime(new Date());
+	    from.set(Calendar.HOUR_OF_DAY, 0);
+	    from.set(Calendar.MINUTE, 0);
+	    from.set(Calendar.SECOND, 0);
+	    from.set(Calendar.MILLISECOND, 0);
+		Query<Event> q = ofy().load().type(clazz).filter("days >=", from.getTime());
+		return q.list();
+	}
 }

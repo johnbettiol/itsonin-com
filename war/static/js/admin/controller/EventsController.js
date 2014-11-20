@@ -175,12 +175,12 @@ angular.module('itsonin').controller('EventsController', ['$scope', 'eventServic
 						}
 						break;
 					  case 'is empty':
-						if(event[filter.field] == '') {
+						if(!event[filter.field] || event[filter.field] == '') {
 							match = true;
 						}
 						break;
 					  case 'is not empty':
-						if(event[filter.field] != '') {
+						if(event[filter.field] && event[filter.field] != '') {
 							match = true;
 						}
 						break;

@@ -40,7 +40,7 @@ public class EventListServlet extends DefaultServlet {
 		 */
 		
 		Date clearDate = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
-		List<Event> events = eventService.list(null, null, null,
+		List<Event> events = eventService.list(false, false, false, null, null,
 				clearDate, null, null, null, null);
 
 		req.setAttribute("events", events);

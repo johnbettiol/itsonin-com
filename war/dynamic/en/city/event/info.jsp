@@ -94,9 +94,6 @@
 							</c:if>
 						</div>
 						<div class="header-actions pull-right">
-							<button id="scrollto-guests-btn">
-								<i class="fa fa-2x fa-users"></i>
-							</button>
 							<button id="scrollto-comments-btn">
 								<i class="fa fa-2x fa-comment-o"></i>
 							</button>
@@ -106,12 +103,26 @@
 						<div class="list-group-item event-item" id="${event.eventId}">
 							<div class="media">
 								<div class="event-icon">
+									<c:if test="${isInvitation == true}">
+										<a href="/${ioiContext.locale}/${ioiContext.city}/Events" id="back-link">
+											<i class="fa fa-angle-left" style="font-size:24px"></i>
+										</a>
+									</c:if>
+									<c:if test="${isInvitation == false}">
+										<a href="javascript:history.back()" id="back-link">
+											<i class="fa fa-angle-left" style="font-size:24px"></i>
+										</a>
+									</c:if>&nbsp;
+								</div>
+								<div class="event-icon">
 									<span class="fa fa-university fa-2x"></span>
 								</div>
-								<div class="media-body clearfix event-body">
+								<div class="media-body clearfix event-body" style="margin-left: 70px">
 									<div class="media-heading event-title"><c:out value="${event.title}"/></div>
 									<p class="event-offer">
-										<c:out value="${event.offer}"/>
+										<c:if test="${not empty event.offerRef}">
+											<c:out value="${event.offer}"/>
+										</c:if>
 									</p>
 									<div class="event-time text-muted">
 										<i class="fa fa-clock-o fs-11"></i>

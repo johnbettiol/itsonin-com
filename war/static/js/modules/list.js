@@ -5,7 +5,7 @@ var EventListModule = (function() {
 	var filteredEvents = events;
 	var filteredByMapEvents = [];
 	var filter = {
-		favorites: false,
+		favourites: false,
 		promo: false,
 		hot: false,
 		category: undefined,
@@ -31,7 +31,7 @@ var EventListModule = (function() {
 			}).on('click', function(e) {
 				$(this).removeClass('hover');
 			});
-
+//TODO: mouseup mousedown focus blur
 			/*$('button').on('click', function() {
 				document.activeElement.blur();
 			});*/
@@ -83,8 +83,12 @@ var EventListModule = (function() {
 
 			$('#favourites-button').on('click', function() {
 				filter.favourites = !filter.favourites;
+				filter.promo = false;
+				filter.hot = false;
+				self.resetCategories();
+
 				if(filter.favourites == true) {
-					$('#filter-date').text('favourites');
+					$('#filter-date').text('Favourites');
 					$('#prev-day-button').hide();
 					$('#next-day-button').hide();
 					self.loadEvents({favourites: true});
@@ -97,7 +101,41 @@ var EventListModule = (function() {
 			});
 
 			$('#promo-button').on('click', function() {
+				filter.promo = !filter.promo;
+				filter.favourites = false;
+				filter.hot = false;
+				self.resetCategories();
 
+				if(filter.promo == true) {
+					$('#filter-date').text('Promotions');
+					$('#prev-day-button').hide();
+					$('#next-day-button').hide();
+					self.loadEvents({promo: true});
+				} else {
+					$('#filter-date').text(filter.date.calendar());
+					$('#prev-day-button').show();
+					$('#next-day-button').show();
+					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
+				}
+			});
+
+			$('#hot-button').on('click', function() {
+				filter.hot = !filter.hot;
+				filter.favourites = false;
+				filter.promo = false;
+				self.resetCategories();
+
+				if(filter.hot == true) {
+					$('#filter-date').text('Hot Events');
+					$('#prev-day-button').hide();
+					$('#next-day-button').hide();
+					self.loadEvents({hot: true});
+				} else {
+					$('#filter-date').text(filter.date.calendar());
+					$('#prev-day-button').show();
+					$('#next-day-button').show();
+					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
+				}
 			});
 
 			$('#prev-day-button').on('click', function() {
@@ -167,6 +205,9 @@ var EventListModule = (function() {
 					} else {
 						return '';
 					}
+				},
+				showDate: function() {
+					return filter.favourites | filter.promo;
 				}
 			});
 
@@ -186,7 +227,11 @@ var EventListModule = (function() {
 			$(window).on('resize', function(){
 				var $lastEvent = $('#list-container').children().last();
 				if($lastEvent) {
-					$('#free-space').height($(this).height() - ($lastEvent.height() + 215));
+					var size = 206;
+					if($('.map').css('visibility') == 'hidden' && $('.filters').css('display') == 'none') {
+						size -= 120;
+					}
+					$('#free-space').height($(this).height() - ($lastEvent.height() + size));
 				}
 				$('#map-canvas').width($('#list-container').width());
 			}).trigger('resize');
@@ -402,6 +447,13 @@ var EventListModule = (function() {
 
 		hideSpinner: function() {
 			$('.overlay').remove();
+		},
+
+		resetCategories: function() {
+			filter.category = undefined;
+			$('#filter-categories button').each(function (i) {
+				$(this).removeClass('selected');
+			});
 		}
 	}
 }());

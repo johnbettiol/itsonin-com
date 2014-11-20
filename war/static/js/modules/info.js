@@ -1,10 +1,11 @@
 var EventInfoModule = (function() {
+	var scrolledToComments = false;
 
 	return {
 		init: function() {
 			var self = this;
 
-			$('.location a, header-logo a, .header-title a').on('touchstart', function(e) {
+			$('.location a, header-logo a, .header-title a, #back-link').on('touchstart', function(e) {
 				$(this).addClass('hover');
 			}).on('touchmove', function(e) {
 				$(this).removeClass('hover');
@@ -55,15 +56,11 @@ var EventInfoModule = (function() {
 			});
 
 			$('#scrollto-comments-btn').on('click', function() {
+				var position = (scrolledToComments == false) ? $('.comments').position().top : 0;
 				$('body,html').stop().animate({
-					scrollTop: $('.comments').position().top
+					scrollTop: position
 				});
-			});
-
-			$('#scrollto-guests-btn').on('click', function() {
-				$('body,html').stop().animate({
-					scrollTop: $('.guests').position().top
-				});
+				scrolledToComments = !scrolledToComments;
 			});
 
 			$.views.helpers({

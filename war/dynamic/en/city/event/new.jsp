@@ -54,8 +54,13 @@
 						<input type="text" class="form-control" id="title-field" name="title-field">
 						<label>Event description</label>
 						<textarea class="form-control" id="description-field" name="description-field"></textarea>
-						<label>Offer</label>
-						<input type="text" class="form-control" id="offer-field" name="offer-field">
+						<label id="promote-event-btn" class="pointer">Promote Event (+)</label>
+						<div id="promote-fields" style="display:none">
+							<label>Offer</label>
+							<input type="text" class="form-control" id="offer-field" name="offer-field">
+							<label>Offer email</label>
+							<input type="text" class="form-control" id="offer-email-field" name="offer-email-field">
+						</div>
 					</div>
 				</div>
 				<hr>

@@ -119,7 +119,11 @@ public class GuestService {
 	public List<Guest> listByEvent(Long eventId, GuestStatus status) {
 		return guestDao.listByEvent(eventId, status);
 	}
-	
+
+	public List<Guest> listByEvent(Long eventId) {
+		return guestDao.listByEvent(eventId);
+	}
+
 	public Guest getHostGuestForEvent(Long eventId) {
 		return guestDao.getHostGuestForEvent(eventId);
 	}

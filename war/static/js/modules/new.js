@@ -35,6 +35,8 @@ var EventNewModule = (function() {
 				event['title'] = $('#title-field').val();
 				event['description'] = $('#description-field').val();
 				event['offer'] = $('#offer-field').val();
+				event['offerEmail'] = $('#offer-email-field').val();
+				event['offerRef'] = $('#offer-ref-field').val();
 
 				//"yyyy-MM-dd'T'HH:mm:ss"
 				if($('#date-from-field').val().length != 0) {
@@ -157,6 +159,10 @@ var EventNewModule = (function() {
 
 			$('#share-on-google-btn').on('click', function() {
 				self.shareOnGoogle();
+			});
+
+			$('#promote-event-btn').on('click', function() {
+				$('#promote-fields').show();
 			});
 
 			self.loadScript();

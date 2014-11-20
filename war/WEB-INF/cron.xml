@@ -6,5 +6,10 @@
 		<description>delete completed events</description>
 		<schedule>every day 00:00</schedule>
 	</cron>
+	<cron>
+		<url>/tasks/computeHotScore</url>
+		<description>compute hot score for events</description>
+		<schedule>every 1 hours</schedule>
+	</cron>
  -->
 </cronentries>

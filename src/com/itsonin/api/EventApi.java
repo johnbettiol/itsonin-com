@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -90,7 +91,9 @@ public class EventApi {
 	@Path("/event/list")
 	@Produces("application/json")
 	public List<Event> list(
-			@QueryParam("favourites") Boolean favourites,
+			@QueryParam("hot") @DefaultValue("false") boolean hot,
+			@QueryParam("promo") @DefaultValue("false") boolean promo,
+			@QueryParam("favourites") @DefaultValue("false") boolean favourites,
 			@QueryParam("types") List<EventCategory> types,
 			@QueryParam("name") String name,
 			@QueryParam("date") @CustomDateFormat("yyyy-MM-dd") Date date,
@@ -99,7 +102,7 @@ public class EventApi {
 			@QueryParam("numberOfLevels") Integer numberOfLevels,
 			@QueryParam("offset") Integer offset,
 			@QueryParam("limit") Integer limit) {
-		return eventService.list(favourites, types, name, date,
+		return eventService.list(hot, promo, favourites, types, name, date,
 				sortField, sortOrder, offset, limit);
 	}
 

@@ -2,6 +2,7 @@ package com.itsonin.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,10 +59,7 @@ public class EventService {
 	}
 
 	public Map<String, Object> create(Event event, Guest guest) {
-		String error = validate(event, guest);
-		if(error != null){
-			throw new BadRequestException(String.format("Error saving event: %s", error));
-		}
+		validate(event, guest);
 
 		Device device = authContextService.getDevice();
 
@@ -221,21 +219,32 @@ public class EventService {
 		return guest;
 	}
 
-	public List<Event> list(Boolean favourites, List<EventCategory> categories,
+	public List<Event> list(boolean hot, boolean promo, boolean favourites, List<EventCategory> categories,
 			String name, Date date, String sortField,
-			SortOrder sortOrder, Integer offset,
-			Integer limit) {
+			SortOrder sortOrder, Integer offset, Integer limit) {
 		Device device = authContextService.getDevice();
-		List<Event> eventList = eventDao.list(date);
+		List<Event> eventList = (promo == true || favourites == true || hot == true) 
+				? eventDao.listFutureEvents() : eventDao.list(date);
+		if(hot == true) {
+			Collections.sort(eventList, EVENT_BY_SCORE_COMPARATOR);
+		} else {
+			Collections.sort(eventList, EVENT_BY_START_DATE_COMPARATOR);
+		}
 		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
 		List<Event> filteredList = new ArrayList<Event>();
 
 		if (DeviceLevel.NORMAL.equals(device.getLevel())) {
 			for (Event event : eventList) {
 				if (event.getVisibility() == EventVisibility.PUBLIC) {
-					if (favourites == null || favourites == false) {
-						filteredList.add(event);
-					} else {
+					if(hot == true) {
+						if(event.getHotScore() != null && event.getHotScore() > 0) {
+							filteredList.add(event);
+						}
+					} else if (promo == true) {
+						if(StringUtils.isNotBlank(event.getOfferRef())) {
+							filteredList.add(event);
+						}
+					} else if (favourites == true) {
 						int guestCounter = -1;
 						for (int grIndex = 0; grIndex < guestList.size(); grIndex++) {
 							Guest guestRecord = guestList.get(grIndex);
@@ -248,6 +257,8 @@ public class EventService {
 						if (guestCounter > 0) {
 							guestList.remove(guestCounter);
 						}
+					} else {
+						filteredList.add(event);
 					}
 				} else if (event.getVisibility() == EventVisibility.PRIVATE
 						&& guestList.size() > 0) {
@@ -271,6 +282,14 @@ public class EventService {
 
 	}
 
+	public void saveAll(List<Event> events) {
+		eventDao.saveAll(events);
+	}
+
+	public List<Event> listFutureEvents() {
+		return eventDao.listFutureEvents();
+	}
+
 	public void cancel(Long eventId, Long guestId) {
 		Event event = eventDao.get(eventId);
 		event.setStatus(EventStatus.CANCELLED);
@@ -289,21 +308,23 @@ public class EventService {
 		return false;
 	}
 	
-	public String validate(Event event, Guest guest) {
+	public void validate(Event event, Guest guest) {
 		List<String> errors = new ArrayList<String>();
 		if(event.getTitle() == null || StringUtils.isBlank(event.getTitle())){
 			errors.add("Event name is required");
 		}
-		if(guest.getName() == null || StringUtils.isBlank(guest.getName())){
+		if((StringUtils.isNotBlank(event.getOffer()) && StringUtils.isBlank(event.getOfferEmail())) ||
+				(StringUtils.isBlank(event.getOffer()) && StringUtils.isNotBlank(event.getOfferEmail()))) {
+			errors.add("Offer and offer email are required");
+		}
+		if(StringUtils.isBlank(guest.getName())){
 			errors.add("Host name is required");
 		}
 		if(event.getSubCategory() == null){
 			errors.add("Event subcategory is required");
 		}
-		if (!errors.isEmpty()) {
-			return StringUtils.join(errors, ", ");
-		}else{
-			return null;
+		if(!errors.isEmpty()){
+			throw new BadRequestException(String.format("Error saving event: %s", StringUtils.join(errors, ", ")));
 		}
 	}
 	
@@ -333,4 +354,24 @@ public class EventService {
 		}
 	}
 
+	public static final Comparator<Event> EVENT_BY_START_DATE_COMPARATOR = new Comparator<Event>() {
+		@Override
+		public int compare(Event event1, Event event2) {
+			return event1.getStartTime().compareTo(event2.getStartTime());
+		}
+	};
+
+	public static final Comparator<Event> EVENT_BY_SCORE_COMPARATOR = new Comparator<Event>() {
+		@Override
+		public int compare(Event e1, Event e2) {
+			if(e1.getHotScore() == null && e2.getHotScore() == null) {
+				return 0;
+			} else if((e1.getHotScore() == null && e2.getHotScore() != null)) {
+				return 1;
+			} else if((e1.getHotScore() != null && e2.getHotScore() == null)) {
+				return -1;
+			}
+			return (e1.getHotScore()>e2.getHotScore() ? -1 : (e1.getHotScore()==e2.getHotScore() ? 0 : 1));
+		}
+	};
 }

@@ -5,7 +5,7 @@ angular.module('itsonin').controller('FilterModalController', ['$scope', '$modal
 
 	$scope.filters = filters;
 	$scope.filter = {};
-	$scope.fields = ['title', 'offer', 'description', 'subCategory', 'status', 'visibility', 'startTime', 'endTime'];
+	$scope.fields = ['title', 'offer', 'offerEmail', 'offerRef','description', 'subCategory', 'status', 'visibility', 'startTime', 'endTime'];
 	$scope.conditions = ['contains', 'does not contain', 'is equal to', 'is not equal to', 'is less than',
 	                     'is greater than', 'begin with', 'end with', 'is empty', 'is not empty'];
 

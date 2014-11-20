@@ -85,7 +85,7 @@ public class AuthAndRouteFilter implements Filter {
 		authContextService.set(new AuthContext(device));
 		
 		if (req.getRequestURI() != null
-				&& req.getRequestURI().startsWith("/api/"))
+				&& (req.getRequestURI().startsWith("/api/") || req.getRequestURI().startsWith("/tasks/")))
 		{
 			// Here is where you do the redirect!
 			filterChain.doFilter(req, res);
