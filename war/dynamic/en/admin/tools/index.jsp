@@ -52,6 +52,10 @@
 				<td>Prinz Seed</td>
 				<td><a href="PrinzSeed">Do it</a></td>
 			</tr>
+			<tr>
+				<td>Dus Seed</td>
+				<td><a href="DusSeed">Do it</a></td>
+			</tr>
 		</tbody>
 	</table>
 	<table>

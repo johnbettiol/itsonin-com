@@ -25,7 +25,7 @@ abstract class EventSeederBase implements EventSeeder {
 		GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
 		if(geocoderResponse.getStatus() == GeocoderStatus.OK){
 			List<GeocoderResult> results = geocoderResponse.getResults();
-	
+			
 			if(results.size() > 0) {
 				GeocoderGeometry geometry = results.get(0).getGeometry();
 				newEvent.setGpsLat(geometry.getLocation().getLat().doubleValue());

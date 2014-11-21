@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.itsonin.crawl.EventimSeeder;
-import com.itsonin.crawl.PrinzDeSeeder;
-import com.itsonin.entity.Comment;
+import com.itsonin.crawl.DusEventimSeeder;
+import com.itsonin.crawl.DusPrinzDeSeeder;
+import com.itsonin.crawl.DusTourismoSeeder;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
@@ -55,7 +55,7 @@ public class AdminToolsServlet extends DefaultServlet {
 		if (irc.getCommand() == null) {
 			return;
 		}
-		Guest guest = new Guest("Joey McCloud");
+		Guest guest = new Guest("Public Event");
 		switch (irc.getCommand()) {
 		case "UpdateAccount":
 			irc.getDevice().setLevel(DeviceLevel.valueOf(req.getParameter("level")));
@@ -78,26 +78,25 @@ public class AdminToolsServlet extends DefaultServlet {
 			break;
 		case "EventimSeed":
 			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsListE = new EventimSeeder().getNewEvents();
+			ArrayList<Event> eventsListE = new DusEventimSeeder().getNewEvents();
 			for (Event event : eventsListE) {
 				Map<String, Object> created = eventService.create(event, guest);
-				Long eventId = ((Event)created.get("event")).getEventId();
-				Long guestId = ((Guest)created.get("guest")).getGuestId();
-				commentService.create(new Comment(eventId, guestId, null, "Question"));
-				commentService.create(new Comment(eventId, guestId, null, "Answer"));
 			}
 			break;
 		case "PrinzSeed":
 			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsListP = new PrinzDeSeeder().getNewEvents();
+			ArrayList<Event> eventsListP = new DusPrinzDeSeeder().getNewEvents();
 			for (Event event : eventsListP) {
 				Map<String, Object> created = eventService.create(event, guest);
-				Long eventId = ((Event)created.get("event")).getEventId();
-				Long guestId = ((Guest)created.get("guest")).getGuestId();
-				commentService.create(new Comment(eventId, guestId, null, "Question"));
-				commentService.create(new Comment(eventId, guestId, null, "Answer"));
 			}
-			break;
+			break;		
+		case "DusSeed":
+				guest.setStatus(GuestStatus.YES);
+				ArrayList<Event> eventsListD = new DusTourismoSeeder().getNewEvents();
+				for (Event event : eventsListD) {
+					Map<String, Object> created = eventService.create(event, guest);
+				}
+				break;
 		case "ImportData":
 			if (req.getParameter("type") == null) {
 				req.setAttribute("message","No upload type specified!");	

@@ -6,6 +6,6 @@ import com.itsonin.entity.Event;
 
 interface EventSeeder {
 	
-	public  ArrayList<Event> getNewEvents();
+	public  ArrayList<Event> getNewEvents() throws SeederParserException;
 	
 }
