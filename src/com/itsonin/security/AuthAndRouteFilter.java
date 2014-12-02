@@ -2,6 +2,7 @@ package com.itsonin.security;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -52,13 +53,29 @@ public class AuthAndRouteFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) servletRequest;
 		HttpServletResponse res = (HttpServletResponse) servletResponse;
-
+		
 		if (req.getRequestURI() != null
 				&& (req.getRequestURI().startsWith("/static/") || 
 						req.getRequestURI().startsWith("/_ah/"))) {
 			filterChain.doFilter(req, res);
 			return;
 		}
+		
+		// This is the google fix for escaped fragment(s) // we only use the route
+		if (req.getMethod().equalsIgnoreCase("GET") && req.getParameter("_escaped_fragment_") != null
+				&& !"".equals(req.getParameter("_escaped_fragment_").trim())) {
+			String destination = req.getParameter("_escaped_fragment_").trim();
+			StringBuilder destinationEncoded = new StringBuilder();
+			for (String chunk : destination.split("/")) {
+				if (!"".equals(chunk)) {
+					destinationEncoded.append("/");
+				}
+				destinationEncoded.append(URLEncoder.encode(chunk, "UTF-8"));
+			}
+			res.sendRedirect(destinationEncoded.toString());
+			return;
+		}
+		
 		Device device = null;
 		String token = CookieUtils.getCookieValue(COOKIE_TOKEN, req);
 
