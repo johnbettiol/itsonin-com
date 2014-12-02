@@ -86,6 +86,11 @@ public class IoiRouterContext {
 	private List<EventCategory> categoryFilters;
 	private boolean citySupported, doRedirect;
 	private Device device;
+	private String getRoute;
+
+	public String getGetRoute() {
+		return getRoute;
+	}
 
 	public IoiRouterContext(HttpServletRequest req) {
 		this(req, null);
@@ -136,6 +141,13 @@ public class IoiRouterContext {
 		if (requestChunks.length == 2) {
 			return;
 		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 3; i < requestChunks.length; i++) {
+			sb.append('/');
+			sb.append(requestChunks[i]);
+		}
+		this.getRoute = sb.toString();
 
 		// OLD URL STRUCTURE
 		// / en / Düsseldorf / Events / Bilk / 514 / Meet / Cultural,Conventions
