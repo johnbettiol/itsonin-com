@@ -3,6 +3,8 @@ package com.itsonin.web;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,16 +38,12 @@ public class IoiRouterContext {
 		return dateFilter;
 	}
 
-	public EventCategory getCategoryFilter() {
-		return categoryFilter;
+	public List<EventCategory> getCategoryFilter() {
+		return categoryFilters;
 	}
 
 	public boolean isCitySupported() {
 		return citySupported;
-	}
-
-	public boolean isMyEvents() {
-		return myEvents;
 	}
 
 	public Device getDevice() {
@@ -59,7 +57,6 @@ public class IoiRouterContext {
 	private static final String REQ_HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
 	private static final String URI_ALIASES_EVENTS = ",Events";
-	private static final String URI_ALIASES_MYEVENTS = ",MyEvents";
 	private static final String URI_PART_ADMIN = "Admin";
 	private static final String URI_PART_TOOLS = "Tools";
 	private static final String URI_PART_WELCOME = "Welcome";
@@ -85,10 +82,9 @@ public class IoiRouterContext {
 
 	private IoiActionType actionType;
 	private String destination, locale, city, eventId, inviterId,
-			locationFilter, dateFilter,
-			command;
-	private EventCategory categoryFilter;
-	private boolean citySupported, myEvents, doRedirect;
+			locationFilter, dateFilter, command;
+	private List<EventCategory> categoryFilters;
+	private boolean citySupported, doRedirect;
 	private Device device;
 
 	public IoiRouterContext(HttpServletRequest req) {
@@ -101,19 +97,18 @@ public class IoiRouterContext {
 	}
 
 	private void parseActionData(HttpServletRequest req) {
-		String requestUri = decode(req.getRequestURI());
 		String requestLocaleHeader = req.getHeader(REQ_HEADER_ACCEPT_LANGUAGE);
 		this.actionType = IoiActionType.EVENT_LIST; // Default Action Type
-		String[] requestChunks = requestUri.split("/");
-
 		// If someone accesses the website root directly, send them to the
 		// default city index URL
-		if (null == requestUri || "/".equals(requestUri)
-				|| requestChunks == null || requestChunks.length == 0) {
+		if (null == req.getRequestURI() || "/".equals(req.getRequestURI())) {
 			setLocaleByBrowser(requestLocaleHeader);
 			setDefaultCity();
 			return;
 		}
+
+		String requestUri = decode(req.getRequestURI());
+		String[] requestChunks = requestUri.split("/");
 
 		String localeChunk = requestChunks[1].toLowerCase();
 		// If locale not detected, redirect to default start page
@@ -142,10 +137,14 @@ public class IoiRouterContext {
 			return;
 		}
 
+		// OLD URL STRUCTURE
 		// / en / Düsseldorf / Events / Bilk / 514 / Meet / Cultural,Conventions
 		// / en / Düsseldorf / Events / new
 		// / en / Düsseldorf / i / 45.1
 		// / en / Düsseldorf / e / 45
+
+		// NEW URL STRUCTURE
+		// http://itsonin-beta.appspot.com/en/<cityFilter>/<actionFilter>/<dateFilter>/<categoryFilter>/<locationFilter>
 
 		String actionTypeName = requestChunks[3];
 		if (URI_PART_EVENT_BASE.equals(actionTypeName)) {
@@ -153,11 +152,6 @@ public class IoiRouterContext {
 		} else if (URI_PART_INVITATION_BASE.equals(actionTypeName)) {
 			parseEventInvitationData(requestChunks);
 		} else if (URI_ALIASES_EVENTS.indexOf("," + actionTypeName) >= 0) {
-			this.myEvents = false;
-			this.actionType = IoiActionType.EVENT_LIST;
-			parseEventListData(requestChunks);
-		} else if (URI_ALIASES_MYEVENTS.indexOf("," + actionTypeName) >= 0) {
-			this.myEvents = true;
 			this.actionType = IoiActionType.EVENT_LIST;
 			parseEventListData(requestChunks);
 		} else if (URI_PART_WELCOME.equals(actionTypeName)) {
@@ -187,20 +181,31 @@ public class IoiRouterContext {
 		doRedirect = true;
 	}
 
+	// NEW URL STRUCTURE
+	// http://itsonin-beta.appspot.com/en/<cityFilter>/<actionFilter>/<dateFilter>/<categoryFilter>/<locationFilter>
 	private void parseEventListData(String[] requestChunks) {
+		// [, en, <cityFilter>, <actionFilter>, <dateFilter>, <categoryFilter>,
+		// <locationFilter>]
+
+		if (requestChunks.length >= 4) {
+			dateFilter = requestChunks[4];
+		}
 		if (requestChunks.length >= 5) {
-			locationFilter = requestChunks[4];
-		}
-		if (requestChunks.length >= 6) {
-			dateFilter = requestChunks[5];
-		}
-		if (requestChunks.length >= 7) {
-			try {
-				this.categoryFilter = EventCategory.valueOf(requestChunks[6].toUpperCase());
-			} catch (IllegalArgumentException iae) {
-				
+			categoryFilters = new ArrayList<EventCategory>();
+			for (String categoryString : requestChunks[5].toUpperCase().split(
+					",")) {
+				try {
+					this.categoryFilters.add(EventCategory
+							.valueOf(categoryString));
+				} catch (IllegalArgumentException iae) {
+
+				}
 			}
 		}
+		if (requestChunks.length >= 6) {
+			locationFilter = requestChunks[6];
+		}
+
 	}
 
 	private void parseEventInvitationData(String[] requestChunks) {
@@ -359,6 +364,7 @@ public class IoiRouterContext {
 	public IoiActionType getActionType() {
 		return actionType;
 	}
+
 	public String getDestination() {
 		return destination;
 	}
