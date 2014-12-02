@@ -199,10 +199,10 @@ public class IoiRouterContext {
 		// [, en, <cityFilter>, <actionFilter>, <dateFilter>, <categoryFilter>,
 		// <locationFilter>]
 
-		if (requestChunks.length >= 4) {
+		if (requestChunks.length > 4) {
 			dateFilter = requestChunks[4];
 		}
-		if (requestChunks.length >= 5) {
+		if (requestChunks.length > 5) {
 			categoryFilters = new ArrayList<EventCategory>();
 			for (String categoryString : requestChunks[5].toUpperCase().split(
 					",")) {
@@ -214,7 +214,7 @@ public class IoiRouterContext {
 				}
 			}
 		}
-		if (requestChunks.length >= 6) {
+		if (requestChunks.length > 6) {
 			locationFilter = requestChunks[6];
 		}
 
