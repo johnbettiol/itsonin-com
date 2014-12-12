@@ -14,6 +14,9 @@
 <head>
 	<title>itsonin - Events in ${ioiContext.city}</title>
 	<%@ include file="../../head.jsp" %>
+</head>
+<body>
+	<div id="view">
 	<script type="text/javascript">
 		var eventJson = ${eventJson};
 		var guestJson = ${guestJson};
@@ -21,7 +24,6 @@
 		var guestsJson = ${guestsJson};
 		var shareUrl = '${shareUrl}';
 	</script>
-	<script type="text/javascript" src="/static/js/modules/info.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			EventInfoModule.init();
@@ -50,7 +52,7 @@
 		<div class="list-group-item guest-item" id="{{:guestId}}">
 			<div class="media">
 				<div class="pull-left">
-					<i class="fa fa-user"></i>									
+					<i class="fa fa-user"></i>
 				</div>
 				<div class="media-body clearfix">
 					<span class="pull-left">{{:name}}
@@ -68,8 +70,6 @@
 			</div>
 		</div>
 	</script>
-</head>
-<body>
 	<div class="header-container">
 		<div class="container" id="info-header">
 			<div class="row">
@@ -113,8 +113,6 @@
 											<i class="fa fa-angle-left" style="font-size:24px"></i>
 										</a>
 									</c:if>&nbsp;
-								</div>
-								<div class="event-icon">
 									<span class="fa fa-university fa-2x"></span>
 								</div>
 								<div class="media-body clearfix event-body" style="margin-left: 70px">
@@ -264,6 +262,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </body>
 </html>

@@ -26,6 +26,9 @@
 <%-- JQUERY COOKIE --%>
 <script src="/static/lib/cookie/jquery.cookie.js" type="text/javascript"></script>
 
+<%-- PATH.JS --%>
+<script src="/static/lib/pathjs/path.js" type="text/javascript"></script>
+
 <%-- MAP CLUSTERER --%>
 <%--<script src="/static/lib/map/markerclusterer_compiled.js" type="text/javascript"></script> --%>
 
@@ -36,6 +39,11 @@
 
 <%-- COMMON SCRIPTS --%>
 <script src="/static/js/script.js" type="text/javascript"></script>
+
+<%-- APPLICATION MODULES --%>
+<script type="text/javascript" src="/static/js/modules/list.js"></script>
+<script type="text/javascript" src="/static/js/modules/new.js"></script>
+<script type="text/javascript" src="/static/js/modules/info.js"></script>
 
 <%-- FONT AWESOME --%>
 <link rel="stylesheet" href="/static/lib/font-awesome/css/font-awesome.min.css" />

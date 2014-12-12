@@ -2,23 +2,25 @@ var EventListModule = (function() {
 
 	var RED_MARKER = 'http://labs.google.com/ridefinder/images/mm_20_red.png';
 
-	var filteredEvents = events;
+	var events = [];
+	var filteredEvents = [];
 	var filteredByMapEvents = [];
 	var filter = {
-		favourites: false,
-		promo: false,
-		hot: false,
-		category: undefined,
+		type: undefined,
+		category: 'All',
 		date: moment()
 	};
 	var map = {};
 	var markers = [];
 	var isMapShown = false;
 	var highlightMarkerOnScroll = true;
+	var viewsCache = {};
 
 	return {
-		init: function() {
+		init: function(initialEvents) {
 			var self = this;
+			events = initialEvents;
+			filteredEvents = initialEvents;
 
 			$('.mob-btn, .header-actions button, .header-actions a, header-logo a, .event-arrow a, #prev-day-button, #next-day-button').on('touchstart', function(e) {
 				$(this).addClass('hover');
@@ -45,18 +47,13 @@ var EventListModule = (function() {
 				}
 
 				if(isMapShown == true) {
-					$('.map').css('visibility', 'hidden');
-					$('.map').css('position', 'absolute');
-					$('.map').css('left', '-10000');
+					$('.map').css({'visibility': 'hidden', 'position': 'absolute', 'left': '-10000'});
 					$('.events-container').css('margin-top', '');
 				} else {
-					$('.map').css('visibility', 'inherit');
-					$('.map').css('position', 'relative');
-					$('.map').css('left', '');
+					$('.map').css({'visibility': 'inherit', 'position': 'relative', 'left': ''});
 					$('.events-container').css('margin-top', '200px');
 					map.panTo(new google.maps.LatLng(51.227741, 6.773456));
 				}
-
 				$(window).trigger('resize');
 				
 				isMapShown = !isMapShown;
@@ -64,118 +61,56 @@ var EventListModule = (function() {
 
 			$('#filter-btn').on('click', function() {
 				isMapShown = false;
-				$('.map').css("visibility", "hidden");
-				$('.map').css("position", "absolute");
+				$('.map').css({'visibility': 'hidden', 'position': 'absolute'});
 				$('.filters').toggle();
 				$(this).toggleClass('active');
 				if($('#map-btn').hasClass('active')){
 					$('#map-btn').toggleClass('active');
 				}
 
-				if($('.filters').is(':hidden') == true) {
+				if($('.filters').css('display') == 'none') {
 					$('.events-container').css('margin-top', '');
 				} else {
 					$('.events-container').css('margin-top', '200px');
 				}
-				self.renderEvents(filteredEvents);
+				//self.renderEvents(filteredEvents);
 				$(window).trigger('resize');
-			});
-
-			$('#favourites-button').on('click', function() {
-				filter.favourites = !filter.favourites;
-				filter.promo = false;
-				filter.hot = false;
-				self.resetCategories();
-
-				if(filter.favourites == true) {
-					$('#filter-date').text('Favourites');
-					$('#prev-day-button').hide();
-					$('#next-day-button').hide();
-					self.loadEvents({favourites: true});
-				} else {
-					$('#filter-date').text(filter.date.calendar());
-					$('#prev-day-button').show();
-					$('#next-day-button').show();
-					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
-				}
-			});
-
-			$('#promo-button').on('click', function() {
-				filter.promo = !filter.promo;
-				filter.favourites = false;
-				filter.hot = false;
-				self.resetCategories();
-
-				if(filter.promo == true) {
-					$('#filter-date').text('Promotions');
-					$('#prev-day-button').hide();
-					$('#next-day-button').hide();
-					self.loadEvents({promo: true});
-				} else {
-					$('#filter-date').text(filter.date.calendar());
-					$('#prev-day-button').show();
-					$('#next-day-button').show();
-					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
-				}
-			});
-
-			$('#hot-button').on('click', function() {
-				filter.hot = !filter.hot;
-				filter.favourites = false;
-				filter.promo = false;
-				self.resetCategories();
-
-				if(filter.hot == true) {
-					$('#filter-date').text('Hot Events');
-					$('#prev-day-button').hide();
-					$('#next-day-button').hide();
-					self.loadEvents({hot: true});
-				} else {
-					$('#filter-date').text(filter.date.calendar());
-					$('#prev-day-button').show();
-					$('#next-day-button').show();
-					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
-				}
 			});
 
 			$('#prev-day-button').on('click', function() {
 				filter.date = filter.date.subtract(1, 'days');
-				$('#filter-date').text(filter.date.calendar());
 
-				self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
+				self.updateHash();
+				self.renderFilters();
 			});
 
 			$('#next-day-button').on('click', function() {
 				filter.date = filter.date.add('days', 1);
-				$('#filter-date').text(filter.date.calendar());
 
-				self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
-			});
-
-			$('#filter-categories button').on('click', function() {
-				var isActive = $(this).hasClass('selected');
-				$('#filter-categories button').each(function (i) {
-					$(this).removeClass('selected');
-				});
-
-				if(isActive == false) {
-					$(this).addClass('selected');
-					filter.category = $(this).attr('id');
-				} else {
-					filter.category = undefined;
-				}
-
-				self.filterEvents();
+				self.updateHash();
+				self.renderFilters();
 			});
 
 			$('#filter-buttons button').on('click', function() {
-				var isActive = $(this).hasClass('selected');
-				$('#filter-buttons button').each(function (i) {
-					$(this).removeClass('selected');
-				});
-				if(isActive == false) {
-					$(this).addClass('selected');
+				var type = $(this).attr('id').split('-')[0]
+				if(filter.type != type) {
+					filter.type = type;
+				} else {
+					delete filter.type;
 				}
+				self.updateHash();
+				self.renderFilters();
+			});
+
+			$('#filter-categories button').on('click', function() {
+				if(filter.category == $(this).attr('id')) {
+					filter.category = 'All';
+				} else {
+					filter.category = $(this).attr('id');
+				}
+
+				self.updateHash();
+				self.renderFilters();
 			});
 
 			/*$('.event-item').on('click', function() {
@@ -188,7 +123,48 @@ var EventListModule = (function() {
 					filter.date = moment(context.select)
 					$('#filter-date').text(filter.date.calendar());
 					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
+					self.updateHash();
 				}
+			});
+
+			Path.map('#!en/Düsseldorf/e/add').to(function(){
+				self.loadPage('/en/Düsseldorf/e/add', '#view');
+			});
+
+			Path.map('#!en/Düsseldorf/e/:eventId').to(function(){
+				self.loadPage('/en/Düsseldorf/e/' + this.params['eventId'], '#view');
+			});
+
+			Path.map('#!en/Düsseldorf/Events(/:date)(/:category)(/:location)').to(function(){
+				var date = this.params['date'];
+				var category = this.params['category'];
+				var location = this.params['location'];
+
+				if(Path.routes.previous) {
+					if(Path.routes.previous.indexOf('#!en/Düsseldorf/Events') != 0) {
+						self.loadPage('/en/Düsseldorf/Events', '#view', function() {
+							self.renderFilters(date, category, location);
+						});
+					} else {
+						self.renderFilters(date, category, location);
+					}
+				}
+			});
+
+			if(!Path.routes.previous) {
+				Path.root("#!en/Düsseldorf/Events");
+			}
+			Path.listen();
+
+			$('#plus-link').on('click', function(event) {
+				event.preventDefault();
+				location.hash = '#!en/Düsseldorf/e/add';
+			});
+
+			$('.event-link').on('click', function(event) {
+				event.preventDefault();
+				var id = $(this).attr('id').split('-')[1];
+				location.hash = '#!en/Düsseldorf/e/' + id;
 			});
 
 			$.views.helpers({
@@ -207,7 +183,7 @@ var EventListModule = (function() {
 					}
 				},
 				showDate: function() {
-					return filter.favourites | filter.promo;
+					return filter.favourites | filter.promo; //TODO
 				}
 			});
 
@@ -222,9 +198,9 @@ var EventListModule = (function() {
 				}
 			});
 
-			self.loadScript();
+			self.loadGoogleScript();
 
-			$(window).on('resize', function(){
+			/*$(window).on('resize', function(){
 				var $lastEvent = $('#list-container').children().last();
 				if($lastEvent) {
 					var size = 206;
@@ -234,7 +210,7 @@ var EventListModule = (function() {
 					$('#free-space').height($(this).height() - ($lastEvent.height() + size));
 				}
 				$('#map-canvas').width($('#list-container').width());
-			}).trigger('resize');
+			}).trigger('resize');*/
 
 			$(window).scroll(function() {
 				if(highlightMarkerOnScroll == true) {
@@ -248,6 +224,31 @@ var EventListModule = (function() {
 			});
 		},
 
+		loadPage: function(url, selector, callback) {
+			var self = this;
+			self.showSpinner();
+
+			if(!viewsCache[url]) {
+				$.get(url, 'html').done(function(responseText) {
+					self.hideSpinner();
+					viewsCache[url] = $("<div>").append($.parseHTML(responseText, document, true)).find(selector);
+					$('body').html(viewsCache[url]);
+					if(callback && typeof callback == 'function') {
+						callback();
+					}
+				}).fail(function(jqXHR, textStatus) {
+					self.hideSpinner();
+					alert( "Request failed: " + textStatus );
+				});
+			} else {
+				$('body').html(viewsCache[url]);
+				self.hideSpinner();
+				if(callback && typeof callback == 'function') {
+					callback();
+				}
+			}
+		},
+
 		getFilter: function() {
 			return filter;
 		},
@@ -255,20 +256,13 @@ var EventListModule = (function() {
 		filterEvents: function() {
 			filteredEvents = $.grep(events, function(event, i) {
 				var fits = true;
-				if(filter.category && filter.category != event.category) {
+				if(filter.category != 'All' && filter.category != event.category) {
 					fits = false;
 				}
 				return fits;
 			});
 			this.renderEvents(filteredEvents);
 			this.initMarkers(filteredEvents);
-		},
-
-		filterEventsByText: function(text) {
-			filteredEvents = $.grep(events, function(e, i) {
-				return  e.title.toLowerCase().indexOf(text.toLowerCase()) > -1
-			});
-			this.renderEvents(filteredEvents);
 		},
 
 		loadEvents: function(params) {
@@ -298,9 +292,20 @@ var EventListModule = (function() {
 				var eventId = $(this).attr('id');
 				self.highlightMarker(eventId);
 			});
+
+			$('.event-link').on('click', function(event) {
+				event.preventDefault();
+				var id = $(this).attr('id').split('-')[1];
+				location.hash = '#!en/Düsseldorf/e/' + id;
+			});
 		},
 
-		loadScript: function() {
+		loadGoogleScript: function() {
+			if (typeof google === 'object' && typeof google.maps === 'object') {
+				this.initMap();
+				return;
+			}
+
 			var script = document.createElement('script');
 			script.type = 'text/javascript';
 			script.src = 'https://maps.googleapis.com/maps/api/js?sensor=true' +
@@ -428,7 +433,7 @@ var EventListModule = (function() {
 			var elemBottom = elemTop + $(elem).height();
 			return (elemTop+5 >= docViewTop+200 && elemTop <= docViewTop + 200 + $(elem).height());
 		},
-		
+
 		getBlueIcon: function() {
 			return {
 				path: google.maps.SymbolPath.CIRCLE,
@@ -449,11 +454,84 @@ var EventListModule = (function() {
 			$('.overlay').remove();
 		},
 
-		resetCategories: function() {
-			filter.category = undefined;
-			$('#filter-categories button').each(function (i) {
-				$(this).removeClass('selected');
-			});
+		updateHash: function() {
+			var hash = '!en/Düsseldorf/Events/';
+			if(filter.type == 'Favourites') {
+				hash += 'Favourites';
+			} else if(filter.type == 'Offers') {
+				hash += 'Offers';
+			} else if(filter.type == 'Hot') {
+				hash += 'Hot';
+			} else {
+				hash += filter.date.format('YYYY-MM-DD');
+			}
+
+			if(filter.category) {
+				hash = hash + '/' + filter.category;
+			}
+
+			location.hash = hash;
+		},
+
+		renderFilters: function (date, category, loc){
+			var self = this;
+			var showFilters = false;
+			if(date == 'Favourites' || date == 'Offers' || date == 'Hot') {
+				filter.type = date;
+				$('#filter-date').text(date);
+				$('#prev-day-button').hide();
+				$('#next-day-button').hide();
+				$('#filter-buttons button').each(function (i) {
+					$(this).removeClass('selected');
+				});
+				$('#' + date + '-button').addClass('selected');
+
+				showFilters = true;
+
+				if(date == 'Favourites') {
+					self.loadEvents({favourites: true});
+				} else if(date == 'Offers') {
+					self.loadEvents({promo: true});
+				} else if(date == 'Hot') {
+					self.loadEvents({hot: true});
+				}
+			} else {
+				delete filter.type;
+				filter.date = date ? moment(date, 'YYYY-MM-DD') : moment();
+				$('#filter-buttons button').each(function (i) {
+					$(this).removeClass('selected');
+				});
+				$('#filter-date').text(filter.date.calendar());
+				$('#prev-day-button').show();
+				$('#next-day-button').show();
+				if(filter.date.format('YYYY-MM-DD') != moment().format('YYYY-MM-DD')) {
+					self.loadEvents({date: filter.date.format('YYYY-MM-DD')});
+				}
+			}
+
+			if(category) {
+				filter.category = category;
+				$('#filter-categories button').each(function (i) {
+					$(this).removeClass('selected');
+				});
+				if(filter.category != 'All') {
+					showFilters = true;
+					$('#' + filter.category).addClass('selected');
+					self.filterEvents();
+				}//TODO: if all...
+			}
+
+			if(showFilters == true) {
+				$('#filter-btn').addClass('active');
+				$('.filters').css('display', 'block');
+				$('.events-container').css('margin-top', '200px');
+			}
+
+			if(loc) {
+				$('#map-btn').toggleClass('active');
+				$('.map').css({'visibility': 'inherit', 'position': 'relative', 'left': ''});
+				$('.events-container').css('margin-top', '200px');
+			}
 		}
 	}
 }());
