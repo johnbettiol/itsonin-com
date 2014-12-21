@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,7 +29,6 @@ import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventVisibility;
 import com.itsonin.enums.GuestStatus;
 import com.itsonin.enums.GuestType;
-import com.itsonin.enums.SortOrder;
 import com.itsonin.exception.BadRequestException;
 import com.itsonin.exception.NotFoundException;
 import com.itsonin.security.AuthContextService;
@@ -40,6 +40,8 @@ import com.itsonin.utils.DateTimeUtil;
  */
 public class EventService {
 
+	@SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger(EventService.class.getName());
 	private static final String HOST = "http://itsonin-com.appspot.com";
 
 	private EventDao eventDao;
@@ -219,22 +221,32 @@ public class EventService {
 		return guest;
 	}
 
-	public List<Event> list(boolean hot, boolean promo, boolean favourites, List<EventCategory> categories,
-			String name, Date date, String sortField,
-			SortOrder sortOrder, Integer offset, Integer limit) {
+	public List<Event> listFutureEvents() {
+		return eventDao.listFutureEvents();
+	}
+
+	public List<Event> listByDate(Date date) {
+		return eventDao.list(date);
+	}
+
+	public List<Event> filter(List<Event> eventList, List<EventCategory> categories,
+			boolean hot, boolean promo, boolean favourites) {
+
+		List<Event> filteredList = new ArrayList<Event>();
 		Device device = authContextService.getDevice();
-		List<Event> eventList = (promo == true || favourites == true || hot == true) 
-				? eventDao.listFutureEvents() : eventDao.list(date);
+
 		if(hot == true) {
 			Collections.sort(eventList, EVENT_BY_SCORE_COMPARATOR);
 		} else {
 			Collections.sort(eventList, EVENT_BY_START_DATE_COMPARATOR);
 		}
 		List<Guest> guestList = guestDao.listByDeviceId(device.getDeviceId());
-		List<Event> filteredList = new ArrayList<Event>();
 
 		if (DeviceLevel.NORMAL.equals(device.getLevel())) {
 			for (Event event : eventList) {
+				if(categories != null && categories.size() > 0 && !categories.contains(event.getCategory())){
+					continue;
+				}
 				if (event.getVisibility() == EventVisibility.PUBLIC) {
 					if(hot == true) {
 						if(event.getHotScore() != null && event.getHotScore() > 0) {
@@ -279,15 +291,10 @@ public class EventService {
 			}
 		}
 		return filteredList;
-
 	}
 
 	public void saveAll(List<Event> events) {
 		eventDao.saveAll(events);
-	}
-
-	public List<Event> listFutureEvents() {
-		return eventDao.listFutureEvents();
 	}
 
 	public void cancel(Long eventId, Long guestId) {

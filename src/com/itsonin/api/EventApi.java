@@ -3,6 +3,7 @@ package com.itsonin.api;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -20,7 +21,6 @@ import com.itsonin.dto.EventWithGuest;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.EventCategory;
-import com.itsonin.enums.SortOrder;
 import com.itsonin.response.SuccessResponse;
 import com.itsonin.resteasy.CustomDateFormat;
 import com.itsonin.service.EventService;
@@ -32,6 +32,9 @@ import com.itsonin.service.GuestService;
  */
 @Path("/api")
 public class EventApi {
+
+	@SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger(EventApi.class.getName());
 
 	private EventService eventService;
 	private GuestService guestService;
@@ -95,15 +98,15 @@ public class EventApi {
 			@QueryParam("promo") @DefaultValue("false") boolean promo,
 			@QueryParam("favourites") @DefaultValue("false") boolean favourites,
 			@QueryParam("types") List<EventCategory> types,
-			@QueryParam("name") String name,
-			@QueryParam("date") @CustomDateFormat("yyyy-MM-dd") Date date,
-			@QueryParam("sortField") String sortField,
-			@QueryParam("sortOrder") SortOrder sortOrder,
-			@QueryParam("numberOfLevels") Integer numberOfLevels,
-			@QueryParam("offset") Integer offset,
-			@QueryParam("limit") Integer limit) {
-		return eventService.list(hot, promo, favourites, types, name, date,
-				sortField, sortOrder, offset, limit);
+			@QueryParam("date") @CustomDateFormat("yyyy-MM-dd") Date date) {
+		List<Event> events;
+		if(favourites == true || promo == true || hot == true) {
+			events = eventService.listFutureEvents();
+		} else {
+			events = eventService.listByDate(date);
+		}
+
+		return eventService.filter(events, types, hot, promo, favourites);
 	}
 
 	@POST

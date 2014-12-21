@@ -1,9 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@ page import="org.joda.time.format.DateTimeFormat" %>
+<%@ page import="com.itsonin.web.IoiRouterContext" %>
 <%@ page session="false" %>
 <% pageContext.setAttribute("now", new org.joda.time.DateTime()); %>
+<%
+IoiRouterContext ioiContext = (IoiRouterContext)request.getAttribute("ioiContext");
+String date = (ioiContext.getDateFilter() == null) ? DateTimeFormat.forPattern("YYYY-MM-dd").print(new org.joda.time.DateTime()):ioiContext.getDateFilter();
+%>
 
 <!DOCTYPE html>
 <html>
@@ -16,7 +23,10 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var events = ${eventsJson};
-				EventListModule.init(events);
+				var dateFilter = '${ioiContext.dateFilter}';
+				var categoryFilter = '${ioiContext.categoryFilter}';
+				var locationFilter = '${ioiContext.locationFilter}';
+				EventListModule.init(events, dateFilter, categoryFilter, locationFilter);
 			});
 		</script>
 		<script id="eventTemplate" type="text/x-jsrender">
@@ -64,7 +74,7 @@
 								<button id="map-btn">
 									<i class="fa fa-2x fa-map-marker"></i>
 								</button>
-								<button id="filter-btn">
+								<button id="filter-btn" <c:if test="${(fn:length(ioiContext.categoryFilter) > 0) || (ioiContext.dateFilter=='Favourites') ||(ioiContext.dateFilter=='Offers') || (ioiContext.dateFilter=='Hot')}">class="active"</c:if>>
 									<i class="fa fa-2x fa-filter"></i>
 								</button>
 							</div>
@@ -72,67 +82,78 @@
 						<div class="row map">
 							<div id="map-canvas"></div>
 						</div>
-						<div class="row filters">
+						<div class="row filters" <c:if test="${(fn:length(ioiContext.categoryFilter) > 0) || (ioiContext.dateFilter=='Favourites') ||(ioiContext.dateFilter=='Offers') || (ioiContext.dateFilter=='Hot')}">style="display:block"</c:if>>
 							<div class="btn-group btn-group-justified" id="filter-categories">
 								<div class="btn-group">
-									<button class="btn mob-btn" id="NIGHTLIFE">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/<%=date %>/Nightlife" 
+									class="btn mob-btn <c:if test="${fn:contains(ioiContext.categoryFilter, 'NIGHTLIFE')}">selected</c:if>" id="NIGHTLIFE">
 										<span class="fa fa-glass"></span>
 										<span class="block">NIGHTLIFE</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="SOCIAL">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/<%=date %>/Social" 
+									class="btn mob-btn <c:if test="${fn:contains(ioiContext.categoryFilter, 'SOCIAL')}">selected</c:if>" id="SOCIAL">
 										<span class="fa fa-users"></span>
 										<span class="block">SOCIAL</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="CULTURAL">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/<%=date %>/Cultural" 
+									class="btn mob-btn <c:if test="${fn:contains(ioiContext.categoryFilter, 'CULTURAL')}">selected</c:if>" id="CULTURAL">
 										<span class="fa fa-university"></span>
 										<span class="block">CULTURAL</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="FESTIVAL">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/<%=date %>/Festival" 
+									class="btn mob-btn <c:if test="${fn:contains(ioiContext.categoryFilter, 'FESTIVAL')}">selected</c:if>" id="FESTIVAL">
 										<span class="fa fa-ticket"></span>
 										<span class="block">FESTIVAL</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="SPORT">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/<%=date %>/Sport" 
+									class="btn mob-btn <c:if test="${fn:contains(ioiContext.categoryFilter, 'SPORT')}">selected</c:if>" id="SPORT">
 										<span class="fa fa-futbol-o"></span>
 										<span class="block">SPORT</span>
-									</button>
+									</a>
 								</div>
 							</div>
+
 							<div class="btn-group btn-group-justified" id="filter-buttons">
 								<div class="btn-group">
-									<button class="btn mob-btn" id="Favourites-button">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/Favourites" 
+										class="btn mob-btn <c:if test="${ioiContext.dateFilter == 'Favourites'}">selected</c:if>" id="Favourites-button">
 										<span class="fa fa-star"></span>
 										<span class="block">FAVOURITES</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="Offers-button">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/Offers" 
+										class="btn mob-btn <c:if test="${ioiContext.dateFilter == 'Offers'}">selected</c:if>" id="Offers-button">
 										<span class="fa fa-dollar"></span>
 										<span class="block">PROMO</span>
-									</button>
+									</a>
 								</div>
 								<div class="btn-group">
-									<button class="btn mob-btn" id="Hot-button">
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events/Hot" 
+										class="btn mob-btn <c:if test="${ioiContext.dateFilter == 'Hot'}">selected</c:if>" id="Hot-button">
 										<span class="fa fa-fire"></span>
 										<span class="block">HOT!</span>
-									</button>
+									</a>
 								</div>
 							</div>
 						</div>
-						<div class="row date">
+						<div class="row date hidden">
 							<div class="col-xs-12">
-								<span class="pointer" id="filter-date">TODAY <joda:format value="${now}" pattern="EEEE MMMM d" locale="en"/></span>
-								<button id="prev-day-button" class="pull-left">
+								<span class="pointer" id="filter-date"><%=date %></span>
+								<button id="prev-day-button" class="pull-left" 
+									<c:if test="${(ioiContext.dateFilter=='Favourites') ||(ioiContext.dateFilter=='Offers') || (ioiContext.dateFilter=='Hot')}">style="display:none"</c:if>>
 									<i class="fa fa-angle-left"></i>
 								</button>
-								<button id="next-day-button" class="pull-right">
+								<button id="next-day-button" class="pull-right"
+									<c:if test="${(ioiContext.dateFilter=='Favourites') ||(ioiContext.dateFilter=='Offers') || (ioiContext.dateFilter=='Hot')}">style="display:none"</c:if>>
 									<i class="fa fa-angle-right"></i>
 								</button>
 							</div>
@@ -143,7 +164,7 @@
 		</div>
 		<div class="container" id="events">
 			<div class="row">
-				<div class="col-sm-offset-3 col-sm-6 events-container">
+				<div class="col-sm-offset-3 col-sm-6 events-container hidden" <c:if test="${(fn:length(ioiContext.categoryFilter) > 0) || (ioiContext.dateFilter=='Favourites') ||(ioiContext.dateFilter=='Offers') || (ioiContext.dateFilter=='Hot')}">style="margin-top: 200px;"</c:if>>
 					<div class="panel panel-default">
 						<div class="list-group" id="list-container">
 							<c:forEach var="event" items="${events}" varStatus="status">

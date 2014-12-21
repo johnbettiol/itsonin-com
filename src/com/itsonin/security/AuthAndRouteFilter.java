@@ -1,7 +1,6 @@
 package com.itsonin.security;
 
 import java.io.IOException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.logging.Logger;
 
