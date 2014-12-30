@@ -42,6 +42,5 @@ public class EventInformationServlet extends DefaultServlet {
 		req.setAttribute("guestsJson", gson.toJson(eventInfo.getGuests()));
 		req.setAttribute("shareUrl", req.getScheme() + "://" + req.getServerName() + "/" +
 		irc.getLocale() + "/" + irc.getCity() + "/i/" + event.getEventId() + "." + guest.getGuestId());
-		req.setAttribute("isInvitation", false);
 	}
 }

@@ -82,16 +82,9 @@
 						</div>
 						<div class="header-title pull-left">
 							<i class="fa fa-angle-right"></i>
-							<c:if test="${isInvitation == true}">
-								<a href="/${ioiContext.locale}/${ioiContext.city}/Events">
-									<span>${ioiContext.city}</span>
-								</a>
-							</c:if>
-							<c:if test="${isInvitation == false}">
-								<a href="javascript:history.back()">
-									<span>${ioiContext.city}</span>
-								</a>
-							</c:if>
+							<a href="/${ioiContext.locale}/${ioiContext.city}/Events" id="city-link">
+								<span>${ioiContext.city}</span>
+							</a>
 						</div>
 						<div class="header-actions pull-right">
 							<button id="scrollto-comments-btn">
@@ -103,16 +96,10 @@
 						<div class="list-group-item event-item" id="${event.eventId}">
 							<div class="media">
 								<div class="event-icon">
-									<c:if test="${isInvitation == true}">
-										<a href="/${ioiContext.locale}/${ioiContext.city}/Events" id="back-link">
-											<i class="fa fa-angle-left" style="font-size:24px"></i>
-										</a>
-									</c:if>
-									<c:if test="${isInvitation == false}">
-										<a href="javascript:history.back()" id="back-link">
-											<i class="fa fa-angle-left" style="font-size:24px"></i>
-										</a>
-									</c:if>&nbsp;
+									<a href="/${ioiContext.locale}/${ioiContext.city}/Events" id="back-link">
+										<i class="fa fa-angle-left" style="font-size:24px"></i>
+									</a>
+									&nbsp;
 									<span class="fa fa-university fa-2x"></span>
 								</div>
 								<div class="media-body clearfix event-body" style="margin-left: 70px">

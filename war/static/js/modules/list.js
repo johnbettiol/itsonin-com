@@ -18,26 +18,12 @@ var EventListModule = (function() {
 	var eventsCache = {};
 
 	return {
-		init: function(initialEvents, dateFilter, categoryFilter, locationFilter) {
+		init: function(initialEvents) {
 			var self = this;
 			events = initialEvents;
 			filteredEvents = initialEvents;
 
-			if(dateFilter == 'Favourites' || dateFilter == 'Offers' || dateFilter == 'Hot') {
-				filter.type = dateFilter;
-			} else if(dateFilter == 'Yesterday') {
-				filter.date = moment().subtract(1, 'days');
-			} else if(dateFilter == 'Today') {
-				filter.date = moment();
-			} else if(dateFilter == 'Tomorrow') {
-				filter.date = moment().add('days', 1);
-			} else if(dateFilter.length > 0){
-				filter.date = moment(dateFilter, 'YYYY-MM-DD');
-			}
-
-			if(categoryFilter != '' && categoryFilter != 'All') {
-				filter.categories = categoryFilter.split(',');
-			}
+			self.initFilterFromPath();
 
 			$('.mob-btn, .header-actions button, .header-actions a, header-logo a, .event-arrow a, #prev-day-button, #next-day-button').on('touchstart', function(e) {
 				$(this).addClass('hover');
@@ -54,6 +40,12 @@ var EventListModule = (function() {
 			/*$('button').on('click', function() {
 				document.activeElement.blur();
 			});*/
+
+			//init caches
+			if(!viewsCache['/en/Düsseldorf/Events']) {
+				viewsCache['/en/Düsseldorf/Events'] =
+					$("<div>").append($.parseHTML($('#view')[0].outerHTML, document, true)).find('#view');
+			}
 
 			$('#map-btn').on('click', function() {
 				filteredByMapEvents = filteredEvents;
@@ -94,10 +86,12 @@ var EventListModule = (function() {
 			});
 
 			$('#prev-day-button').on('click', function() {
+				event.preventDefault();
 				self.updateHash(moment(filter.date).subtract(1, 'days'), filter.categories);
 			});
 
 			$('#next-day-button').on('click', function() {
+				event.preventDefault();
 				self.updateHash(moment(filter.date).add('days', 1), filter.categories);
 			});
 
@@ -115,14 +109,15 @@ var EventListModule = (function() {
 				event.preventDefault();
 				var category = $(this).attr('id');
 
-				var i = $.inArray(category, filter.categories);
+				var categories = filter.categories.slice();
+				var i = $.inArray(category, categories);
 				if(i >= 0){
-					filter.categories.splice(i,1);
+					categories.splice(i,1);
 				} else {
-					filter.categories.push(category);
+					categories.push(category);
 				}
 
-				self.updateHash(filter.date, filter.categories, filter.type);
+				self.updateHash(filter.date, categories, filter.type);
 			});
 
 			$('#filter-date').pickadate({
@@ -131,40 +126,15 @@ var EventListModule = (function() {
 				}
 			});
 
-			Path.map('#!en/Düsseldorf/e/add').to(function(){
-				self.loadPage('/en/Düsseldorf/e/add', '#view');
-			});
-
-			Path.map('#!en/Düsseldorf/e/:eventId').to(function(){
-				self.loadPage('/en/Düsseldorf/e/' + this.params['eventId'], '#view');
-			});
-
-			Path.map('#!en/Düsseldorf/Events(/:date)(/:categories)(/:location)').to(function(){
-				var date = this.params['date'];
-				var categories = (this.params['categories'] && this.params['categories'] != 'All') ? this.params['categories'].split(',') : [];
-				var location = this.params['location'];
-
-				self.loadPage('/en/Düsseldorf/Events', '#view', function() {
-					self.renderFilters(date, categories, location);
-				});
-			});
-
-			Path.listen();
-
-			if(!Path.routes.current) {
-				$('.date').removeClass('hidden');
-				$('.events-container').removeClass('hidden');
-			}
-
 			$('#plus-link').on('click', function(event) {
 				event.preventDefault();
-				location.hash = '#!en/Düsseldorf/e/add';
+				location.hash = '#!/en/Düsseldorf/e/add';
 			});
 
 			$('.event-link').on('click', function(event) {
 				event.preventDefault();
 				var id = $(this).attr('id').split('-')[1];
-				location.hash = '#!en/Düsseldorf/e/' + id;
+				location.hash = '#!/en/Düsseldorf/e/' + id;
 			});
 
 			$.views.helpers({
@@ -200,6 +170,48 @@ var EventListModule = (function() {
 
 			self.loadGoogleScript();
 
+			Path.map('#!/en/Düsseldorf/e/add').to(function(){
+				self.loadPage('/en/Düsseldorf/e/add', '#view');
+			});
+
+			Path.map('#!/en/Düsseldorf/e/:eventId').to(function(){
+				self.loadPage('/en/Düsseldorf/e/' + this.params['eventId'], '#view');
+			});
+
+			Path.map('#!/en/Düsseldorf/Events(/:date)(/:categories)(/:location)').to(function(){
+				var date = this.params['date'];
+				var categories = (this.params['categories'] && this.params['categories'] != 'All') ? this.params['categories'].split(',') : [];
+				var location = this.params['location'];
+
+				self.loadPage('/en/Düsseldorf/Events', '#view', function() {
+					self.renderFilters(date, categories, location);
+				});
+			});
+
+			Path.map('#!/').to(function(){
+				if(Path.routes.previous) {
+					self.initFilterFromPath();
+					self.loadPage('/en/Düsseldorf/Events', '#view', function() {
+						self.renderFilters(filter.date, filter.categories, filter.location);
+					});
+				}
+			});
+
+			if(!Path.routes.previous) {
+				Path.root('#!/');
+				$('.date').removeClass('hidden');
+				$('.events-container').removeClass('hidden');
+				eventsCache['date_' + filter.date.format('YYYY-MM-DD')] = initialEvents;
+			}
+
+			Path.listen();
+
+			if(!Path.routes.current) {
+				$('.date').removeClass('hidden');
+				$('.events-container').removeClass('hidden');
+				eventsCache['date_' + filter.date.format('YYYY-MM-DD')] = initialEvents;
+			}
+
 			/*$(window).on('resize', function(){
 				var $lastEvent = $('#list-container').children().last();
 				if($lastEvent) {
@@ -223,6 +235,38 @@ var EventListModule = (function() {
 					});
 				}
 			});
+		},
+
+		initFilterFromPath: function() {
+			var requestChunks = location.pathname.split("/");
+			if (requestChunks.length >= 5) {
+				var date = requestChunks[4];
+				if(date == 'Favourites' || date == 'Offers' || date == 'Hot') {
+					filter.type = date;
+				} else if(date == 'Yesterday') {
+					filter.date = moment().subtract(1, 'days');
+				} else if(date == 'Today') {
+					filter.date = moment();
+				} else if(date == 'Tomorrow') {
+					filter.date = moment().add('days', 1);
+				} else if(date.length > 0){
+					filter.date = moment(date, 'YYYY-MM-DD');
+				}
+			} else {
+				filter.date = moment(moment(), 'YYYY-MM-DD');
+			}
+			if (requestChunks.length >= 6) {
+				var categories = requestChunks[5];
+				if(categories != 'All') {
+					filter.categories = categories.split(',');
+					for(var i = 0; i < filter.categories.length; i++) {
+						var str = filter.categories[i];
+						filter.categories[i] = str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+					}
+				}
+			} else{
+				filter.categories = [];
+			}
 		},
 
 		loadPage: function(url, selector, callback) {
@@ -257,8 +301,8 @@ var EventListModule = (function() {
 		filterEvents: function() {
 			filteredEvents = $.grep(events, function(event, i) {
 				var fits = true;
-				if(filter.categories.length != 0) {
-					var i = $.inArray(event.category, filter.categories);
+				if(filter.categories.length != 0) {//TODO: temporary, change!!!
+					var i = $.inArray(event.category.charAt(0).toUpperCase() + event.category.slice(1).toLowerCase(), filter.categories);
 					if(i < 0){
 						fits = false;
 					}
@@ -273,35 +317,15 @@ var EventListModule = (function() {
 			var self = this;
 			self.showSpinner();
 
-			var id = '';
-			for(var prop in params){
-				if(params.hasOwnProperty(prop)){
-					id += (prop + '_' + params[prop]);
-				}
-			}
-
-			if(eventsCache[id]) {
-				events = eventsCache[id];
+			EventService.list(params, function(data){
+				events = data;
 				self.filterEvents();
+				$('.date').removeClass('hidden');
+				$('.events-container').removeClass('hidden');
 				self.hideSpinner();
-			} else {
-				$.ajax({
-					type: 'GET',
-					url: '/api/event/list',
-					data: params,
-					contentType: "application/json",
-					dataType: 'json'
-				}).done(function(data, textStatus, jqXHR) {
-					eventsCache[id] = data;
-					events = eventsCache[id];
-					self.filterEvents();
-					$('.date').removeClass('hidden');
-					$('.events-container').removeClass('hidden');
-					self.hideSpinner();
-				}).fail(function(jqXHR, textStatus, errorThrown) {
-					self.hideSpinner();
-				});
-			}
+			}, function(){
+				self.hideSpinner();
+			});
 		},
 
 		renderEvents: function(events) {
@@ -316,7 +340,7 @@ var EventListModule = (function() {
 			$('.event-link').on('click', function(event) {
 				event.preventDefault();
 				var id = $(this).attr('id').split('-')[1];
-				location.hash = '#!en/Düsseldorf/e/' + id;
+				location.hash = '#!/en/Düsseldorf/e/' + id;
 			});
 		},
 
@@ -475,7 +499,7 @@ var EventListModule = (function() {
 		},
 
 		updateHash: function(date, categories, type) {
-			var hash = '!en/Düsseldorf/Events/';
+			var hash = '!/en/Düsseldorf/Events/';
 			if(type == 'Favourites' || type == 'Offers' || type == 'Hot') {
 				hash += type;
 			} else {
@@ -499,7 +523,7 @@ var EventListModule = (function() {
 			var self = this;
 			var showFilters = false;
 
-			if($(categories).not(filter.categories).length == 0 && $(filter.categories).not(categories).length == 0) {
+			//if(!Path.routes.previous || self.compareArrays(categories, filter.categories)==false/*($(categories).not(filter.categories).length != 0 || $(filter.categories).not(categories).length != 0)*/) {
 				filter.categories = categories;
 				$('#filter-categories a').each(function (i) {
 					$(this).removeClass('selected');
@@ -511,6 +535,12 @@ var EventListModule = (function() {
 					});
 					self.filterEvents();
 				}
+			//}
+
+			if(categories.length == 0) {//temp hack
+				$('#filter-categories a').each(function (i) {
+					$(this).removeClass('selected');
+				});
 			}
 
 			if(date == 'Favourites' || date == 'Offers' || date == 'Hot') {
@@ -544,7 +574,7 @@ var EventListModule = (function() {
 					filter.date = moment();
 				} else if(date == 'Tomorrow') {
 					filter.date = moment().add('days', 1);
-				} else if(date.length > 0){
+				} else if(date && date.length > 0){
 					filter.date = moment(date, 'YYYY-MM-DD');
 				} else {
 					filter.date = moment();
@@ -570,6 +600,16 @@ var EventListModule = (function() {
 				$('.map').css({'visibility': 'inherit', 'position': 'relative', 'left': ''});
 				$('.events-container').css('margin-top', '200px');
 			}
+		},
+
+		compareArrays: function(arr1, arr2){
+		    if (arr1.length !== arr2.length) return false;
+		    for (var i = 0, len = arr1.length; i < len; i++){
+		        if (arr1[i] !== arr2[i]){
+		            return false;
+		        }
+		    }
+		    return true;
 		}
 	}
 }());

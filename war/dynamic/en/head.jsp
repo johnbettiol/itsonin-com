@@ -40,6 +40,9 @@
 <%-- COMMON SCRIPTS --%>
 <script src="/static/js/script.js" type="text/javascript"></script>
 
+<%-- APPLICATION SERVICES --%>
+<script type="text/javascript" src="/static/js/service/eventService.js"></script>
+
 <%-- APPLICATION MODULES --%>
 <script type="text/javascript" src="/static/js/modules/list.js"></script>
 <script type="text/javascript" src="/static/js/modules/new.js"></script>

@@ -177,27 +177,21 @@ var EventNewModule = (function() {
 			$.cookie('name', guest['name'], {path: '/'});
 			self.showSpinner();
 
-			$.ajax({
-				type: 'POST',
-				url: '/api/event/create',
-				data: JSON.stringify({event:event, guest:guest}),
-				contentType: "application/json",
-				dataType: 'json'
-			}).done(function(data) {
+			EventService.save(event, guest, function(data){
 				shareUrl = baseUrl + '/i/' + data.event.eventId + "." + data.guest.guestId; 
 				$('#error-alert').hide();
 				$('#success-text').text('New event created successfully');
 				$('#success-alert').show();
 				if(data.event.sharability != 'NOSHARE' && data.event.visibility == 'PUBLIC') {
 					$('.share').show();
-					var $target = $('html,body'); 
+					var $target = $('html,body');
 					$target.animate({scrollTop: $target.height()});
 				}
-				
+
 				$('#save-btn').hide();
 				$('#cancel-btn').html('Go back');
 				self.hideSpinner();
-			}).fail(function(jqXHR, textStatus, errorThrown) {
+			}, function(){
 				var json = $.parseJSON(jqXHR.responseText);
 				if(json.message){
 					$('#error-text').text(json.message);

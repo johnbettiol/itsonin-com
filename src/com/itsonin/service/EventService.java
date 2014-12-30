@@ -260,13 +260,13 @@ public class EventService {
 						int guestCounter = -1;
 						for (int grIndex = 0; grIndex < guestList.size(); grIndex++) {
 							Guest guestRecord = guestList.get(grIndex);
-							if (guestRecord.getEventId() == event.getEventId()
+							if (event.getEventId().equals(guestRecord.getEventId())
 									&& guestRecord.getStatus() != GuestStatus.VIEWED) {
 								filteredList.add(event);
 								guestCounter = grIndex;
 							}
 						}
-						if (guestCounter > 0) {
+						if (guestCounter >= 0) {
 							guestList.remove(guestCounter);
 						}
 					} else {
@@ -277,12 +277,12 @@ public class EventService {
 					int guestCounter = -1;
 					for (int grIndex = 0; grIndex < guestList.size(); grIndex++) {
 						Guest guestRecord = guestList.get(grIndex);
-						if (guestRecord.getEventId() == event.getEventId()) {
+						if (event.getEventId().equals(guestRecord.getEventId())) {
 							filteredList.add(event);
 							guestCounter = grIndex;
 						}
 					}
-					if (guestCounter > 0) {
+					if (guestCounter >= 0) {
 						guestList.remove(guestCounter);
 					}
 				} else {

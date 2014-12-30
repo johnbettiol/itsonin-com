@@ -63,6 +63,24 @@ var EventInfoModule = (function() {
 				scrolledToComments = !scrolledToComments;
 			});
 
+			$('#back-link').on('click', function(event) {
+				event.preventDefault();
+				if(Path.routes.previous) {
+					history.back();
+				} else {
+					location.href = '/en/Düsseldorf/Events';
+				}
+			});
+
+			$('#city-link').on('click', function(event) {
+				event.preventDefault();
+				if(Path.routes.previous) {
+					history.back();
+				} else {
+					location.href = '/en/Düsseldorf/Events';
+				}
+			});
+
 			$.views.helpers({
 				formatTime: function (val) {
 					if(val) {
