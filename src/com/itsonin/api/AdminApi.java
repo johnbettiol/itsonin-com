@@ -15,8 +15,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.google.inject.Inject;
-import com.itsonin.crawl.EventimSeeder;
-import com.itsonin.crawl.PrinzDeSeeder;
+import com.itsonin.crawl.DusEventimSeeder;
+import com.itsonin.crawl.DusPrinzDeSeeder;
+import com.itsonin.crawl.DusTourismoSeeder;
+import com.itsonin.crawl.EventSeeder;
+import com.itsonin.crawl.SeederParserException;
 import com.itsonin.entity.Comment;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
@@ -70,32 +73,34 @@ public class AdminApi {
 	@Path("/seed/{engine}")
 	@Produces("application/json")
 	public Response seed(@PathParam("engine") String engine) {
-		Guest guest = new Guest("Joey McCloud");
+		EventSeeder es = null;
 		switch (engine) {
-			case "prinz":
-				guest.setStatus(GuestStatus.YES);
-				ArrayList<Event> eventsListP = new PrinzDeSeeder().getNewEvents();
-				for (Event event : eventsListP) {
-					Map<String, Object> created = eventService.create(event, guest);
-					Long eventId = ((Event)created.get("event")).getEventId();
-					Long guestId = ((Guest)created.get("guest")).getGuestId();
-					commentService.create(new Comment(eventId, guestId, null, "Question"));
-					commentService.create(new Comment(eventId, guestId, null, "Answer"));
-				}
+			case "DusPrinz":
+				es = new DusPrinzDeSeeder();
 				break;
-			case "eventim":
-				guest.setStatus(GuestStatus.YES);
-				ArrayList<Event> eventsListE = new EventimSeeder().getNewEvents();
-				for (Event event : eventsListE) {
-					Map<String, Object> created = eventService.create(event, guest);
-					Long eventId = ((Event)created.get("event")).getEventId();
-					Long guestId = ((Guest)created.get("guest")).getGuestId();
-					commentService.create(new Comment(eventId, guestId, null, "Question"));
-					commentService.create(new Comment(eventId, guestId, null, "Answer"));
-				}
+			case "DusEventim":
+				es = new DusEventimSeeder();
 				break;
+			case "DusTourismo":
+				es = new DusTourismoSeeder();
+				break;
+			case "DusTonight":
 			default:
 				return Response.status(Status.BAD_REQUEST).entity("Unknown engine").build();
+		}
+		Guest seedHost = es.getHostGuest();
+		ArrayList<Event> seedEvents = null;
+		try {
+			seedEvents = es.getNewEvents();
+		} catch (SeederParserException e) {
+			return Response.status(Status.BAD_REQUEST).entity("Engine Failed: " + e.getMessage()).build();
+		}
+		List <Map<String, Object>> result = eventService.createOrUpdateFromSeed(seedHost, seedEvents);
+		for (Map<String, Object> created : result) {
+			Long eventId = ((Event)created.get("event")).getEventId();
+			Long guestId = ((Guest)created.get("guest")).getGuestId();
+			commentService.create(new Comment(eventId, guestId, null, "Question"));
+			commentService.create(new Comment(eventId, guestId, null, "Answer"));
 		}
 		return Response.ok().build();
 	}

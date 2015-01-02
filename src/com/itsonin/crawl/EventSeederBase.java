@@ -12,6 +12,8 @@ import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.code.geocoder.model.GeocoderResult;
 import com.google.code.geocoder.model.GeocoderStatus;
 import com.itsonin.entity.Event;
+import com.itsonin.entity.Guest;
+import com.itsonin.enums.GuestStatus;
 
 abstract class EventSeederBase implements EventSeeder {
 	
@@ -32,6 +34,12 @@ abstract class EventSeederBase implements EventSeeder {
 				newEvent.setGpsLong(geometry.getLocation().getLng().doubleValue());
 			}
 		}
+	}
+	
+	public Guest getHostGuest() {
+		Guest guest = new Guest(getEventHostName());
+		guest.setStatus(GuestStatus.YES);
+		return guest;
 	}
 
 }

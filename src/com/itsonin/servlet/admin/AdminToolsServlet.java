@@ -8,12 +8,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.itsonin.crawl.DusEventimSeeder;
 import com.itsonin.crawl.DusPrinzDeSeeder;
 import com.itsonin.crawl.DusTourismoSeeder;
+import com.itsonin.crawl.EventSeeder;
+import com.itsonin.crawl.SeederParserException;
+import com.itsonin.entity.Comment;
 import com.itsonin.entity.Event;
 import com.itsonin.entity.Guest;
 import com.itsonin.enums.DeviceLevel;
@@ -42,13 +47,43 @@ public class AdminToolsServlet extends DefaultServlet {
 
 	@Inject
 	public AdminToolsServlet(AuthContextService authContextService,
-			EventService eventService, DeviceService deviceService, CommentService commentService, 
-			DataImportService dis) {
+			EventService eventService, DeviceService deviceService,
+			CommentService commentService, DataImportService dis) {
 		super(authContextService);
 		this.eventService = eventService;
 		this.deviceService = deviceService;
 		this.commentService = commentService;
 		this.dis = dis;
+	}
+	
+	private void doSeed(String engine) {
+		EventSeeder es = null;
+		switch (engine) {
+			case "DusPrinz":
+				es = new DusPrinzDeSeeder();
+				break;
+			case "DusEventim":
+				es = new DusEventimSeeder();
+				break;
+			case "DusTourismo":
+				es = new DusTourismoSeeder();
+				break;
+			case "DusTonight":
+		}
+		Guest seedHost = es.getHostGuest();
+		ArrayList<Event> seedEvents = null;
+		try {
+			seedEvents = es.getNewEvents();
+		} catch (SeederParserException e) {
+			return;
+		}
+		List <Map<String, Object>> result = eventService.createOrUpdateFromSeed(seedHost, seedEvents);
+		for (Map<String, Object> created : result) {
+			Long eventId = ((Event)created.get("event")).getEventId();
+			Long guestId = ((Guest)created.get("guest")).getGuestId();
+			commentService.create(new Comment(eventId, guestId, null, "Question"));
+			commentService.create(new Comment(eventId, guestId, null, "Answer"));
+		}
 	}
 
 	public void doIoiAction(HttpServletRequest req, HttpServletResponse res) {
@@ -58,76 +93,74 @@ public class AdminToolsServlet extends DefaultServlet {
 		Guest guest = new Guest("Public Event");
 		switch (irc.getCommand()) {
 		case "UpdateAccount":
-			irc.getDevice().setLevel(DeviceLevel.valueOf(req.getParameter("level")));
+			irc.getDevice().setLevel(
+					DeviceLevel.valueOf(req.getParameter("level")));
 			deviceService.updateDevice(irc.getDevice());
-			req.setAttribute("message","Device Level Updated");
+			req.setAttribute("message", "Device Level Updated");
 			break;
 		case "QuickSeed":
-			List<Double> lats = Arrays.asList(51.2384547, 51.218514, 51.2272899, 51.2201704, 51.2528229);
-			List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422, 6.772928, 6.7782096);
-			for(int i=1;i<=5;i++) {
-				Event event = new Event(EventSubCategory.PARTY, EventSharability.NORMAL,
-						EventVisibility.PUBLIC, EventStatus.ACTIVE,
-						EventFlexibility.NEGOTIABLE, "Germany vs Argentina party " + i, "event summary", 
-						"event description", "event notes", new Date(), new Date(), DateTimeUtil.getDaysBetweenDates(new Date(), new Date()),
-						lats.get(i-1), longs.get(i-1), "location.url", "ratinger Straße",
+			List<Double> lats = Arrays.asList(51.2384547, 51.218514,
+					51.2272899, 51.2201704, 51.2528229);
+			List<Double> longs = Arrays.asList(6.8143503, 6.7707483, 6.7725422,
+					6.772928, 6.7782096);
+			for (int i = 1; i <= 5; i++) {
+				Event event = new Event(EventSubCategory.PARTY,
+						EventSharability.NORMAL, EventVisibility.PUBLIC,
+						EventStatus.ACTIVE, EventFlexibility.NEGOTIABLE,
+						"Germany vs Argentina party " + i, "event summary",
+						"event description", "event notes", new Date(),
+						new Date(), DateTimeUtil.getDaysBetweenDates(
+								new Date(), new Date()), lats.get(i - 1),
+						longs.get(i - 1), "location.url", "ratinger Straße",
 						"location address", new Date(), "qseed");
 				event.setEventId(Long.valueOf(i));
 				eventService.create(event, guest);
 			}
 			break;
-		case "EventimSeed":
-			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsListE = new DusEventimSeeder().getNewEvents();
-			for (Event event : eventsListE) {
-				Map<String, Object> created = eventService.create(event, guest);
-			}
+		case "DusEventimSeed":
+			doSeed("DusEventim");
 			break;
-		case "PrinzSeed":
-			guest.setStatus(GuestStatus.YES);
-			ArrayList<Event> eventsListP = new DusPrinzDeSeeder().getNewEvents();
-			for (Event event : eventsListP) {
-				Map<String, Object> created = eventService.create(event, guest);
-			}
-			break;		
-		case "DusSeed":
-				guest.setStatus(GuestStatus.YES);
-				ArrayList<Event> eventsListD = new DusTourismoSeeder().getNewEvents();
-				for (Event event : eventsListD) {
-					Map<String, Object> created = eventService.create(event, guest);
-				}
-				break;
+		case "DusPrinzSeed":
+			doSeed("DusPrinz");
+			break;
+		case "DusTourismoSeed":
+			doSeed("DusTourismo");
+			break;
 		case "ImportData":
 			if (req.getParameter("type") == null) {
-				req.setAttribute("message","No upload type specified!");	
+				req.setAttribute("message", "No upload type specified!");
 			}
 			if (req.getParameter("dataType") == null) {
-				req.setAttribute("message","No data type specified!");
+				req.setAttribute("message", "No data type specified!");
 			}
 			switch (req.getParameter("type")) {
 			case "default":
 				req.setAttribute("result", dis.fromDefaultFiles(irc));
 				break;
 			case "upload":
-				String [] uploadedFiles = (String []) req.getAttribute("_rmFiles");
-				if (uploadedFiles == null || uploadedFiles.length ==0) {
-					req.setAttribute("message","No files uploaded!");
+				String[] uploadedFiles = (String[]) req
+						.getAttribute("_rmFiles");
+				if (uploadedFiles == null || uploadedFiles.length == 0) {
+					req.setAttribute("message", "No files uploaded!");
 					break;
 				}
 				req.setAttribute("result", dis.fromFiles(irc, uploadedFiles));
 			case "download":
 				if (req.getParameter("url") == null) {
-					req.setAttribute("message","No url specified!");
+					req.setAttribute("message", "No url specified!");
 					break;
 				}
-				req.setAttribute("results", dis.fromUrls(irc, req.getParameterValues("url")));
+				req.setAttribute("results",
+						dis.fromUrls(irc, req.getParameterValues("url")));
 				break;
 			case "text":
 				if (req.getParameter("data") == null) {
-					req.setAttribute("message","No input data provided specified!");
+					req.setAttribute("message",
+							"No input data provided specified!");
 					break;
 				}
-				req.setAttribute("results", dis.fromStrings(irc, req.getParameterValues("data")));
+				req.setAttribute("results",
+						dis.fromStrings(irc, req.getParameterValues("data")));
 				break;
 			}
 			break;

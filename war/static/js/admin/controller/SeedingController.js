@@ -3,7 +3,7 @@
 angular.module('itsonin').controller('SeedingController', ['$scope', 'seedingService',
 	function ($scope, seedingService) {
 
-	$scope.seedingEngines = ['prinz', 'eventim'];
+	$scope.seedingEngines = ['DusPrinz', 'DusEventim', 'DusTourismo', 'DusTonight'];
 
 	$scope.startSeeding = function() {
 		seedingService.seed($scope.seedingEngine,

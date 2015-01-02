@@ -381,4 +381,36 @@ public class EventService {
 			return (e1.getHotScore()>e2.getHotScore() ? -1 : (e1.getHotScore()==e2.getHotScore() ? 0 : 1));
 		}
 	};
+	
+	public EventWithGuest get2(Long eventId, Boolean forInvitation) {
+		Event event = eventDao.get(eventId);
+		GuestStatus status;
+		if(event.getVisibility() == EventVisibility.PUBLIC){
+			if(forInvitation != null && forInvitation.equals(true)){
+				status = GuestStatus.MAYBE;
+			} else {
+				status = GuestStatus.VIEWED;
+			}
+		} else {
+			status = GuestStatus.MAYBE;
+		}
+		Guest guest = storeGuestEntry(eventId, null, status);
+		return new EventWithGuest(event, guest);
+	}
+
+	public List<Map<String, Object>> createOrUpdateFromSeed(Guest seedHost, ArrayList<Event> eventsList) {
+		List <Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		for (Event event : eventsList) {
+			Event existingEvent = eventDao.getByUid(event.genUidFromData());
+			if (existingEvent == null) {
+				// Create a new event row
+				Map<String, Object> created = create(event,  seedHost);
+				result.add(created);
+			} else {
+				// Update existing row with modified data
+				update(existingEvent.getEventId(), event);
+			}
+		}
+		return result;
+	}
 }

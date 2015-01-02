@@ -170,4 +170,10 @@ public class DusEventimSeeder extends EventSeederBase {
 
 		return null;
 	}
+	
+	public String getEventHostName() {
+		return "Eventim";
+	}
+
+	
 }

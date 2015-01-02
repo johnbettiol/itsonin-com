@@ -52,4 +52,10 @@ public class EventDao extends ObjectifyGenericDao<Event>{
 		Query<Event> q = ofy().load().type(clazz).filter("days >=", from.getTime());
 		return q.list();
 	}
+
+	public Event getByUid(String uid) {
+		Query<Event> q = ofy().load().type(clazz).filter("uid =", uid);
+		List <Event> matches = q.list();
+		return matches.size() > 0 ? matches.get(0) : null;
+	}
 }

@@ -12,11 +12,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.itsonin.entity.Event;
+import com.itsonin.entity.Guest;
 import com.itsonin.enums.EventFlexibility;
 import com.itsonin.enums.EventSharability;
 import com.itsonin.enums.EventStatus;
 import com.itsonin.enums.EventSubCategory;
 import com.itsonin.enums.EventVisibility;
+import com.itsonin.enums.GuestStatus;
 import com.itsonin.utils.DateTimeUtil;
 
 public class DusPrinzDeSeeder extends EventSeederBase {
@@ -263,4 +265,9 @@ public class DusPrinzDeSeeder extends EventSeederBase {
 		}
 		// return null;
 	}
+	
+	public String getEventHostName() {
+		return "Prinz";
+	}
+
 }

@@ -303,4 +303,9 @@ public class DusTourismoSeeder extends EventSeederBase {
 
 		return addressLine1 + "\n" + addressLine2;
 	}
+	
+	public String getEventHostName() {
+		return "Tourismo";
+	}
+
 }

@@ -21,17 +21,18 @@ import com.itsonin.resteasy.CustomDateTimeSerializer;
 
 /**
  * @author nkislitsin
- *
+ * 
  */
 @Entity
 @Cache
 @Index
 public class Event implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	private Long eventId;
+	private String uid;
 	private EventCategory category;
 	private EventSubCategory subCategory;
 	private EventSharability sharability;
@@ -61,15 +62,19 @@ public class Event implements Serializable {
 	private String source;
 	private Integer hotScore;
 	private Date created;
-	
-	@SuppressWarnings("unused")
-	private Event(){}
 
-	public Event(EventSubCategory subCategory, EventSharability sharability, EventVisibility visibility, 
-			EventStatus status,	EventFlexibility flexibility, String title, String summary, String description,
-			String notes, Date startTime, Date endTime, List<Date> days, Double gpsLat,Double gpsLong, 
-			String locationUrl, String locationTitle, String locationAddress, Date created, String source) {
-		
+	@SuppressWarnings("unused")
+	private Event() {
+	}
+
+	public Event(EventSubCategory subCategory, EventSharability sharability,
+			EventVisibility visibility, EventStatus status,
+			EventFlexibility flexibility, String title, String summary,
+			String description, String notes, Date startTime, Date endTime,
+			List<Date> days, Double gpsLat, Double gpsLong, String locationUrl,
+			String locationTitle, String locationAddress, Date created,
+			String source) {
+
 		this.category = subCategory.getParent();
 		this.subCategory = subCategory;
 		this.sharability = sharability;
@@ -95,8 +100,16 @@ public class Event implements Serializable {
 		return eventId;
 	}
 
+	public String getUid() {
+		return uid;
+	}
+
 	public void setEventId(Long eventId) {
 		this.eventId = eventId;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public EventSharability getSharability() {
@@ -138,7 +151,7 @@ public class Event implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	public String getSummary() {
 		return summary;
 	}
@@ -146,7 +159,7 @@ public class Event implements Serializable {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -256,7 +269,7 @@ public class Event implements Serializable {
 
 	public void setIconImage(String val) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public String getSource() {
@@ -325,6 +338,12 @@ public class Event implements Serializable {
 
 	public void setHotScore(Integer hotScore) {
 		this.hotScore = hotScore;
+	}
+
+	public String genUidFromData() {
+		return endTime != null ? source + "_" + localTitle + "_"
+				+ endTime.getTime() : source + "_" + localTitle + "_"
+				+ startTime.getTime();
 	}
 
 }
