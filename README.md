@@ -1,3 +1,8 @@
+To anyone stumbling across this...  This was a startup idea I had back in the past where I wanted an OpenStreetMap style competitor to tripadvisor and google reviews.
+
+I got lazy and didn't follow it up.
+
+
 #itsonin.com Technical Specification
 ##Type Definitions
 Type|Internal Type|Example
